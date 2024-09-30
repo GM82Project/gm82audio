@@ -10,8 +10,8 @@
 
 #include <map>
 
-#define GMREAL __declspec(dllexport) double __cdecl
-#define GMSTR __declspec(dllexport) char* __cdecl
+#define GMREAL extern "C" __declspec(dllexport) double __cdecl
+#define GMSTR extern "C" __declspec(dllexport) char* __cdecl
 
 GMREAL audio_init(double sample_rate);
 GMREAL audio_update(double dt);

@@ -8,7 +8,9 @@
 	"description": "A cute_sound.h wrapper for GM 8.2.",
 	"helpfile": "",
 	"hidden": false,
-	"dependencies": [],
+	"dependencies": [
+		"Game Maker 8.2 Core"
+	],
 	"files": [
 		{
 			"filename": "gm82cs.dll",

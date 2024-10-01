@@ -1,0 +1,365 @@
+{
+	"name": "Game Maker 8.2 Audio",
+	"folder": "gm82",
+	"version": "1.0",
+	"author": "",
+	"date": "01/10/2024",
+	"license": "Free to use, also for commercial games.",
+	"description": "A cute_sound wrapper for GM 8.2.",
+	"helpfile": "",
+	"hidden": false,
+	"dependencies": [
+		"Game Maker 8.2 Core"
+	],
+	"files": [
+		{
+			"filename": "gm82audio.dll",
+			"origname": "gm82audio.dll",
+			"kind": 1,
+			"init": "",
+			"final": "__gm82audio_end",
+			"functions": [
+				{
+					"name": "__gm82audio_init",
+					"extname": "",
+					"calltype": 12,
+					"helpline": "",
+					"hidden": true,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "__gm82audio_update",
+					"extname": "",
+					"calltype": 12,
+					"helpline": "",
+					"hidden": true,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "__gm82audio_end",
+					"extname": "",
+					"calltype": 12,
+					"helpline": "",
+					"hidden": true,
+					"argtypes": [],
+					"returntype": 2
+				},
+				{
+					"name": "__gm82audio_loadwav",
+					"extname": "",
+					"calltype": 12,
+					"helpline": "",
+					"hidden": true,
+					"argtypes": [
+						1
+					],
+					"returntype": 2
+				},
+				{
+					"name": "__gm82audio_loadogg",
+					"extname": "",
+					"calltype": 12,
+					"helpline": "",
+					"hidden": true,
+					"argtypes": [
+						1
+					],
+					"returntype": 2
+				},
+				{
+					"name": "__gm82audio_sfx_play",
+					"extname": "",
+					"calltype": 12,
+					"helpline": "",
+					"hidden": true,
+					"argtypes": [
+						2,
+						2,
+						2,
+						2,
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "__gm82audio_music_play",
+					"extname": "",
+					"calltype": 12,
+					"helpline": "",
+					"hidden": true,
+					"argtypes": [
+						2,
+						2,
+						2,
+						2,
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "__gm82audio_music_pitch",
+					"extname": "",
+					"calltype": 12,
+					"helpline": "",
+					"hidden": true,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "__gm82audio_get_error",
+					"extname": "",
+					"calltype": 12,
+					"helpline": "",
+					"hidden": true,
+					"argtypes": [],
+					"returntype": 1
+				},
+				{
+					"name": "audio_music_pause",
+					"extname": "__gm82audio_music_pause",
+					"calltype": 12,
+					"helpline": "audio_music_pause()",
+					"hidden": false,
+					"argtypes": [],
+					"returntype": 2
+				},
+				{
+					"name": "audio_music_resume",
+					"extname": "__gm82audio_music_resume",
+					"calltype": 12,
+					"helpline": "audio_music_resume()",
+					"hidden": false,
+					"argtypes": [],
+					"returntype": 2
+				},
+				{
+					"name": "audio_music_get_pos",
+					"extname": "__gm82audio_music_get_pos",
+					"calltype": 12,
+					"helpline": "audio_music_get_pos()",
+					"hidden": false,
+					"argtypes": [],
+					"returntype": 2
+				},
+				{
+					"name": "__gm82audio_music_set_pos",
+					"extname": "",
+					"calltype": 12,
+					"helpline": "",
+					"hidden": true,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "__gm82audio_music_crossfade",
+					"extname": "",
+					"calltype": 12,
+					"helpline": "",
+					"hidden": true,
+					"argtypes": [
+						2,
+						2,
+						2,
+						2,
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "__gm82audio_music_switch",
+					"extname": "",
+					"calltype": 12,
+					"helpline": "",
+					"hidden": true,
+					"argtypes": [
+						2,
+						2,
+						2,
+						2,
+						2,
+						2
+					],
+					"returntype": 2
+				}
+			],
+			"constants": []
+		},
+		{
+			"filename": "gm82audio.gml",
+			"origname": "gm82audio.gml",
+			"kind": 2,
+			"init": "__gm82audio_init",
+			"final": "",
+			"functions": [
+				{
+					"name": "__gm82audio_init",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "",
+					"hidden": true,
+					"argtypes": null,
+					"returntype": 2
+				},
+				{
+					"name": "__gm82audio_step",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "",
+					"hidden": true,
+					"argtypes": null,
+					"returntype": 2
+				},
+				{
+					"name": "audio_load",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_load(filename)",
+					"hidden": false,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "audio_sfx_play",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_sfx_play(sound)",
+					"hidden": false,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "audio_sfx_play_ext",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_sfx_play_ext(sound,vol,pan,pitch,loop)",
+					"hidden": false,
+					"argtypes": [
+						2,
+						2,
+						2,
+						2,
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "audio_music_play",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_music_play(sound,[fadeintime])",
+					"hidden": false,
+					"argtypes": null,
+					"returntype": 2
+				},
+				{
+					"name": "audio_music_pitch",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_music_pitch(pitch)",
+					"hidden": false,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "audio_music_set_pos",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_music_set_pos(pos)",
+					"hidden": false,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "audio_music_play_ext",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_music_play_ext(sound,fadeintime,vol,pitch,loop)",
+					"hidden": false,
+					"argtypes": [
+						2,
+						2,
+						2,
+						2,
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "audio_music_crossfade",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_music_crossfade(sound,fadetime)",
+					"hidden": false,
+					"argtypes": [
+						2,
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "audio_music_crossfade_ext",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_music_crossfade_ext(sound,fadetime,vol,pitch,loop)",
+					"hidden": false,
+					"argtypes": [
+						2,
+						2,
+						2,
+						2,
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "audio_music_switch",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_music_switch(sound,fadeouttime,fadeintime)",
+					"hidden": false,
+					"argtypes": [
+						2,
+						2,
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "audio_music_switch_ext",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_music_switch_ext(sound,fadeouttime,fadeintime,vol,pitch,loop)",
+					"hidden": false,
+					"argtypes": [
+						2,
+						2,
+						2,
+						2,
+						2,
+						2
+					],
+					"returntype": 2
+				}
+			],
+			"constants": []
+		}
+	]
+}

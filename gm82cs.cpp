@@ -13,7 +13,7 @@
 #define GMREAL extern "C" __declspec(dllexport) double __cdecl
 #define GMSTR extern "C" __declspec(dllexport) char* __cdecl
 
-GMREAL audio_init(double sample_rate);
+GMREAL audio_init(double gm_hwnd,double sample_rate);
 GMREAL audio_update(double dt);
 GMREAL audio_end();
 GMREAL sound_add(char* fn);
@@ -25,9 +25,9 @@ static double SAMPLE_RATE;
 static int SOUND_INDEX=1;
 static std::map<int,cs_audio_source_t*> SOUNDS;
 
-GMREAL audio_init(double sample_rate) {
+GMREAL audio_init(double gm_hwnd,double sample_rate) {
     SAMPLE_RATE=sample_rate;
-    cs_init(NULL,(int)SAMPLE_RATE,1024,NULL);
+    cs_init((HWND)(int)gm_hwnd,(int)SAMPLE_RATE,1024,NULL);
     cs_spawn_mix_thread();
     cs_mix_thread_sleep_delay(1);
     return 0;

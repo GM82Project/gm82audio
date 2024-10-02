@@ -2,3 +2,4 @@
 *.dll
 test
 build
+*.py

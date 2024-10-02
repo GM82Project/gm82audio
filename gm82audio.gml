@@ -7,7 +7,7 @@
 
 #define __gm82audio_step
     var __now;__now=get_timer()
-    __gm82audio_update(__now-global.__gm82audio_last_update)    
+    __gm82audio_update((__now-global.__gm82audio_last_update)/1000)
     global.__gm82audio_last_update=__now
 
 

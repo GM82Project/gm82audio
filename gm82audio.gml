@@ -115,5 +115,28 @@
     ///audio_music_set_pos(pos)
     if (__gm82audio_music_set_pos(argument0))
         show_error("in function audio_music_set_pos: "+__gm82audio_get_error(),0)
+
+
+#define audio_music_volume
+    ///audio_music_volume(volume)
+    __gm82audio_music_volume(median(0,argument0,1))
+
+
+#define audio_music_set_loop
+    ///audio_music_set_loop(loops)
+    __gm82audio_music_loop(argument0)
+
+
+#define audio_music_stop
+    ///audio_music_stop([fadeouttime])
+    var __fade;__fade=0
+    
+    if (argument_count>1) {
+        show_error("in function audio_music_stop: wrong number of arguments",0)
+        exit
+    }
+    if (argument_count==1) __fade=max(0,argument[0])
+    __gm82audio_music_stop(__fade)
+
 //
 //

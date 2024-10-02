@@ -163,3 +163,13 @@ GMREAL __gm82audio_music_set_pos(double pos) {
     }
     return 0;
 }
+
+GMREAL __gm82audio_sound_get_length(double soundid) {
+    cs_audio_source_t* snd=SOUNDS[(int)soundid];
+    return (double)(cs_get_sample_count(snd)/((double)cs_get_sample_rate(snd)));
+}
+
+GMREAL __gm82audio_music_stop(double fadeouttime) {
+    cs_music_stop(fadeouttime);
+    return 0;
+}

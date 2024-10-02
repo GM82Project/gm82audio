@@ -1466,6 +1466,7 @@ typedef struct cs_context_t
 	bool separate_thread;
 	bool running;
 	int sleep_milliseconds;
+	float global_sample_rate;
 
 #if CUTE_SOUND_PLATFORM == CUTE_SOUND_WINDOWS
 
@@ -1845,6 +1846,7 @@ cs_error_t cs_init(void* os_handle, unsigned play_frequency_in_Hz, int buffered_
 	s_ctx->running = true;
 	s_ctx->separate_thread = false;
 	s_ctx->sleep_milliseconds = 0;
+	s_ctx->global_sample_rate = (float)play_frequency_in_Hz;
 
 #if CUTE_SOUND_PLATFORM == CUTE_SOUND_WINDOWS
 
@@ -1998,6 +2000,7 @@ void cs_update(float dt)
 			s_ctx->fade = s_ctx->fade_switch_1;
 			s_ctx->fade_switch_1 = 0;
 			s_ctx->music_next->paused = false;
+			s_ctx->music_next->volume = 0;
 		} else {
 			s_ctx->music_playing->volume = s_smoothstep(((s_ctx->fade - s_ctx->t) / s_ctx->fade));;
 		}
@@ -2291,9 +2294,11 @@ void cs_mix()
 				cs__m128 vA = cs_mm_set1_ps(vA0);
 				cs__m128 vB = cs_mm_set1_ps(vB0);
 
+				float adjusted_pitch = playing->pitch * (((float)playing->audio->sample_rate) / s_ctx->global_sample_rate);
+
 				int prev_playing_sample_index = playing->sample_index;
 				int sample_index_wide = (int)CUTE_SOUND_TRUNC(playing->sample_index, 4) / 4;
-				int samples_to_read = (int)(samples_needed * playing->pitch);
+				int samples_to_read = (int)(samples_needed * adjusted_pitch);
 				if (samples_to_read + playing->sample_index > audio->sample_count) {
 					samples_to_read = audio->sample_count - playing->sample_index;
 				} else if (samples_to_read + playing->sample_index < 0) {
@@ -2301,17 +2306,17 @@ void cs_mix()
 					// be accounted for otherwise the sample index cursor gets stuck at sample count.
 					playing->sample_index = audio->sample_count + samples_to_read + playing->sample_index;
 				}
-				int samples_to_write = (int)(samples_to_read / playing->pitch);
+				int samples_to_write = samples_needed;
 				int write_wide = CUTE_SOUND_ALIGN(samples_to_write, 4) / 4;
 				int write_offset_wide = (int)CUTE_SOUND_ALIGN(write_offset, 4) / 4;
 				static int written_so_far = 0;
 				written_so_far += samples_to_read;
 
 				// Do the actual mixing: Apply volume, load samples into float buffers.
-				if (playing->pitch != 1.0f) {
+				if (adjusted_pitch != 1.0f) {
 					// Pitch shifting -- We read in samples at a resampled rate (multiply by pitch). These samples
 					// are read in one at a time in scalar mode, but then mixed together via SIMD.
-					cs__m128 pitch = cs_mm_set1_ps(playing->pitch);
+					cs__m128 pitch = cs_mm_set1_ps(adjusted_pitch);
 					cs__m128 index_offset = cs_mm_set1_ps((float)playing->sample_index);
 					switch (audio->channel_count) {
 					case 1:
@@ -3102,6 +3107,8 @@ void cs_music_switch_to(cs_audio_source_t* audio_source, float fade_out_time, fl
 		CUTE_SOUND_ASSERT(s_ctx->music_next == NULL);
 		cs_sound_inst_t* inst = s_inst_music(audio_source, fade_in_time == 0 ? 1.0f : 0);
 		s_ctx->music_next = inst;
+		s_ctx->music_next->paused = true;
+		s_ctx->music_next->volume = 0.f;
 
 		s_ctx->fade = fade_out_time;
 		s_ctx->fade_switch_1 = fade_in_time;

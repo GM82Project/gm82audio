@@ -3,7 +3,7 @@
 	"folder": "gm82",
 	"version": "1.0",
 	"author": "",
-	"date": "01/10/2024",
+	"date": "02/10/2024",
 	"license": "Free to use, also for commercial games.",
 	"description": "A cute_sound wrapper for GM 8.2.",
 	"helpfile": "",
@@ -231,10 +231,10 @@
 					"returntype": 2
 				},
 				{
-					"name": "audio_sfx_play",
+					"name": "audio_sound_play",
 					"extname": "",
 					"calltype": 2,
-					"helpline": "audio_sfx_play(sound)",
+					"helpline": "audio_sound_play(sound)",
 					"hidden": false,
 					"argtypes": [
 						2
@@ -242,10 +242,10 @@
 					"returntype": 2
 				},
 				{
-					"name": "audio_sfx_play_ext",
+					"name": "audio_sound_play_ext",
 					"extname": "",
 					"calltype": 2,
-					"helpline": "audio_sfx_play_ext(sound,vol,pan,pitch,loop)",
+					"helpline": "audio_sound_play_ext(sound,vol,pan,pitch,loop)",
 					"hidden": false,
 					"argtypes": [
 						2,

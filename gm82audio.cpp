@@ -35,8 +35,8 @@ static double SAMPLE_RATE=44100;
 static int SOUND_INDEX=1;
 static std::map<int,cs_audio_source_t*> SOUNDS;
 static char* ERROR_STR = "";
-static double MUSIC_SAMPLERATE=44100;
 static bool MUSIC_PAUSED=false;
+static cs_audio_source_t* CURRENT_SONG;
 
 GMREAL __gm82audio_init(double gm_hwnd) {
     cs_init((HWND)(int)gm_hwnd,(int)SAMPLE_RATE,1024,NULL);
@@ -82,14 +82,11 @@ GMREAL __gm82audio_loadogg(char* fn) {
 }
 
 GMREAL __gm82audio_sfx_play(double soundid,double vol,double pan,double pitch,double loops) {
-    //TODO: vol pan loops
-    cs_audio_source_t* snd=SOUNDS[(int)soundid];
-    //compensate pitch
-    int sndrate=cs_get_sample_rate(snd);
+    cs_audio_source_t* snd=SOUNDS[(int)soundid];   
     cs_sound_params_t params=cs_sound_params_default();
     params.volume=vol;
     params.pan=pan;
-    params.pitch=(sndrate/SAMPLE_RATE)*pitch;
+    params.pitch=pitch;
     params.looped=(loops>=0.5);
     cs_play_sound(snd,params);
     return 0;
@@ -108,10 +105,8 @@ GMREAL __gm82audio_music_resume() {
 }
 
 GMREAL __gm82audio_music_play(double soundid,double fadeintime,double vol,double pitch,double loops) {
-    cs_audio_source_t* snd=SOUNDS[(int)soundid];
-
-    cs_music_play(snd,(float)fadeintime);
-    
+    CURRENT_SONG=SOUNDS[(int)soundid];
+    cs_music_play(CURRENT_SONG,(float)fadeintime);    
     __gm82audio_music_pitch(pitch);
     __gm82audio_music_volume(vol);
     __gm82audio_music_loop(loops);
@@ -119,8 +114,8 @@ GMREAL __gm82audio_music_play(double soundid,double fadeintime,double vol,double
 }
 
 GMREAL __gm82audio_music_switch(double soundid,double fadeouttime,double fadeintime,double vol,double pitch,double loops) {
-    cs_audio_source_t* snd=SOUNDS[(int)soundid];
-    cs_music_switch_to(snd,(float)fadeouttime,(float)fadeintime);
+    CURRENT_SONG=SOUNDS[(int)soundid];
+    cs_music_switch_to(CURRENT_SONG,(float)fadeouttime,(float)fadeintime);
     __gm82audio_music_pitch(pitch);
     __gm82audio_music_volume(vol);
     __gm82audio_music_loop(loops);
@@ -128,8 +123,8 @@ GMREAL __gm82audio_music_switch(double soundid,double fadeouttime,double fadeint
 }
 
 GMREAL __gm82audio_music_crossfade(double soundid,double fadetime,double vol,double pitch,double loops) {
-    cs_audio_source_t* snd=SOUNDS[(int)soundid];
-    cs_music_crossfade(snd,(float)fadetime);
+    CURRENT_SONG=SOUNDS[(int)soundid];
+    cs_music_crossfade(CURRENT_SONG,(float)fadetime);
     __gm82audio_music_pitch(pitch);
     __gm82audio_music_volume(vol);
     __gm82audio_music_loop(loops);
@@ -141,7 +136,7 @@ GMREAL __gm82audio_music_pitch(double pitch) {
         cs_music_pause();
     } else {
         if (!MUSIC_PAUSED) cs_music_resume();
-        cs_music_set_pitch(pitch*(MUSIC_SAMPLERATE/SAMPLE_RATE));
+        cs_music_set_pitch(pitch);
     }
     return 0;
 }
@@ -157,11 +152,11 @@ GMREAL __gm82audio_music_loop(double loops) {
 }
 
 GMREAL __gm82audio_music_get_pos() {
-    return (double)(cs_music_get_sample_index()/MUSIC_SAMPLERATE);
+    return (double)(cs_music_get_sample_index()/((double)cs_get_sample_rate(CURRENT_SONG)));
 }
 
 GMREAL __gm82audio_music_set_pos(double pos) {
-    cs_error_t error=cs_music_set_sample_index((int)(pos*MUSIC_SAMPLERATE));
+    cs_error_t error=cs_music_set_sample_index((int)(pos*cs_get_sample_rate(CURRENT_SONG)));
     if (error) {
         strcpy(ERROR_STR,cs_error_as_string(error));
         return 1;

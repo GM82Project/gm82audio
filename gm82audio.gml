@@ -34,13 +34,13 @@
     }
 
 
-#define audio_sfx_play
-    ///audio_sfx_play(sound)
+#define audio_sound_play
+    ///audio_sound_play(sound)
     if (argument0) __gm82audio_sfx_play(argument0,1,0.5,1,0)
 
 
-#define audio_sfx_play_ext
-    ///audio_sfx_play_ext(sound,vol,pan,pitch,loop)
+#define audio_sound_play_ext
+    ///audio_sound_play_ext(sound,vol,pan,pitch,loop)
     if (argument0) __gm82audio_sfx_play(
         argument0,
         median(0,argument1,1),

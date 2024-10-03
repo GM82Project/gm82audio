@@ -25,8 +25,6 @@ if (index<=0 || index>=SOUND_INDEX) return __ERROR_NONEXIST;\
     if (sound->deleted) return __ERROR_DELETED;
 
 
-
-
 struct sound_struct {
     cs_audio_source_t* source;
     bool deleted=false;
@@ -65,28 +63,42 @@ GMREAL __gm82audio_exists(double index) {
     __CHECK_EXISTS_DEL(index,sound);
     return 1;
 }
-GMREAL __gm82audio_loadwav(char* fn) {
-    cs_error_t error;
-    cs_audio_source_t* snd=cs_load_wav(fn,&error);
-    if (snd==NULL) {
-        strcpy(ERROR_STR,cs_error_as_string(error));
-        return 0;
-    }
+
+int __gm82audio_store_sound(cs_audio_source_t* snd) {
+    if (snd==NULL) return 0;
     SOUNDS.reserve(((SOUND_INDEX+1)/256+1)*256);
     SOUNDS[SOUND_INDEX]=new sound_struct(snd);
     return SOUND_INDEX++;
 }
 
+GMREAL __gm82audio_loadwav(char* fn) {
+    cs_error_t error;
+    cs_audio_source_t* snd=cs_load_wav(fn,&error);
+    if (snd==NULL) strcpy(ERROR_STR,cs_error_as_string(error));
+    return __gm82audio_store_sound(snd);
+}
+
 GMREAL __gm82audio_loadogg(char* fn) {
     cs_error_t error;
     cs_audio_source_t* snd=cs_load_ogg(fn,&error);
-    if (snd==NULL) {
-        strcpy(ERROR_STR,cs_error_as_string(error));
-        return 0;
-    }
-    SOUNDS.reserve(((SOUND_INDEX+1)/256+1)*256);
-    SOUNDS[SOUND_INDEX]=new sound_struct(snd);
-    return SOUND_INDEX++;
+    if (snd==NULL) strcpy(ERROR_STR,cs_error_as_string(error));
+    return __gm82audio_store_sound(snd);
+}
+
+GMREAL __gm82audio_loadwav_mem(double gmbuffer,double length) {
+    cs_error_t error;
+    const void* data=(void*)(size_t)gmbuffer;
+    cs_audio_source_t* snd=cs_read_mem_wav(data,(size_t)length,&error);
+    if (snd==NULL) strcpy(ERROR_STR,cs_error_as_string(error));
+    return __gm82audio_store_sound(snd);
+}
+
+GMREAL __gm82audio_loadogg_mem(double gmbuffer,double length) {
+    cs_error_t error;
+    const void* data=(void*)(size_t)gmbuffer;
+    cs_audio_source_t* snd=cs_read_mem_ogg(data,(size_t)length,&error);
+    if (snd==NULL) strcpy(ERROR_STR,cs_error_as_string(error));
+    return __gm82audio_store_sound(snd);
 }
 
 GMREAL __gm82audio_sfx_play(double soundid,double vol,double pan,double pitch,double loops) {
@@ -217,7 +229,7 @@ GMREAL __gm82audio_unload(double soundid) {
     }
     return 0;
 }
+
 /*
-sounds from buffers
-sfx instances using struct vector - pause, loop, vol, pitch, pan, get sndid, stop
+sfx instances - pause, loop, vol, pitch, pan, get sndid, stop
 */

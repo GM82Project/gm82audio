@@ -11,6 +11,12 @@
     global.__gm82audio_last_update=__now
 
 
+#define __gm82audio_check
+    if (argument0==-1) {show_error("in function "+argument1+": sound "+string(argument2)+" does not exist!",0) return 0}
+    if (argument0==-2) {show_error("in function "+argument1+": sound "+string(argument2)+" is deleted!",0) return 0}
+    return 1
+
+
 #define audio_load
     ///audio_load(filename)
     //filename: full or relative path to either a 16-bit wav file or an ogg file
@@ -36,18 +42,18 @@
 
 #define audio_sound_play
     ///audio_sound_play(sound)
-    if (argument0) __gm82audio_sfx_play(argument0,1,0.5,1,0)
+    __gm82audio_check(__gm82audio_sfx_play(argument0,1,0.5,1,0),"audio_sound_play",argument0)
 
 
 #define audio_sound_play_ext
     ///audio_sound_play_ext(sound,vol,pan,pitch,loop)
-    if (argument0) __gm82audio_sfx_play(
+    __gm82audio_check(__gm82audio_sfx_play(
         argument0,
         median(0,argument1,1),
         median(0,argument2/2+0.5,1),
         median(-2,argument3,2),
         argument4
-    )
+    ),"audio_sound_play_ext",argument0)
 
 
 #define audio_music_play
@@ -59,51 +65,51 @@
         exit
     }
     if (argument_count==2) __fade=max(0,argument[1])
-    if (argument[0]) __gm82audio_music_play(argument[0],__fade,1,1,1)
+    __gm82audio_check(__gm82audio_music_play(argument[0],__fade,1,1,1),"audio_music_play",argument0)
 
 
 #define audio_music_play_ext
     ///audio_music_play_ext(sound,fadeintime,vol,pitch,loop)
-    if (argument0) __gm82audio_music_play(
-            argument0,
-            argument1,
-            median(0,argument2,1),
-            median(-2,argument3,2),
-            argument4>=0.5
-        )
-
-
-#define audio_music_crossfade
-    ///audio_music_crossfade(sound,fadetime)
-    if (argument0) __gm82audio_music_crossfade(argument0,argument1,1,1,1)
-
-
-#define audio_music_crossfade_ext
-    ///audio_music_crossfade_ext(sound,fadetime,vol,pitch,loop)
-    if (argument0) __gm82audio_music_crossfade(
+    __gm82audio_check(__gm82audio_music_play(
         argument0,
         argument1,
         median(0,argument2,1),
         median(-2,argument3,2),
         argument4>=0.5
-    )
+    ),"audio_music_play_ext",argument0)
+
+
+#define audio_music_crossfade
+    ///audio_music_crossfade(sound,fadetime)
+    __gm82audio_check(__gm82audio_music_crossfade(argument0,argument1,1,1,1),"audio_music_crossfade",argument0)
+
+
+#define audio_music_crossfade_ext
+    ///audio_music_crossfade_ext(sound,fadetime,vol,pitch,loop)
+    __gm82audio_check(__gm82audio_music_crossfade(
+        argument0,
+        argument1,
+        median(0,argument2,1),
+        median(-2,argument3,2),
+        argument4>=0.5
+    ),"audio_music_crossfade_ext",argument0)
 
 
 #define audio_music_switch
     ///audio_music_switch(sound,fadeouttime,fadeintime)
-    if (argument0) __gm82audio_music_switch(argument0,argument1,argument2,1,1,1)
+    __gm82audio_check(__gm82audio_music_switch(argument0,argument1,argument2,1,1,1),"audio_music_switch",argument0)
 
 
 #define audio_music_switch_ext
     ///audio_music_switch_ext(sound,fadeouttime,fadeintime,vol,pitch,loop)
-    if (argument0) __gm82audio_music_switch(
+    __gm82audio_check(__gm82audio_music_switch(
         argument0,
         argument1,
         argument2,
         median(0,argument3,1),
         median(-2,argument4,2),
         argument5>=0.5
-    )
+    ),"audio_music_switch_ext",argument0)
 
 
 #define audio_music_pitch

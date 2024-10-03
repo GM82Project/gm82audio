@@ -8,7 +8,7 @@
 #define CUTE_SOUND_IMPLEMENTATION
 #include "cute_sound.h"
 
-#include <map>
+#include <vector>
 
 #define GMREAL extern "C" __declspec(dllexport) double __cdecl 
 #define GMSTR extern "C" __declspec(dllexport) char* __cdecl
@@ -33,7 +33,7 @@ GMREAL __gm82audio_music_set_pos(double pos);
 
 static double SAMPLE_RATE=44100;
 static int SOUND_INDEX=1;
-static std::map<int,cs_audio_source_t*> SOUNDS;
+static std::vector<cs_audio_source_t*> SOUNDS;
 static char* ERROR_STR = "";
 static bool MUSIC_PAUSED=false;
 static cs_audio_source_t* CURRENT_SONG;
@@ -66,7 +66,8 @@ GMREAL __gm82audio_loadwav(char* fn) {
         strcpy(ERROR_STR,cs_error_as_string(error));
         return 0;
     }
-    SOUNDS.insert(std::make_pair(SOUND_INDEX,snd));
+    SOUNDS.reserve(((SOUND_INDEX+1)/256+1)*256);
+    SOUNDS[SOUND_INDEX]=snd;
     return SOUND_INDEX++;
 }
 
@@ -77,7 +78,8 @@ GMREAL __gm82audio_loadogg(char* fn) {
         strcpy(ERROR_STR,cs_error_as_string(error));
         return 0;
     }
-    SOUNDS.insert(std::make_pair(SOUND_INDEX,snd));
+    SOUNDS.reserve(((SOUND_INDEX+1)/256+1)*256);
+    SOUNDS[SOUND_INDEX]=snd;
     return SOUND_INDEX++;
 }
 

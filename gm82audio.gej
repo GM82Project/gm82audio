@@ -141,6 +141,7 @@
 						2,
 						2,
 						2,
+						2,
 						2
 					],
 					"returntype": 2
@@ -189,6 +190,7 @@
 						2,
 						2,
 						2,
+						2,
 						2
 					],
 					"returntype": 2
@@ -222,6 +224,7 @@
 					"helpline": "",
 					"hidden": true,
 					"argtypes": [
+						2,
 						2,
 						2,
 						2,
@@ -316,9 +319,10 @@
 					"name": "audio_music_crossfade_ext",
 					"extname": "",
 					"calltype": 2,
-					"helpline": "audio_music_crossfade_ext(sound,fadetime,vol,pitch,loop)",
+					"helpline": "audio_music_crossfade_ext(sound,fadetime,vol,pan,pitch,loop)",
 					"hidden": false,
 					"argtypes": [
+						2,
 						2,
 						2,
 						2,
@@ -362,9 +366,10 @@
 					"name": "audio_music_play_ext",
 					"extname": "",
 					"calltype": 2,
-					"helpline": "audio_music_play_ext(sound,fadeintime,vol,pitch,loop)",
+					"helpline": "audio_music_play_ext(sound,fadeintime,vol,pan,pitch,loop)",
 					"hidden": false,
 					"argtypes": [
+						2,
 						2,
 						2,
 						2,
@@ -421,9 +426,10 @@
 					"name": "audio_music_switch_ext",
 					"extname": "",
 					"calltype": 2,
-					"helpline": "audio_music_switch_ext(sound,fadeouttime,fadeintime,vol,pitch,loop)",
+					"helpline": "audio_music_switch_ext(sound,fadeouttime,fadeintime,vol,pan,pitch,loop)",
 					"hidden": false,
 					"argtypes": [
+						2,
 						2,
 						2,
 						2,

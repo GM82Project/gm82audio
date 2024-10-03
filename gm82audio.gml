@@ -12,8 +12,20 @@
 
 
 #define __gm82audio_check
-    if (argument0==-1) {show_error("in function "+argument1+": sound "+string(argument2)+" does not exist!",0) return 0}
-    if (argument0==-2) {show_error("in function "+argument1+": sound "+string(argument2)+" is deleted!",0) return 0}
+    if (argument0==-1) {
+        show_error(
+            "in function "+argument1+": sound "+string(argument2)+" does not exist!",
+            0
+        )
+        return 0
+    }
+    if (argument0==-2) {
+        show_error(
+            "in function "+argument1+": sound "+string(argument2)+" is deleted!",
+            0
+        )
+        return 0
+    }
     return 1
 
 
@@ -21,6 +33,7 @@
     ///audio_load(filename)
     //filename: full or relative path to either a 16-bit wav file or an ogg file
     var snd;snd=noone;
+    var erstr;erstr="in function audio_load: error loading "+argument0+": "
     
     if (file_exists(argument0)) {
         ext=string_lower(filename_ext(argument0))
@@ -28,21 +41,21 @@
         if (ext==".wav") snd=__gm82audio_loadwav(argument0)
         if (ext==".ogg") snd=__gm82audio_loadogg(argument0)
         
-        if (snd==noone)
-            show_error("in function audio_load: error loading "+argument0+": unrecognized extension "+ext,0)
-        if (snd==0)
-            show_error("in function audio_load: error loading "+argument0+": "+__gm82audio_get_error(),0)
+        if (snd==noone) show_error(erstr+"unrecognized extension "+ext,0)
+        if (snd==0) show_error(erstr+__gm82audio_get_error(),0)
         
         return snd
     } else {    
-        show_error("in function audio_load: error loading "+argument0+": file does not exist",0)
+        show_error(erstr+"file does not exist",0)
         return 0
     }
 
 
 #define audio_sound_play
     ///audio_sound_play(sound)
-    __gm82audio_check(__gm82audio_sfx_play(argument0,1,0.5,1,0),"audio_sound_play",argument0)
+    __gm82audio_check(
+        __gm82audio_sfx_play(argument0,1,0.5,1,0)
+    ,"audio_sound_play",argument0)
 
 
 #define audio_sound_play_ext
@@ -65,50 +78,59 @@
         exit
     }
     if (argument_count==2) __fade=max(0,argument[1])
-    __gm82audio_check(__gm82audio_music_play(argument[0],__fade,1,1,1),"audio_music_play",argument0)
+    __gm82audio_check(
+        __gm82audio_music_play(argument[0],__fade,1,0.5,1,1)
+    ,"audio_music_play",argument0)
 
 
 #define audio_music_play_ext
-    ///audio_music_play_ext(sound,fadeintime,vol,pitch,loop)
+    ///audio_music_play_ext(sound,fadeintime,vol,pan,pitch,loop)
     __gm82audio_check(__gm82audio_music_play(
         argument0,
         argument1,
         median(0,argument2,1),
-        median(-2,argument3,2),
-        argument4>=0.5
+        median(0,argument3/2+0.5,1),
+        median(-2,argument4,2),
+        argument5>=0.5
     ),"audio_music_play_ext",argument0)
 
 
 #define audio_music_crossfade
     ///audio_music_crossfade(sound,fadetime)
-    __gm82audio_check(__gm82audio_music_crossfade(argument0,argument1,1,1,1),"audio_music_crossfade",argument0)
+    __gm82audio_check(
+        __gm82audio_music_crossfade(argument0,argument1,1,0.5,1,1)
+    ,"audio_music_crossfade",argument0)
 
 
 #define audio_music_crossfade_ext
-    ///audio_music_crossfade_ext(sound,fadetime,vol,pitch,loop)
+    ///audio_music_crossfade_ext(sound,fadetime,vol,pan,pitch,loop)
     __gm82audio_check(__gm82audio_music_crossfade(
         argument0,
         argument1,
         median(0,argument2,1),
-        median(-2,argument3,2),
-        argument4>=0.5
+        median(0,argument3/2+0.5,1),
+        median(-2,argument4,2),
+        argument5>=0.5
     ),"audio_music_crossfade_ext",argument0)
 
 
 #define audio_music_switch
     ///audio_music_switch(sound,fadeouttime,fadeintime)
-    __gm82audio_check(__gm82audio_music_switch(argument0,argument1,argument2,1,1,1),"audio_music_switch",argument0)
+    __gm82audio_check(
+        __gm82audio_music_switch(argument0,argument1,argument2,1,0.5,1,1)
+    ,"audio_music_switch",argument0)
 
 
 #define audio_music_switch_ext
-    ///audio_music_switch_ext(sound,fadeouttime,fadeintime,vol,pitch,loop)
+    ///audio_music_switch_ext(sound,fadeouttime,fadeintime,vol,pan,pitch,loop)
     __gm82audio_check(__gm82audio_music_switch(
         argument0,
         argument1,
         argument2,
         median(0,argument3,1),
-        median(-2,argument4,2),
-        argument5>=0.5
+        median(0,argument4/2+0.5,1),
+        median(-2,argument5,2),
+        argument6>=0.5
     ),"audio_music_switch_ext",argument0)
 
 

@@ -415,10 +415,10 @@
 					"returntype": 2
 				},
 				{
-					"name": "audio_music_set_loop",
+					"name": "audio_music_loop",
 					"extname": "",
 					"calltype": 2,
-					"helpline": "audio_music_set_loop(loops)",
+					"helpline": "audio_music_loop(enabled)",
 					"hidden": false,
 					"argtypes": [
 						2

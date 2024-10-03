@@ -180,8 +180,8 @@
     __gm82audio_music_volume(median(0,argument0,1))
 
 
-#define audio_music_set_loop
-    ///audio_music_set_loop(loops)
+#define audio_music_loop
+    ///audio_music_loop(enabled)
     __gm82audio_music_loop(argument0)
 
 

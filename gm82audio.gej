@@ -3,7 +3,7 @@
 	"folder": "gm82",
 	"version": "1.0",
 	"author": "",
-	"date": "02/10/2024",
+	"date": "03/10/2024",
 	"license": "Free to use, also for commercial games.",
 	"description": "A cute_sound wrapper for GM 8.2.",
 	"helpfile": "",
@@ -234,6 +234,28 @@
 						2
 					],
 					"returntype": 2
+				},
+				{
+					"name": "__gm82audio_music_pan",
+					"extname": "",
+					"calltype": 12,
+					"helpline": "",
+					"hidden": false,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "__gm82audio_stop_all",
+					"extname": "",
+					"calltype": 12,
+					"helpline": "",
+					"hidden": true,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
 				}
 			],
 			"constants": []
@@ -429,6 +451,26 @@
 					"extname": "",
 					"calltype": 2,
 					"helpline": "audio_music_stop([fadeouttime])",
+					"hidden": false,
+					"argtypes": null,
+					"returntype": 2
+				},
+				{
+					"name": "audio_music_pan",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_music_pan(pan)",
+					"hidden": false,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "audio_stop_all",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_stop_all([musictoo])",
 					"hidden": false,
 					"argtypes": null,
 					"returntype": 2

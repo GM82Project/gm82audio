@@ -111,6 +111,11 @@
     __gm82audio_music_pitch(median(-2,argument0,2))
 
 
+#define audio_music_pan
+    ///audio_music_pan(pan)
+    __gm82audio_music_pan(median(0,argument0/2+0.5,1))
+
+
 #define audio_music_set_pos
     ///audio_music_set_pos(pos)
     if (__gm82audio_music_set_pos(argument0))
@@ -138,5 +143,10 @@
     if (argument_count==1) __fade=max(0,argument[0])
     __gm82audio_music_stop(__fade)
 
+
+#define audio_stop_all
+    ///audio_stop_all([musictoo])
+    if (argument_count) __gm82audio_stop_all(argument[0])
+    else __gm82audio_stop_all(0)
 //
 //

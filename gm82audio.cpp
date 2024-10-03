@@ -151,6 +151,11 @@ GMREAL __gm82audio_music_loop(double loops) {
     return 0;
 }
 
+GMREAL __gm82audio_music_pan(double pan) {
+    cs_music_set_pan(pan);    
+    return 0;
+}
+
 GMREAL __gm82audio_music_get_pos() {
     return (double)(cs_music_get_sample_index()/((double)cs_get_sample_rate(CURRENT_SONG)));
 }
@@ -173,3 +178,15 @@ GMREAL __gm82audio_music_stop(double fadeouttime) {
     cs_music_stop(fadeouttime);
     return 0;
 }
+
+GMREAL __gm82audio_stop_all(double musictoo) {
+    cs_stop_all_playing_sounds();
+    if (musictoo>=0.5) cs_music_stop(0);
+    return 0;
+}
+/*
+soubnds from buffers
+sfx instances usig std list
+instance pause, loop, vol, pitch, pan, get sndid
+stop instances
+*/

@@ -346,6 +346,7 @@ void cs_music_pause();
 void cs_music_resume();
 void cs_music_set_volume(float volume_0_to_1);
 void cs_music_set_pitch(float pitch /* = 1.0f */);
+void cs_music_set_pan(float pan_0_to_1);
 void cs_music_set_loop(bool true_to_loop);
 void cs_music_switch_to(cs_audio_source_t* audio, float fade_out_time /* = 0 */, float fade_in_time /* = 0 */);
 void cs_music_crossfade(cs_audio_source_t* audio, float cross_fade_time /* = 0 */);
@@ -3065,6 +3066,21 @@ void cs_music_set_pitch(float pitch)
 	s_ctx->music_pitch = pitch;
 	if (s_ctx->music_playing) s_ctx->music_playing->pitch = pitch;
 	if (s_ctx->music_next) s_ctx->music_next->pitch = pitch;
+}
+
+void cs_music_set_pan(float pan_0_to_1)
+{
+if (pan_0_to_1 < 0) pan_0_to_1 = 0;
+	if (pan_0_to_1 > 1) pan_0_to_1 = 1;
+
+	if (s_ctx->music_playing) {
+		s_ctx->music_playing->pan0 = 1.0f - pan_0_to_1;
+		s_ctx->music_playing->pan1 = pan_0_to_1;
+	}
+	if (s_ctx->music_next) {
+		s_ctx->music_next->pan0 = 1.0f - pan_0_to_1;
+		s_ctx->music_next->pan1 = pan_0_to_1;
+	}
 }
 
 void cs_music_set_loop(bool true_to_loop)

@@ -185,7 +185,7 @@ GMREAL __gm82audio_music_set_pos(double pos) {
     return 0;
 }
 
-GMREAL __gm82audio_sound_get_length(double soundid) {
+GMREAL __gm82audio_get_length(double soundid) {
     __CHECK_EXISTS_DEL(soundid,sound);
     return (double)(
         cs_get_sample_count(sound->source)/((double)cs_get_sample_rate(sound->source))

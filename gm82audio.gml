@@ -51,15 +51,15 @@
     }
 
 
-#define audio_sound_play
-    ///audio_sound_play(sound)
+#define audio_play
+    ///audio_play(sound)
     __gm82audio_check(
         __gm82audio_sfx_play(argument0,1,0.5,1,0)
     ,"audio_sound_play",argument0)
 
 
-#define audio_sound_play_ext
-    ///audio_sound_play_ext(sound,vol,pan,pitch,loop)
+#define audio_play_ext
+    ///audio_play_ext(sound,vol,pan,pitch,loop)
     __gm82audio_check(__gm82audio_sfx_play(
         argument0,
         median(0,argument1,1),

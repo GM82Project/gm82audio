@@ -2916,7 +2916,8 @@ static void s_insert(cs_sound_inst_t* inst)
 	cs_list_push_back(&s_ctx->playing_sounds, &inst->node);
 	inst->audio->playing_count += 1;
 	inst->active = true;
-	inst->id = s_ctx->instance_id_gen++;
+	inst->id = s_ctx->instance_id_gen;
+    s_ctx->instance_id_gen=(s_ctx->instance_id_gen+1) % UINT32_MAX;
 	cs_hashtableinsert(&s_ctx->instance_map, inst->id, &inst);
 	cs_unlock();
 }
@@ -3253,13 +3254,13 @@ void cs_music_crossfade(cs_audio_source_t* audio_source, float cross_fade_time)
 
 int cs_music_get_sample_index()
 {
-	if (s_ctx->music_playing) return 0;
+	if (!s_ctx->music_playing) return 0;
 	else return s_ctx->music_playing->sample_index;
 }
 
 cs_error_t cs_music_set_sample_index(int sample_index)
 {
-	if (s_ctx->music_playing) return CUTE_SOUND_ERROR_INVALID_SOUND;
+	if (!s_ctx->music_playing) return CUTE_SOUND_ERROR_INVALID_SOUND;
 	if (sample_index > s_ctx->music_playing->audio->sample_count) return CUTE_SOUND_ERROR_TRIED_TO_SET_SAMPLE_INDEX_BEYOND_THE_AUDIO_SOURCES_SAMPLE_COUNT;
 	s_ctx->music_playing->sample_index = sample_index;
 	return CUTE_SOUND_ERROR_NONE;

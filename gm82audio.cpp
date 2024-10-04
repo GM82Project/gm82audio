@@ -42,6 +42,7 @@ GMREAL __gm82audio_init(double gm_hwnd) {
     cs_init((HWND)(int)gm_hwnd,(int)SAMPLE_RATE,1024,NULL);
     cs_spawn_mix_thread();
     cs_mix_thread_sleep_delay(1);
+    SOUNDS.push_back(NULL);
     return 0;
 }
 
@@ -66,8 +67,8 @@ GMREAL __gm82audio_exists(double index) {
 
 int __gm82audio_store_sound(cs_audio_source_t* snd) {
     if (snd==NULL) return 0;
-    SOUNDS.reserve(((SOUND_INDEX+1)/256+1)*256);
-    SOUNDS[SOUND_INDEX]=new sound_struct(snd);
+    SOUNDS.reserve((((SOUND_INDEX+1)/256)+1)*256);
+    SOUNDS.push_back(new sound_struct(snd));
     return SOUND_INDEX++;
 }
 
@@ -109,18 +110,18 @@ GMREAL __gm82audio_sfx_play(double soundid,double vol,double pan,double pitch,do
     params.pan=pan;
     params.pitch=pitch;
     params.looped=(loops>=0.5);
-    return cs_play_sound(snd,params);
+    cs_playing_sound_t inst=cs_play_sound(snd,params);
+    return (double)(uint32_t)(inst.id);
 }
 
-GMREAL __gm82audio_music_pause() {
-    cs_music_pause();
-    MUSIC_PAUSED=true;
-    return 0;
-}
-
-GMREAL __gm82audio_music_resume() {
-    cs_music_resume();
-    MUSIC_PAUSED=false;
+GMREAL __gm82audio_music_pause(double pause) {
+    if (pause>=0.5) {
+        cs_music_pause();
+        MUSIC_PAUSED=true;
+    } else {
+        cs_music_resume();
+        MUSIC_PAUSED=false;
+    }
     return 0;
 }
 
@@ -188,11 +189,11 @@ GMREAL __gm82audio_music_get_pos() {
 }
 
 GMREAL __gm82audio_music_set_pos(double pos) {
-    cs_error_t error=cs_music_set_sample_index((int)(pos*cs_get_sample_rate(CURRENT_MUSIC_SOURCE)));
-    if (error) {
-        strcpy(ERROR_STR,cs_error_as_string(error));
-        return 1;
-    }
+    cs_music_set_sample_index(
+        max(0,min(cs_get_sample_count(CURRENT_MUSIC_SOURCE),
+            (int)(pos*cs_get_sample_rate(CURRENT_MUSIC_SOURCE))
+        ))
+    );
     return 0;
 }
 
@@ -220,6 +221,32 @@ GMREAL __gm82audio_global_volume(double vol) {
     return 0;
 }
 
+GMREAL __gm82audio_sound_pause(double inst,double paused) {
+    cs_sound_set_is_paused({(uint64_t)inst},paused>=0.5?true:false);
+    return 0;
+}
+
+GMREAL __gm82audio_get_pos(double inst) {
+    cs_sound_inst_t* instance = s_get_inst({(uint64_t)inst});
+    if (instance) return (double)(
+        instance->sample_index/((double)cs_get_sample_rate(instance->audio))
+    );
+    return 0;
+}
+
+GMREAL __gm82audio_set_pos(double inst,double pos) {
+    cs_sound_inst_t* instance = s_get_inst({(uint64_t)inst});
+    if (instance) {
+        cs_sound_set_sample_index(
+            {(uint64_t)inst},
+            max(0,min(cs_get_sample_count(instance->audio),
+                (int)(pos*cs_get_sample_rate(instance->audio))
+            )
+        );
+    }
+    return 0;
+}
+
 GMREAL __gm82audio_unload(double soundid) {
     __CHECK_EXISTS(soundid,sound);
     if (!sound->deleted) {
@@ -228,7 +255,3 @@ GMREAL __gm82audio_unload(double soundid) {
     }
     return 0;
 }
-
-/*
-sfx instances - pause, loop, vol, pitch, pan, get sndid, stop
-*/

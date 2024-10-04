@@ -32,23 +32,23 @@
 #define audio_load
     ///audio_load(filename)
     //filename: full or relative path to either a 16-bit wav or an ogg file
-    var snd;snd=noone;
-    var erstr;erstr="in function audio_load: error loading "+argument0+": "
+    var __snd;__snd=noone;
+    var __erstr;__erstr="in function audio_load: error loading "+argument0+": "
     
     if (file_exists(argument0)) {
-        b=buffer_create()
-        buffer_load_part(b,argument[0],0,4)
-        buffer_set_pos(b,0)
-        var fourcc;fourcc=buffer_read_data(b,4)
-        buffer_destroy(b)
+        __b=buffer_create()
+        buffer_load_part(__b,argument[0],0,4)
+        buffer_set_pos(__b,0)
+        var __fourcc;__fourcc=buffer_read_data(__b,4)
+        buffer_destroy(__b)
         
-        if (fourcc=="RIFF") snd=__gm82audio_loadwav(argument0)
-        if (fourcc=="OggS") snd=__gm82audio_loadogg(argument0)
+        if (__fourcc=="RIFF") __snd=__gm82audio_loadwav(argument0)
+        if (__fourcc=="OggS") __snd=__gm82audio_loadogg(argument0)
         
-        if (snd==noone) show_error(erstr+"unrecognized audio format "+fourcc,0)
-        if (snd==0) show_error(erstr+__gm82audio_get_error(),0)
+        if (__snd==noone) show_error(__erstr+"unrecognized audio format "+__fourcc,0)
+        if (__snd==0) show_error(__erstr+__gm82audio_get_error(),0)
     } else {    
-        show_error(erstr+"file does not exist",0)
+        show_error(__erstr+"file does not exist",0)
     }
     return snd
 
@@ -56,42 +56,44 @@
 #define audio_load_buffer
     ///audio_load_buffer(buffer)
     //buffer: a handle to a gm82net buffer
-    var snd;snd=noone;
-    var erstr;erstr="in function audio_load_buffer: "
+    var __snd;__snd=noone;
+    var __erstr;__erstr="in function audio_load_buffer: "
 
     if (buffer_exists(argument0)) {
         buffer_set_pos(argument0,0)
-        var fourcc;fourcc=buffer_read_data(argument0,4)
-        var addr;addr=buffer_get_address(argument0,0)
-        var size;size=buffer_get_size(argument0)
+        var __fourcc;__fourcc=buffer_read_data(argument0,4)
+        var __addr;__addr=buffer_get_address(argument0,0)
+        var __size;__size=buffer_get_size(argument0)
         
-        if (fourcc=="RIFF") snd=__gm82audio_loadwav_mem(addr,size)
-        if (fourcc=="OggS") snd=__gm82audio_loadogg_mem(addr,size)
+        if (__fourcc=="RIFF") __snd=__gm82audio_loadwav_mem(__addr,__size)
+        if (__fourcc=="OggS") __snd=__gm82audio_loadogg_mem(__addr,__size)
         
-        if (snd==noone) show_error(erstr+"unrecognized audio format "+fourcc,0)
-        if (snd==0) show_error(erstr+__gm82audio_get_error(),0)
+        if (__snd==noone) show_error(__erstr+"unrecognized audio format "+__fourcc,0)
+        if (__snd==0) show_error(__erstr+__gm82audio_get_error(),0)
     } else {    
-        show_error(erstr+"buffer does not exist",0)
+        show_error(__erstr+"buffer does not exist",0)
     }
-    return snd
+    return __snd
 
 
 #define audio_play
     ///audio_play(sound)
-    __gm82audio_check(
-        __gm82audio_sfx_play(argument0,1,0.5,1,0)
-    ,"audio_play",argument0)
+    var __call;__call=__gm82audio_sfx_play(argument0,1,0.5,1,0)
+    __gm82audio_check(__call,"audio_play",argument0)
+    return __call
 
 
 #define audio_play_ext
     ///audio_play_ext(sound,vol,pan,pitch,loop)
-    __gm82audio_check(__gm82audio_sfx_play(
+    var __call;__call=__gm82audio_sfx_play(
         argument0,
         median(0,argument1,1),
         median(0,argument2/2+0.5,1),
         median(-2,argument3,2),
         argument4
-    ),"audio_play_ext",argument0)
+    )
+    __gm82audio_check(__call,"audio_play_ext",argument0)
+    return __call
 
 
 #define audio_music_play
@@ -185,6 +187,16 @@
     __gm82audio_music_loop(argument0)
 
 
+#define audio_music_pause
+    ///audio_music_pause()
+    __gm82audio_music_pause(1)
+
+
+#define audio_music_resume
+    ///audio_music_resume()
+    __gm82audio_music_pause(0)
+
+
 #define audio_music_stop
     ///audio_music_stop([fadeouttime])
     var __fade;__fade=0
@@ -201,5 +213,21 @@
     ///audio_stop_all([musictoo])
     if (argument_count) __gm82audio_stop_all(argument[0])
     else __gm82audio_stop_all(0)
+
+
+#define audio_pause
+    //audio_pause(inst)
+    __gm82audio_sound_pause(argument0,1)
+
+
+#define audio_resume
+    //audio_resume(inst)
+    __gm82audio_sound_pause(argument0,0)
+
 //
 //
+
+/*
+TODO
+- sfx instances - loop, vol, pitch, pan, stop
+*/

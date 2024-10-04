@@ -3,7 +3,7 @@
 	"folder": "gm82",
 	"version": "1.0",
 	"author": "",
-	"date": "03/10/2024",
+	"date": "04/10/2024",
 	"license": "Free to use, also for commercial games.",
 	"description": "A cute_sound wrapper for GM 8.2.",
 	"helpfile": "",
@@ -43,6 +43,17 @@
 					"returntype": 2
 				},
 				{
+					"name": "audio_get_pos",
+					"extname": "__gm82audio_get_pos",
+					"calltype": 12,
+					"helpline": "audio_get_pos(inst)",
+					"hidden": false,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
 					"name": "audio_global_volume",
 					"extname": "__gm82audio_global_volume",
 					"calltype": 12,
@@ -63,21 +74,26 @@
 					"returntype": 2
 				},
 				{
-					"name": "audio_music_pause",
-					"extname": "__gm82audio_music_pause",
+					"name": "audio_music_set_pos",
+					"extname": "__gm82audio_music_set_pos",
 					"calltype": 12,
-					"helpline": "audio_music_pause()",
+					"helpline": "audio_music_set_pos(pos)",
 					"hidden": false,
-					"argtypes": [],
+					"argtypes": [
+						2
+					],
 					"returntype": 2
 				},
 				{
-					"name": "audio_music_resume",
-					"extname": "__gm82audio_music_resume",
+					"name": "audio_set_pos",
+					"extname": "__gm82audio_set_pos",
 					"calltype": 12,
-					"helpline": "audio_music_resume()",
+					"helpline": "audio_set_pos(inst,pos)",
 					"hidden": false,
-					"argtypes": [],
+					"argtypes": [
+						2,
+						2
+					],
 					"returntype": 2
 				},
 				{
@@ -194,6 +210,17 @@
 					"returntype": 2
 				},
 				{
+					"name": "__gm82audio_music_pause",
+					"extname": "",
+					"calltype": 12,
+					"helpline": "",
+					"hidden": true,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
 					"name": "__gm82audio_music_pitch",
 					"extname": "",
 					"calltype": 12,
@@ -286,6 +313,18 @@
 					"returntype": 2
 				},
 				{
+					"name": "__gm82audio_sound_pause",
+					"extname": "",
+					"calltype": 12,
+					"helpline": "",
+					"hidden": false,
+					"argtypes": [
+						2,
+						2
+					],
+					"returntype": 2
+				},
+				{
 					"name": "__gm82audio_stop_all",
 					"extname": "",
 					"calltype": 12,
@@ -368,6 +407,17 @@
 					"returntype": 2
 				},
 				{
+					"name": "audio_music_loop",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_music_loop(enabled)",
+					"hidden": false,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
 					"name": "audio_music_pan",
 					"extname": "",
 					"calltype": 2,
@@ -376,6 +426,15 @@
 					"argtypes": [
 						2
 					],
+					"returntype": 2
+				},
+				{
+					"name": "audio_music_pause",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_music_pause()",
+					"hidden": false,
+					"argtypes": [],
 					"returntype": 2
 				},
 				{
@@ -415,25 +474,12 @@
 					"returntype": 2
 				},
 				{
-					"name": "audio_music_loop",
+					"name": "audio_music_resume",
 					"extname": "",
 					"calltype": 2,
-					"helpline": "audio_music_loop(enabled)",
+					"helpline": "audio_music_resume()",
 					"hidden": false,
-					"argtypes": [
-						2
-					],
-					"returntype": 2
-				},
-				{
-					"name": "audio_music_set_pos",
-					"extname": "",
-					"calltype": 2,
-					"helpline": "audio_music_set_pos(pos)",
-					"hidden": false,
-					"argtypes": [
-						2
-					],
+					"argtypes": [],
 					"returntype": 2
 				},
 				{
@@ -487,6 +533,17 @@
 					"returntype": 2
 				},
 				{
+					"name": "audio_pause",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_pause(inst)",
+					"hidden": false,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
 					"name": "audio_play",
 					"extname": "",
 					"calltype": 2,
@@ -508,6 +565,17 @@
 						2,
 						2,
 						2,
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "audio_resume",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_resume(inst)",
+					"hidden": false,
+					"argtypes": [
 						2
 					],
 					"returntype": 2

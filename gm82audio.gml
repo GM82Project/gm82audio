@@ -87,9 +87,9 @@
     ///audio_play_ext(sound,vol,pan,pitch,loop)
     var __call;__call=__gm82audio_sfx_play(
         argument0,
-        median(0,argument1,1),
+        argument1,
         median(0,argument2/2+0.5,1),
-        median(-2,argument3,2),
+        argument3,
         argument4
     )
     __gm82audio_check(__call,"audio_play_ext",argument0)
@@ -115,9 +115,9 @@
     __gm82audio_check(__gm82audio_music_play(
         argument0,
         argument1,
-        median(0,argument2,1),
+        argument2,
         median(0,argument3/2+0.5,1),
-        median(-2,argument4,2),
+        argument4,
         argument5>=0.5
     ),"audio_music_play_ext",argument0)
 
@@ -134,7 +134,7 @@
     __gm82audio_check(__gm82audio_music_crossfade(
         argument0,
         argument1,
-        median(0,argument2,1),
+        argument2,
         median(0,argument3/2+0.5,1),
         argument4,
         argument5>=0.5
@@ -154,7 +154,7 @@
         argument0,
         argument1,
         argument2,
-        median(0,argument3,1),
+        argument3,
         median(0,argument4/2+0.5,1),
         argument5,
         argument6>=0.5
@@ -183,7 +183,7 @@
 
 /*
 TODO
-- sfx instances - vol, pitch, stop
+- stop instances
 - stop all instances of a specific sound
 - implement renex engine pack file support 
 */

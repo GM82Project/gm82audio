@@ -114,14 +114,15 @@ GMREAL __gm82audio_sfx_play(double soundid,double vol,double pan,double pitch,do
     return (double)(uint32_t)(inst.id);
 }
 
-GMREAL __gm82audio_music_pause(double pause) {
-    if (pause>=0.5) {
-        cs_music_pause();
-        MUSIC_PAUSED=true;
-    } else {
-        cs_music_resume();
-        MUSIC_PAUSED=false;
-    }
+GMREAL __gm82audio_music_pause() {
+    cs_music_pause();
+    MUSIC_PAUSED=true;
+    return 0;
+}
+
+GMREAL __gm82audio_music_resume() {
+    cs_music_resume();
+    MUSIC_PAUSED=false;
     return 0;
 }
 
@@ -146,7 +147,7 @@ GMREAL __gm82audio_music_loop(double loops) {
 }
 
 GMREAL __gm82audio_music_pan(double pan) {
-    cs_music_set_pan(pan);    
+    cs_music_set_pan(max(0,min(1,(pan+1)*0.5)));
     return 0;
 }
 
@@ -221,8 +222,18 @@ GMREAL __gm82audio_global_volume(double vol) {
     return 0;
 }
 
-GMREAL __gm82audio_sound_pause(double inst,double paused) {
-    cs_sound_set_is_paused({(uint64_t)inst},paused>=0.5?true:false);
+GMREAL __gm82audio_sound_pause(double inst) {
+    cs_sound_set_is_paused({(uint64_t)inst},true);
+    return 0;
+}
+
+GMREAL __gm82audio_sound_resume(double inst) {
+    cs_sound_set_is_paused({(uint64_t)inst},false);
+    return 0;
+}
+
+GMREAL __gm82audio_sound_volume(double inst,double vol) {
+    cs_sound_set_volume({(uint64_t)inst},vol);
     return 0;
 }
 
@@ -258,7 +269,7 @@ GMREAL __gm82audio_set_pan(double inst,double pan) {
 }
 
 GMREAL __gm82audio_set_pitch(double inst,double pitch) {
-    cs_sound_set_pitch({(uint64_t)inst},max(-200,min(200,pitch)));
+    cs_sound_set_pitch({(uint64_t)inst},pitch);
     return 0;
 }
 

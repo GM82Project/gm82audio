@@ -206,10 +206,10 @@
 					"returntype": 2
 				},
 				{
-					"name": "audio_sound_pause",
+					"name": "audio_pause",
 					"extname": "__gm82audio_sound_pause",
 					"calltype": 12,
-					"helpline": "audio_sound_pause(inst)",
+					"helpline": "audio_pause(inst)",
 					"hidden": false,
 					"argtypes": [
 						2
@@ -217,12 +217,24 @@
 					"returntype": 2
 				},
 				{
-					"name": "audio_sound_resume",
+					"name": "audio_resume",
 					"extname": "__gm82audio_sound_resume",
 					"calltype": 12,
-					"helpline": "audio_sound_resume(inst)",
+					"helpline": "audio_resume(inst)",
 					"hidden": false,
 					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "audio_volume",
+					"extname": "__gm82audio_sound_volume",
+					"calltype": 12,
+					"helpline": "audio_volume(inst,vol)",
+					"hidden": false,
+					"argtypes": [
+						2,
 						2
 					],
 					"returntype": 2

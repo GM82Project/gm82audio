@@ -25,7 +25,9 @@
 
 #define audio_load
     ///audio_load(filename)
-    //filename: full or relative path to either a 16-bit wav or an ogg file
+    //filename: full or relative path to a sound file
+    //returns: sound index
+    //Loads a sound file. 16-bit pcm WAV files and ogg vorbis are supported.
     var __snd;__snd=noone;
     var __erstr;__erstr="in function audio_load: error loading "+argument0+": "
     
@@ -50,6 +52,8 @@
 #define audio_load_buffer
     ///audio_load_buffer(buffer)
     //buffer: a handle to a gm82net buffer
+    //returns: sound index
+    //Loads a sound from a buffer. You can delete the buffer afterwards.    
     var __snd;__snd=noone;
     var __erstr;__erstr="in function audio_load_buffer: "
 
@@ -72,6 +76,9 @@
 
 #define audio_play
     ///audio_play(sound)
+    //sound: sound index to play
+    //returns: instance id
+    //Plays a sound and returns an instance id.
     var __call;__call=__gm82audio_sfx_play(argument0,1,0,1,0)
     __gm82audio_check(__call,"audio_play",argument0)
     return __call
@@ -79,6 +86,10 @@
 
 #define audio_play_ext
     ///audio_play_ext(sound,vol,pan,pitch,loop)
+    //sound: sound index to play
+    //vol,pan,pitch,loop: sound properties
+    //returns: instance id
+    //Plays a sound with preset properties and returns an instance id.
     var __call;__call=__gm82audio_sfx_play(
         argument0,argument1,argument2,argument3,argument4
     )
@@ -88,6 +99,9 @@
 
 #define audio_music_play
     ///audio_music_play(sound,[fadeintime])
+    //sound: sound index to play
+    //fadeintime: optional time to fade in in ms
+    //Plays a music piece. There can only be one music instance.
     var __fade;__fade=0
     
     if (argument_count==0 || argument_count>2) {
@@ -102,6 +116,10 @@
 
 #define audio_music_play_ext
     ///audio_music_play_ext(sound,fadeintime,vol,pan,pitch,loop)
+    //sound: sound index to play
+    //fadeintime: time to fade in in ms
+    //vol,pan,pitch,loop: sound properties    
+    //Plays a music piece with preset properties. There can only be one music instance.
     __gm82audio_check(__gm82audio_music_play(
         argument0,argument1,argument2,argument3,argument4,argument5>=0.5
     ),"audio_music_play_ext",argument0)
@@ -109,6 +127,9 @@
 
 #define audio_music_crossfade
     ///audio_music_crossfade(sound,fadetime)
+    //sound: sound index to play
+    //fadetime: time to crossfade in in ms
+    //Plays a new music piece and crossfades it with the old one.
     __gm82audio_check(__gm82audio_music_crossfade(
         argument0,argument1,1,0,1,1
     ),"audio_music_crossfade",argument0)
@@ -116,6 +137,10 @@
 
 #define audio_music_crossfade_ext
     ///audio_music_crossfade_ext(sound,fadetime,vol,pan,pitch,loop)
+    //sound: sound index to play
+    //fadetime: time to crossfade in in ms
+    //vol,pan,pitch,loop: sound properties   
+    //Plays a new music piece with preset properties and crossfades it with the old one.
     __gm82audio_check(__gm82audio_music_crossfade(
         argument0,argument1,argument2,argument3,argument4,argument5>=0.5
     ),"audio_music_crossfade_ext",argument0)
@@ -123,6 +148,10 @@
 
 #define audio_music_switch
     ///audio_music_switch(sound,fadeouttime,[fadeintime])
+    //sound: sound index to play
+    //fadeouttime: time to fade out in ms
+    //fadeintime: optional, time to fade in in ms
+    //Plays a new music piece and fades out and in to it.
     var __fadein;
     
     if (argument_count<2 || argument_count>3) {
@@ -140,6 +169,11 @@
 
 #define audio_music_switch_ext
     ///audio_music_switch_ext(sound,fadeouttime,fadeintime,vol,pan,pitch,loop)
+    //sound: sound index to play
+    //fadeouttime: time to fade out in ms
+    //fadeintime: time to fade in in ms
+    //vol,pan,pitch,loop: sound properties
+    //Plays a new music piece with preset properties and fades out and in to it.
     __gm82audio_check(__gm82audio_music_switch(
         argument0,argument1,argument2,argument3,argument4,argument5,argument6>=0.5
     ),"audio_music_switch_ext",argument0)
@@ -147,6 +181,8 @@
 
 #define audio_music_stop
     ///audio_music_stop([fadeouttime])
+    //fadeouttime: optional time to fade the music out
+    //Stops the currently playing music piece with a fade out time.
     var __fade;__fade=0
     
     if (argument_count>1) {
@@ -160,6 +196,8 @@
 
 #define audio_global_stop
     ///audio_global_stop([music too])
+    //music too: stop music as well as sounds
+    //Stops all playing sounds.
     if (argument_count) __gm82audio_stop_all(argument[0])
     else __gm82audio_stop_all(0)
 

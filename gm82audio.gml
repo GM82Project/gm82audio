@@ -13,17 +13,11 @@
 
 #define __gm82audio_check
     if (argument0==-1) {
-        show_error(
-            "in function "+argument1+": sound "+string(argument2)+" does not exist!",
-            0
-        )
+        show_error("in function "+argument1+": sound "+string(argument2)+" does not exist!",0)
         return 0
     }
     if (argument0==-2) {
-        show_error(
-            "in function "+argument1+": sound "+string(argument2)+" is deleted!",
-            0
-        )
+        show_error("in function "+argument1+": sound "+string(argument2)+" is deleted!",0)
         return 0
     }
     return 1
@@ -42,8 +36,8 @@
         var __fourcc;__fourcc=buffer_read_data(__b,4)
         buffer_destroy(__b)
         
-        if (__fourcc=="RIFF") __snd=__gm82audio_loadwav(argument0)
-        if (__fourcc=="OggS") __snd=__gm82audio_loadogg(argument0)
+        if (__fourcc=="RIFF") __snd=__gm82audio_load(argument0,0)
+        if (__fourcc=="OggS") __snd=__gm82audio_load(argument0,1)
         
         if (__snd==noone) show_error(__erstr+"unrecognized audio format "+__fourcc,0)
         if (__snd==0) show_error(__erstr+__gm82audio_get_error(),0)
@@ -65,8 +59,8 @@
         var __addr;__addr=buffer_get_address(argument0,0)
         var __size;__size=buffer_get_size(argument0)
         
-        if (__fourcc=="RIFF") __snd=__gm82audio_loadwav_mem(__addr,__size)
-        if (__fourcc=="OggS") __snd=__gm82audio_loadogg_mem(__addr,__size)
+        if (__fourcc=="RIFF") __snd=__gm82audio_load_mem(__addr,__size,0)
+        if (__fourcc=="OggS") __snd=__gm82audio_load_mem(__addr,__size,1)
         
         if (__snd==noone) show_error(__erstr+"unrecognized audio format "+__fourcc,0)
         if (__snd==0) show_error(__erstr+__gm82audio_get_error(),0)
@@ -86,11 +80,7 @@
 #define audio_play_ext
     ///audio_play_ext(sound,vol,pan,pitch,loop)
     var __call;__call=__gm82audio_sfx_play(
-        argument0,
-        argument1,
-        argument2,
-        argument3,
-        argument4
+        argument0,argument1,argument2,argument3,argument4
     )
     __gm82audio_check(__call,"audio_play_ext",argument0)
     return __call
@@ -105,39 +95,29 @@
         exit
     }
     if (argument_count==2) __fade=max(0,argument[1])
-    __gm82audio_check(
-        __gm82audio_music_play(argument[0],__fade,1,0,1,1)
-    ,"audio_music_play",argument0)
+    __gm82audio_check(__gm82audio_music_play(
+        argument[0],__fade,1,0,1,1
+    ),"audio_music_play",argument0)
 
 
 #define audio_music_play_ext
     ///audio_music_play_ext(sound,fadeintime,vol,pan,pitch,loop)
     __gm82audio_check(__gm82audio_music_play(
-        argument0,
-        argument1,
-        argument2,
-        argument3,
-        argument4,
-        argument5>=0.5
+        argument0,argument1,argument2,argument3,argument4,argument5>=0.5
     ),"audio_music_play_ext",argument0)
 
 
 #define audio_music_crossfade
     ///audio_music_crossfade(sound,fadetime)
-    __gm82audio_check(
-        __gm82audio_music_crossfade(argument0,argument1,1,0,1,1)
-    ,"audio_music_crossfade",argument0)
+    __gm82audio_check(__gm82audio_music_crossfade(
+        argument0,argument1,1,0,1,1
+    ),"audio_music_crossfade",argument0)
 
 
 #define audio_music_crossfade_ext
     ///audio_music_crossfade_ext(sound,fadetime,vol,pan,pitch,loop)
     __gm82audio_check(__gm82audio_music_crossfade(
-        argument0,
-        argument1,
-        argument2,
-        argument3,
-        argument4,
-        argument5>=0.5
+        argument0,argument1,argument2,argument3,argument4,argument5>=0.5
     ),"audio_music_crossfade_ext",argument0)
 
 
@@ -153,21 +133,15 @@
     __fadein=argument[1]
     if (argument_count==3) __fadein=argument[2]
     
-    __gm82audio_check(
-        __gm82audio_music_switch(argument[0],argument[1],__fadein,1,0,1,1)
-    ,"audio_music_switch",argument[0])
+    __gm82audio_check(__gm82audio_music_switch(
+        argument[0],argument[1],__fadein,1,0,1,1
+    ),"audio_music_switch",argument[0])
 
 
 #define audio_music_switch_ext
     ///audio_music_switch_ext(sound,fadeouttime,fadeintime,vol,pan,pitch,loop)
     __gm82audio_check(__gm82audio_music_switch(
-        argument0,
-        argument1,
-        argument2,
-        argument3,
-        argument4,
-        argument5,
-        argument6>=0.5
+        argument0,argument1,argument2,argument3,argument4,argument5,argument6>=0.5
     ),"audio_music_switch_ext",argument0)
 
 
@@ -179,6 +153,7 @@
         show_error("in function audio_music_stop: wrong number of arguments",0)
         exit
     }
+    
     if (argument_count==1) __fade=max(0,argument[0])
     __gm82audio_music_stop(__fade)
 
@@ -193,7 +168,6 @@
 
 /*
 TODO
-- clean up and format code 
 - loop points?
 - implement renex engine pack file support 
 */

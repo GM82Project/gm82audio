@@ -163,11 +163,125 @@
     if (argument_count) __gm82audio_stop_all(argument[0])
     else __gm82audio_stop_all(0)
 
+
+#define audio_create_pack
+    ///audio_create_pack(sourcedir,filename)
+    //sourcedir: directory to load files from
+    //filename: filename to save the pack to
+    //Creates a sound pack containing supported files from the source directory.
+    var __dir,__save,__q,__fn,__size,__mb,__b;
+    
+    __dir=filename_dir(argument0)
+    __save=argument1
+
+    __q=ds_queue_create()
+
+    for (__fn=file_find_first(__dir+"\*.*",0);__fn!="";__fn=file_find_next()) {
+        if (string_pos(string_lower(filename_ext(string(_fn))),".wav;.ogg;"))
+            ds_queue_enqueue(__q,__dir+"\"+__fn)
+    } file_find_close()
+
+    __size=ds_queue_size(__q)
+
+    __mb=buffer_create()
+    __b=buffer_create()
+
+    buffer_write_string(__mb,"WASD1.0")
+    buffer_write_u32(__mb,__size)
+
+    repeat (__size) {__fn=ds_queue_dequeue(__q)
+        buffer_load(__b,__fn)
+        buffer_deflate(__b)
+        buffer_write_string(__mb,filename_name(__fn))
+        buffer_write_u32(__mb,buffer_get_size(__b))
+        buffer_copy(__mb,__b)
+        buffer_clear(__b)
+    }
+
+    buffer_save(__mb,__save)
+    buffer_destroy(__mb)
+    buffer_destroy(__b)
+    ds_queue_destroy(__q)
+
+
+#define audio_load_pack
+    ///audio_load_pack(pack)
+    //pack: path to pack file to load
+    //returns: map with the sounds added
+    //Adds a sound pack for use.
+    //Note: Make sure to delete the returned map when you're done.
+    var __fn,__mb,__retlist,__b,__count,__name,__index,__length,__pos;
+
+    __fn=temp_directory+"\gm82\sound\wasd"
+
+    __mb=buffer_create()
+    buffer_load(__mb,argument0)
+
+    if (buffer_read_string(__mb)!="WASD1.0") {buffer_destroy(__mb) show_error("Error loading WASD pack: file "+argument0+"is not a valid WASD pack.",0) return noone}
+
+    __retlist=ds_map_create()
+    __b=buffer_create()
+
+    __count=buffer_read_u32(__mb)
+
+    repeat (__count) {
+        __name=buffer_read_string(__mb)
+        __name=filename_remove_ext(__name)
+        __length=buffer_read_u32(__mb)
+        __pos=buffer_get_pos(__mb)
+        buffer_copy_part(__b,__mb,__pos,__length)
+        buffer_set_pos(__mb,__pos+__length)
+        buffer_inflate(__b)
+        __index=audio_load_buffer(__b)
+        buffer_clear(__b)
+        ds_map_add(__retlist,__name,__index)
+    }
+
+    return __retlist
+
+
+#define audio_unpack_pack
+    ///sound_unpack_pack(pack,dir)
+    //pack: path to pack file
+    //dir: directory to unpack to
+    //returns: list of files unpacked
+    //unpacks the specified pack file to a directory.
+    //Note: Make sure to delete the returned list when you're done with it.
+    var __dir,__mb,__retlist,__b,__count,__name,__fname,__length,__pos;
+
+    __dir=argument1+"\"
+    directory_create(__dir)
+
+    __mb=buffer_create()
+    buffer_load(__mb,argument0)
+
+    if (buffer_read_string(__mb)!="WASD1.0") {buffer_destroy(__mb) show_error("Error loading WASD pack: file "+argument0+"is not a valid WASD pack.",0) return noone}
+
+    __b=buffer_create()
+
+    __count=buffer_read_u32(__mb)
+    
+    __retlist=ds_list_create()
+
+    repeat (__count) {
+        __name=buffer_read_string(__mb)
+        __fname=__dir+"\"+__name
+        __length=buffer_read_u32(__mb)
+        __pos=buffer_get_pos(__mb)
+        buffer_copy_part(__b,__mb,__pos,__length)
+        buffer_set_pos(__mb,__pos+__length)
+        buffer_inflate(__b)
+        buffer_save(__b,__fname)
+        buffer_clear(__b)
+        ds_list_add(__retlist,__name)
+    }
+    
+    return __retlist
 //
 //
 
 /*
 TODO
 - loop points?
-- implement renex engine pack file support 
+- johnny doc
 */

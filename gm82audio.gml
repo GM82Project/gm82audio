@@ -136,7 +136,7 @@
         argument1,
         median(0,argument2,1),
         median(0,argument3/2+0.5,1),
-        median(-2,argument4,2),
+        argument4,
         argument5>=0.5
     ),"audio_music_crossfade_ext",argument0)
 
@@ -156,45 +156,9 @@
         argument2,
         median(0,argument3,1),
         median(0,argument4/2+0.5,1),
-        median(-2,argument5,2),
+        argument5,
         argument6>=0.5
     ),"audio_music_switch_ext",argument0)
-
-
-#define audio_music_pitch
-    ///audio_music_pitch(pitch)
-    __gm82audio_music_pitch(median(-2,argument0,2))
-
-
-#define audio_music_pan
-    ///audio_music_pan(pan)
-    __gm82audio_music_pan(median(0,argument0/2+0.5,1))
-
-
-#define audio_music_set_pos
-    ///audio_music_set_pos(pos)
-    if (__gm82audio_music_set_pos(argument0))
-        show_error("in function audio_music_set_pos: "+__gm82audio_get_error(),0)
-
-
-#define audio_music_volume
-    ///audio_music_volume(volume)
-    __gm82audio_music_volume(median(0,argument0,1))
-
-
-#define audio_music_loop
-    ///audio_music_loop(enabled)
-    __gm82audio_music_loop(argument0)
-
-
-#define audio_music_pause
-    ///audio_music_pause()
-    __gm82audio_music_pause(1)
-
-
-#define audio_music_resume
-    ///audio_music_resume()
-    __gm82audio_music_pause(0)
 
 
 #define audio_music_stop
@@ -214,21 +178,12 @@
     if (argument_count) __gm82audio_stop_all(argument[0])
     else __gm82audio_stop_all(0)
 
-
-#define audio_pause
-    //audio_pause(inst)
-    __gm82audio_sound_pause(argument0,1)
-
-
-#define audio_resume
-    //audio_resume(inst)
-    __gm82audio_sound_pause(argument0,0)
 //
 //
 
 /*
 TODO
-- sfx instances - vol, pitch, pan, stop
+- sfx instances - vol, pitch, stop
 - stop all instances of a specific sound
 - implement renex engine pack file support 
 */

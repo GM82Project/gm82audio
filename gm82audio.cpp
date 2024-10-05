@@ -252,6 +252,16 @@ GMREAL __gm82audio_set_loop(double inst,double loops) {
     return 0;
 }
 
+GMREAL __gm82audio_set_pan(double inst,double pan) {
+    cs_sound_set_pan({(uint64_t)inst},max(0,min(1,(pan+1)/2)));
+    return 0;
+}
+
+GMREAL __gm82audio_set_pitch(double inst,double pitch) {
+    cs_sound_set_pitch({(uint64_t)inst},max(-200,min(200,pitch)));
+    return 0;
+}
+
 GMREAL __gm82audio_unload(double soundid) {
     __CHECK_EXISTS(soundid,sound);
     if (!sound->deleted) {

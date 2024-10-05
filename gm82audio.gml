@@ -78,7 +78,7 @@
 
 #define audio_play
     ///audio_play(sound)
-    var __call;__call=__gm82audio_sfx_play(argument0,1,0.5,1,0)
+    var __call;__call=__gm82audio_sfx_play(argument0,1,0,1,0)
     __gm82audio_check(__call,"audio_play",argument0)
     return __call
 
@@ -88,7 +88,7 @@
     var __call;__call=__gm82audio_sfx_play(
         argument0,
         argument1,
-        median(0,argument2/2+0.5,1),
+        argument2,
         argument3,
         argument4
     )
@@ -106,7 +106,7 @@
     }
     if (argument_count==2) __fade=max(0,argument[1])
     __gm82audio_check(
-        __gm82audio_music_play(argument[0],__fade,1,0.5,1,1)
+        __gm82audio_music_play(argument[0],__fade,1,0,1,1)
     ,"audio_music_play",argument0)
 
 
@@ -116,7 +116,7 @@
         argument0,
         argument1,
         argument2,
-        median(0,argument3/2+0.5,1),
+        argument3,
         argument4,
         argument5>=0.5
     ),"audio_music_play_ext",argument0)
@@ -125,7 +125,7 @@
 #define audio_music_crossfade
     ///audio_music_crossfade(sound,fadetime)
     __gm82audio_check(
-        __gm82audio_music_crossfade(argument0,argument1,1,0.5,1,1)
+        __gm82audio_music_crossfade(argument0,argument1,1,0,1,1)
     ,"audio_music_crossfade",argument0)
 
 
@@ -135,7 +135,7 @@
         argument0,
         argument1,
         argument2,
-        median(0,argument3/2+0.5,1),
+        argument3,
         argument4,
         argument5>=0.5
     ),"audio_music_crossfade_ext",argument0)
@@ -154,7 +154,7 @@
     if (argument_count==3) __fadein=argument[2]
     
     __gm82audio_check(
-        __gm82audio_music_switch(argument[0],argument[1],__fadein,1,0.5,1,1)
+        __gm82audio_music_switch(argument[0],argument[1],__fadein,1,0,1,1)
     ,"audio_music_switch",argument[0])
 
 
@@ -165,7 +165,7 @@
         argument1,
         argument2,
         argument3,
-        median(0,argument4/2+0.5,1),
+        argument4,
         argument5,
         argument6>=0.5
     ),"audio_music_switch_ext",argument0)
@@ -193,6 +193,7 @@
 
 /*
 TODO
+- clean up and format code 
 - loop points?
 - implement renex engine pack file support 
 */

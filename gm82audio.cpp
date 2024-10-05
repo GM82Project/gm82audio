@@ -107,7 +107,7 @@ GMREAL __gm82audio_sfx_play(double soundid,double vol,double pan,double pitch,do
     cs_audio_source_t* snd=sound->source;   
     cs_sound_params_t params=cs_sound_params_default();
     params.volume=vol;
-    params.pan=pan;
+    params.pan=(pan+1)*0.5;
     params.pitch=pitch;
     params.looped=(loops>=0.5);
     cs_playing_sound_t inst=cs_play_sound(snd,params);
@@ -301,4 +301,3 @@ GMREAL __gm82audio_global_resume() {
     cs_set_global_pause(true);
     return 0;
 }
-

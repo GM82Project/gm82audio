@@ -241,9 +241,14 @@ GMREAL __gm82audio_set_pos(double inst,double pos) {
             {(uint64_t)inst},
             max(0,min(cs_get_sample_count(instance->audio),
                 (int)(pos*cs_get_sample_rate(instance->audio))
-            )
+            ))
         );
     }
+    return 0;
+}
+
+GMREAL __gm82audio_set_loop(double inst,double loops) {
+    cs_sound_set_is_looped({(uint64_t)inst},loops>=0.5);
     return 0;
 }
 

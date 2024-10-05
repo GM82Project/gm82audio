@@ -50,7 +50,7 @@
     } else {    
         show_error(__erstr+"file does not exist",0)
     }
-    return snd
+    return __snd
 
 
 #define audio_load_buffer
@@ -223,11 +223,12 @@
 #define audio_resume
     //audio_resume(inst)
     __gm82audio_sound_pause(argument0,0)
-
 //
 //
 
 /*
 TODO
-- sfx instances - loop, vol, pitch, pan, stop
+- sfx instances - vol, pitch, pan, stop
+- stop all instances of a specific sound
+- implement renex engine pack file support 
 */

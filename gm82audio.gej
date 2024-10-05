@@ -345,6 +345,18 @@
 						2
 					],
 					"returntype": 2
+				},
+				{
+					"name": "audio_set_loop",
+					"extname": "__gm82audio_set_loop",
+					"calltype": 12,
+					"helpline": "audio_set_loop(inst,enabled)",
+					"hidden": false,
+					"argtypes": [
+						2,
+						2
+					],
+					"returntype": 2
 				}
 			],
 			"constants": []

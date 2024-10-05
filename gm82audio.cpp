@@ -237,6 +237,16 @@ GMREAL __gm82audio_sound_volume(double inst,double vol) {
     return 0;
 }
 
+GMREAL __gm82audio_sound_stop(double inst) {
+    cs_sound_stop({(uint64_t)inst});
+    return 0;
+}
+GMREAL __gm82audio_sound_stop_instances(double soundid) {
+    __CHECK_EXISTS_DEL(soundid,sound);
+    cs_stop_all_instances_of(sound->source);
+    return 0;
+}
+
 GMREAL __gm82audio_get_pos(double inst) {
     cs_sound_inst_t* instance = s_get_inst({(uint64_t)inst});
     if (instance) return (double)(
@@ -273,7 +283,7 @@ GMREAL __gm82audio_set_pitch(double inst,double pitch) {
     return 0;
 }
 
-GMREAL __gm82audio_unload(double soundid) {
+GMREAL __gm82audio_delete(double soundid) {
     __CHECK_EXISTS(soundid,sound);
     if (!sound->deleted) {
         cs_free_audio_source(sound->source);
@@ -281,3 +291,14 @@ GMREAL __gm82audio_unload(double soundid) {
     }
     return 0;
 }
+
+GMREAL __gm82audio_global_pause() {
+    cs_set_global_pause(true);
+    return 0;
+}
+
+GMREAL __gm82audio_global_resume() {
+    cs_set_global_pause(true);
+    return 0;
+}
+

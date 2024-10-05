@@ -3441,6 +3441,30 @@ void cs_stop_all_playing_sounds()
 	cs_unlock();
 }
 
+
+void cs_stop_all_instances_of(cs_audio_source_t* soundsource)
+{
+	cs_lock();
+
+	if (cs_list_empty(&s_ctx->playing_sounds)) {
+		cs_unlock();
+		return;
+	}
+	cs_list_node_t* playing_sound = cs_list_begin(&s_ctx->playing_sounds);
+	cs_list_node_t* end = cs_list_end(&s_ctx->playing_sounds);
+
+	do {
+		cs_sound_inst_t* inst = CUTE_SOUND_LIST_HOST(cs_sound_inst_t, node, playing_sound);
+		cs_list_node_t* next = playing_sound->next;
+		if (inst->audio==soundsource) {
+            inst->active = false;
+        }
+		playing_sound = next;
+	} while (playing_sound != end);
+
+	cs_unlock();
+}
+
 void cs_cull_duplicates(bool true_to_enable)
 {
 	s_ctx->cull_duplicates = true_to_enable;

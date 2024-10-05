@@ -21,10 +21,10 @@
 			"final": "__gm82audio_end",
 			"functions": [
 				{
-					"name": "audio_free",
-					"extname": "__gm82audio_unload",
+					"name": "audio_delete",
+					"extname": "__gm82audio_delete",
 					"calltype": 12,
-					"helpline": "audio_free(soundid)",
+					"helpline": "audio_delete(sound)",
 					"hidden": false,
 					"argtypes": [
 						2
@@ -54,12 +54,42 @@
 					"returntype": 2
 				},
 				{
+					"name": "audio_global_pause",
+					"extname": "__gm82audio_global_pause",
+					"calltype": 12,
+					"helpline": "audio_global_pause()",
+					"hidden": false,
+					"argtypes": [],
+					"returntype": 2
+				},
+				{
+					"name": "audio_global_resume",
+					"extname": "__gm82audio_global_resume",
+					"calltype": 12,
+					"helpline": "audio_global_resume()",
+					"hidden": false,
+					"argtypes": [],
+					"returntype": 2
+				},
+				{
 					"name": "audio_global_volume",
 					"extname": "__gm82audio_global_volume",
 					"calltype": 12,
 					"helpline": "audio_global_volume(volume)",
 					"hidden": false,
 					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "audio_loop",
+					"extname": "__gm82audio_set_loop",
+					"calltype": 12,
+					"helpline": "audio_loop(inst,enabled)",
+					"hidden": false,
+					"argtypes": [
+						2,
 						2
 					],
 					"returntype": 2
@@ -136,17 +166,6 @@
 					"returntype": 2
 				},
 				{
-					"name": "audio_music_set_pos",
-					"extname": "__gm82audio_music_set_pos",
-					"calltype": 12,
-					"helpline": "audio_music_set_pos(pos)",
-					"hidden": false,
-					"argtypes": [
-						2
-					],
-					"returntype": 2
-				},
-				{
 					"name": "audio_music_volume",
 					"extname": "__gm82audio_music_volume",
 					"calltype": 12,
@@ -158,46 +177,10 @@
 					"returntype": 2
 				},
 				{
-					"name": "audio_set_loop",
-					"extname": "__gm82audio_set_loop",
-					"calltype": 12,
-					"helpline": "audio_set_loop(inst,enabled)",
-					"hidden": false,
-					"argtypes": [
-						2,
-						2
-					],
-					"returntype": 2
-				},
-				{
-					"name": "audio_set_pan",
+					"name": "audio_pan",
 					"extname": "__gm82audio_set_pan",
 					"calltype": 12,
-					"helpline": "audio_set_pan(inst,pan)",
-					"hidden": false,
-					"argtypes": [
-						2,
-						2
-					],
-					"returntype": 2
-				},
-				{
-					"name": "audio_set_pitch",
-					"extname": "__gm82audio_set_pitch",
-					"calltype": 12,
-					"helpline": "audio_set_pitch(inst,pitch)",
-					"hidden": false,
-					"argtypes": [
-						2,
-						2
-					],
-					"returntype": 2
-				},
-				{
-					"name": "audio_set_pos",
-					"extname": "__gm82audio_set_pos",
-					"calltype": 12,
-					"helpline": "audio_set_pos(inst,pos)",
+					"helpline": "audio_pan(inst,pan)",
 					"hidden": false,
 					"argtypes": [
 						2,
@@ -217,10 +200,56 @@
 					"returntype": 2
 				},
 				{
+					"name": "audio_pitch",
+					"extname": "__gm82audio_set_pitch",
+					"calltype": 12,
+					"helpline": "audio_pitch(inst,pitch)",
+					"hidden": false,
+					"argtypes": [
+						2,
+						2
+					],
+					"returntype": 2
+				},
+				{
 					"name": "audio_resume",
 					"extname": "__gm82audio_sound_resume",
 					"calltype": 12,
 					"helpline": "audio_resume(inst)",
+					"hidden": false,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "audio_set_pos",
+					"extname": "__gm82audio_set_pos",
+					"calltype": 12,
+					"helpline": "audio_set_pos(inst,pos)",
+					"hidden": false,
+					"argtypes": [
+						2,
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "audio_stop",
+					"extname": "__gm82audio_sound_stop",
+					"calltype": 12,
+					"helpline": "audio_stop(instance)",
+					"hidden": false,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "audio_stop_all",
+					"extname": "__gm82audio_sound_stop_instances",
+					"calltype": 12,
+					"helpline": "audio_stop_all(sound)",
 					"hidden": false,
 					"argtypes": [
 						2
@@ -422,6 +451,15 @@
 			"final": "",
 			"functions": [
 				{
+					"name": "audio_global_stop",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_global_stop([music too])",
+					"hidden": false,
+					"argtypes": null,
+					"returntype": 2
+				},
+				{
 					"name": "audio_load",
 					"extname": "",
 					"calltype": 2,
@@ -509,13 +547,9 @@
 					"name": "audio_music_switch",
 					"extname": "",
 					"calltype": 2,
-					"helpline": "audio_music_switch(sound,fadeouttime,fadeintime)",
+					"helpline": "audio_music_switch(sound,fadeouttime,[fadeintime])",
 					"hidden": false,
-					"argtypes": [
-						2,
-						2,
-						2
-					],
+					"argtypes": null,
 					"returntype": 2
 				},
 				{
@@ -559,15 +593,6 @@
 						2,
 						2
 					],
-					"returntype": 2
-				},
-				{
-					"name": "audio_stop_all",
-					"extname": "",
-					"calltype": 2,
-					"helpline": "audio_stop_all([musictoo])",
-					"hidden": false,
-					"argtypes": null,
 					"returntype": 2
 				},
 				{

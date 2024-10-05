@@ -142,10 +142,20 @@
 
 
 #define audio_music_switch
-    ///audio_music_switch(sound,fadeouttime,fadeintime)
+    ///audio_music_switch(sound,fadeouttime,[fadeintime])
+    var __fadein;
+    
+    if (argument_count<2 || argument_count>3) {
+        show_error("in function audio_music_switch: wrong number of arguments",0)
+        exit
+    }
+    
+    __fadein=argument[1]
+    if (argument_count==3) __fadein=argument[2]
+    
     __gm82audio_check(
-        __gm82audio_music_switch(argument0,argument1,argument2,1,0.5,1,1)
-    ,"audio_music_switch",argument0)
+        __gm82audio_music_switch(argument[0],argument[1],__fadein,1,0.5,1,1)
+    ,"audio_music_switch",argument[0])
 
 
 #define audio_music_switch_ext
@@ -173,8 +183,8 @@
     __gm82audio_music_stop(__fade)
 
 
-#define audio_stop_all
-    ///audio_stop_all([musictoo])
+#define audio_global_stop
+    ///audio_global_stop([music too])
     if (argument_count) __gm82audio_stop_all(argument[0])
     else __gm82audio_stop_all(0)
 
@@ -183,7 +193,6 @@
 
 /*
 TODO
-- stop instances
-- stop all instances of a specific sound
+- loop points?
 - implement renex engine pack file support 
 */

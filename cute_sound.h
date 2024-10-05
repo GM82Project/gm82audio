@@ -2692,7 +2692,7 @@ cs_audio_source_t* cs_read_mem_wav(const void* memory, size_t size, cs_error_t* 
 	audio->sample_rate = (int)fmt.nSamplesPerSec;
 
 	{
-		int sample_size = *((uint32_t*)(data + 4));
+		int sample_size = *((uint32_t*)(data + 4))-4;
 		int sample_count = sample_size / (fmt.nChannels * sizeof(uint16_t));
 		audio->sample_count = sample_count;
 		audio->channel_count = fmt.nChannels;

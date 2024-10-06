@@ -470,6 +470,18 @@
 			"final": "",
 			"functions": [
 				{
+					"name": "audio_create_pack",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_create_pack(sourcedir,filename)",
+					"hidden": false,
+					"argtypes": [
+						2,
+						2
+					],
+					"returntype": 2
+				},
+				{
 					"name": "audio_global_stop",
 					"extname": "",
 					"calltype": 2,
@@ -494,6 +506,17 @@
 					"extname": "",
 					"calltype": 2,
 					"helpline": "audio_load_buffer(buffer)",
+					"hidden": false,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "audio_load_pack",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_load_pack(pack)",
 					"hidden": false,
 					"argtypes": [
 						2
@@ -615,6 +638,18 @@
 					"returntype": 2
 				},
 				{
+					"name": "sound_unpack_pack",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "sound_unpack_pack(pack,dir)",
+					"hidden": false,
+					"argtypes": [
+						2,
+						2
+					],
+					"returntype": 2
+				},
+				{
 					"name": "__gm82audio_check",
 					"extname": "",
 					"calltype": 2,
@@ -639,41 +674,6 @@
 					"helpline": "",
 					"hidden": true,
 					"argtypes": null,
-					"returntype": 2
-				},
-				{
-					"name": "audio_create_pack",
-					"extname": "",
-					"calltype": 2,
-					"helpline": "audio_create_pack(sourcedir,filename)",
-					"hidden": false,
-					"argtypes": [
-						2,
-						2
-					],
-					"returntype": 2
-				},
-				{
-					"name": "audio_load_pack",
-					"extname": "",
-					"calltype": 2,
-					"helpline": "audio_load_pack(pack)",
-					"hidden": false,
-					"argtypes": [
-						2
-					],
-					"returntype": 2
-				},
-				{
-					"name": "sound_unpack_pack",
-					"extname": "",
-					"calltype": 2,
-					"helpline": "sound_unpack_pack(pack,dir)",
-					"hidden": false,
-					"argtypes": [
-						2,
-						2
-					],
 					"returntype": 2
 				}
 			],

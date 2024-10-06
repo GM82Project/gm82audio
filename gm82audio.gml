@@ -27,7 +27,7 @@
     ///audio_load(filename)
     //filename: full or relative path to a sound file
     //returns: sound index
-    //Loads a sound file. 16-bit pcm WAV files and ogg vorbis are supported.
+    //Loads a sound file. 16-bit pcm wav files and ogg vorbis are supported.
     var __snd;__snd=noone;
     var __erstr;__erstr="in function audio_load: error loading "+argument0+": "
     
@@ -53,7 +53,8 @@
     ///audio_load_buffer(buffer)
     //buffer: a handle to a gm82net buffer
     //returns: sound index
-    //Loads a sound from a buffer. You can delete the buffer afterwards.    
+    //Loads a sound from a buffer. 16-bit pcm wav files and ogg vorbis are supported.
+    //You can delete the buffer afterwards.    
     var __snd;__snd=noone;
     var __erstr;__erstr="in function audio_load_buffer: "
 
@@ -321,5 +322,5 @@
 /*
 TODO
 - loop points?
-- johnny doc
+- instances should be negative numbers
 */

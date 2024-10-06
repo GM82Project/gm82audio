@@ -35,7 +35,7 @@ struct sound_struct {
 static double SAMPLE_RATE=44100;
 static int SOUND_INDEX=1;
 static std::vector<sound_struct*> SOUNDS;
-static char* ERROR_STR="";
+static char ERROR_STR[255];
 static bool MUSIC_PAUSED=false;
 static cs_audio_source_t* CURRENT_MUSIC_SOURCE=NULL;
 
@@ -87,7 +87,7 @@ GMREAL __gm82audio_load_mem(double gmbuffer,double length,double type) {
     if (type>=0.5) snd=cs_read_mem_ogg((void*)(size_t)gmbuffer,(size_t)length,&error);
     else snd=cs_read_mem_wav((void*)(size_t)gmbuffer,(size_t)length,&error);
     if (snd==NULL) strcpy(ERROR_STR,cs_error_as_string(error));
-    return __gm82audio_store_sound(snd);
+    return (double)__gm82audio_store_sound(snd);
 }
 
 GMREAL __gm82audio_exists(double index) {

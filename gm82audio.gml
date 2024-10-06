@@ -59,8 +59,12 @@
     var __erstr;__erstr="in function audio_load_buffer: "
 
     if (buffer_exists(argument0)) {
-        buffer_set_pos(argument0,0)
-        var __fourcc;__fourcc=buffer_read_data(argument0,4)
+        var __fourcc;__fourcc=
+            chr(buffer_peek(argument0,0))+
+            chr(buffer_peek(argument0,1))+
+            chr(buffer_peek(argument0,2))+
+            chr(buffer_peek(argument0,3))
+        
         var __addr;__addr=buffer_get_address(argument0,0)
         var __size;__size=buffer_get_size(argument0)
         
@@ -322,4 +326,5 @@
 /*
 TODO
 - loop points?
+- 8 bit wavs fucking crash the shit out of it
 */

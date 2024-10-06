@@ -208,7 +208,7 @@ GMREAL __gm82audio_music_play(double soundid,double fadeintime,double vol,double
     CURRENT_MUSIC_SOURCE=sound->source;
     cs_music_play(CURRENT_MUSIC_SOURCE,(float)fadeintime);    
     __gm82audio_music_set_all(vol,pan,pitch,loops);
-    return 0;
+    return 1;
 }
 
 GMREAL __gm82audio_music_switch(double soundid,double fadeouttime,double fadeintime,double vol,double pan,double pitch,double loops) {
@@ -216,7 +216,7 @@ GMREAL __gm82audio_music_switch(double soundid,double fadeouttime,double fadeint
     CURRENT_MUSIC_SOURCE=sound->source;
     cs_music_switch_to(CURRENT_MUSIC_SOURCE,(float)fadeouttime,(float)fadeintime);
     __gm82audio_music_set_all(vol,pan,pitch,loops);
-    return 0;
+    return 1;
 }
 
 GMREAL __gm82audio_music_crossfade(double soundid,double fadetime,double vol,double pan,double pitch,double loops) {
@@ -224,7 +224,7 @@ GMREAL __gm82audio_music_crossfade(double soundid,double fadetime,double vol,dou
     CURRENT_MUSIC_SOURCE=sound->source;
     cs_music_crossfade(CURRENT_MUSIC_SOURCE,(float)fadetime);
     __gm82audio_music_set_all(vol,pan,pitch,loops);
-    return 0;
+    return 1;
 }
 
 GMREAL __gm82audio_music_pause() {

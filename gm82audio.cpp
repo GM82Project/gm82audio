@@ -14,7 +14,7 @@
 #define GMSTR extern "C" __declspec(dllexport) char* __cdecl
 
 #define __ERROR_NONEXIST 0
-#define __ERROR_DELETED -1
+#define __ERROR_DELETED 0.1
 
 #define __CHECK_EXISTS(index,sound) \
 if (index<=0 || index>=SOUND_INDEX) return __ERROR_NONEXIST;\
@@ -91,11 +91,17 @@ GMREAL __gm82audio_load_mem(double gmbuffer,double length,double type) {
 }
 
 GMREAL __gm82audio_exists(double index) {
-    ///audio_exists(sound)
-    //sound: sound index to check
-    //returns: 1 if the sound exists; 0 if it doesn't exist; -1 if it was deleted.
-    __CHECK_EXISTS_DEL(index,sound);
-    return 1;
+    ///audio_exists(sound/inst)
+    //sound/inst: sound index to check, or instance
+    //returns: various values
+    //If a sound id is passed: 1 if it exists, 0 if it doesn't, 0.1 if it was deleted
+    //If an instance id is passed: 1 if it's still playing, 0 if it's finished
+    if (index>=0) {
+        __CHECK_EXISTS_DEL(index,sound);
+        return 1;
+    } else {
+        return cs_sound_is_active({(uint64_t)-index})?1:0;
+    }    
 }
 
 GMREAL __gm82audio_global_volume(double vol) {
@@ -270,7 +276,8 @@ GMREAL __gm82audio_set_volume(double inst,double vol) {
     //inst: audio instance
     //volume: gain factor
     //Changes the volume of an audio instance. Volume above 1 is accepted.
-    cs_sound_set_volume({(uint64_t)inst},vol);
+    if (inst>=0) return 0;
+    cs_sound_set_volume({(uint64_t)-inst},vol);
     return 0;
 }
 
@@ -279,7 +286,8 @@ GMREAL __gm82audio_set_pitch(double inst,double pitch) {
     //inst: audio instance
     //pitch: pitch shifting factor
     //Changes the pitch of an audio instance. Negative pitch is accepted.
-    cs_sound_set_pitch({(uint64_t)inst},pitch);
+    if (inst>=0) return 0;
+    cs_sound_set_pitch({(uint64_t)-inst},pitch);
     return 0;
 }
 
@@ -288,7 +296,8 @@ GMREAL __gm82audio_set_pan(double inst,double pan) {
     //inst: audio instance
     //pan: panning value
     //Changes the horizontal positioning of an audio instance.
-    cs_sound_set_pan({(uint64_t)inst},max(0,min(1,(pan+1)/2)));
+    if (inst>=0) return 0;
+    cs_sound_set_pan({(uint64_t)-inst},max(0,min(1,(pan+1)/2)));
     return 0;
 }
 
@@ -297,7 +306,8 @@ GMREAL __gm82audio_set_loop(double inst,double loops) {
     //inst: audio instance
     //enabled: boolean
     //Enables or disables looping a sound instance.
-    cs_sound_set_is_looped({(uint64_t)inst},loops>=0.5);
+    if (inst>=0) return 0;
+    cs_sound_set_is_looped({(uint64_t)-inst},loops>=0.5);
     return 0;
 }
 
@@ -309,7 +319,8 @@ GMREAL __gm82audio_set_all(double inst,double vol,double pan,double pitch,double
     //pitch: pitch shifting factor
     //loops: boolean
     //Changes all properties of a sound instance at once.    
-    cs_playing_sound_t instance={(uint64_t)inst};
+    if (inst>=0) return 0;
+    cs_playing_sound_t instance={(uint64_t)-inst};
     cs_sound_set_volume(instance,vol);
     cs_sound_set_pan(instance,(pan+1)*0.5);
     cs_sound_set_pitch(instance,pitch);
@@ -327,14 +338,15 @@ GMREAL __gm82audio_sfx_play(double soundid,double vol,double pan,double pitch,do
     params.looped=(loops>=0.5);
     cs_playing_sound_t inst=cs_play_sound(snd,params);
     if (pitch<0) cs_sound_set_sample_index(inst,cs_get_sample_count(snd));
-    return (double)(uint32_t)(inst.id);
+    return -(double)(uint32_t)(inst.id);
 }
 
 GMREAL __gm82audio_sound_pause(double inst) {
     ///audio_pause(inst)
     //inst: sound instance
     //Pauses playback of a sound instance.
-    cs_sound_set_is_paused({(uint64_t)inst},true);
+    if (inst>=0) return 0;
+    cs_sound_set_is_paused({(uint64_t)-inst},true);
     return 0;
 }
 
@@ -342,7 +354,8 @@ GMREAL __gm82audio_sound_resume(double inst) {
     ///audio_resume(inst)
     //inst: sound instance
     //Resumes playback of a sound instance.
-    cs_sound_set_is_paused({(uint64_t)inst},false);
+    if (inst>=0) return 0;
+    cs_sound_set_is_paused({(uint64_t)-inst},false);
     return 0;
 }
 
@@ -350,7 +363,8 @@ GMREAL __gm82audio_get_pos(double inst) {
     ///audio_get_pos(inst)
     //inst: sound instance
     //returns: the current position of the sound instance, in seconds
-    cs_sound_inst_t* instance = s_get_inst({(uint64_t)inst});
+    if (inst>=0) return 0;
+    cs_sound_inst_t* instance = s_get_inst({(uint64_t)-inst});
     if (instance) return (double)(
         instance->sample_index/((double)cs_get_sample_rate(instance->audio))
     );
@@ -362,7 +376,8 @@ GMREAL __gm82audio_set_pos(double inst,double pos) {
     //inst: sound instance
     //pos: position in seconds
     //Changes the current position of the sound instance, in seconds.
-    cs_sound_inst_t* instance = s_get_inst({(uint64_t)inst});
+    if (inst>=0) return 0;
+    cs_sound_inst_t* instance = s_get_inst({(uint64_t)-inst});
     if (instance) {
         cs_sound_set_sample_index(
             {(uint64_t)inst},
@@ -378,7 +393,8 @@ GMREAL __gm82audio_sound_stop(double inst) {
     ///audio_stop(inst)
     //inst: sound instance to stop
     //Deletes a sound instance.
-    cs_sound_stop({(uint64_t)inst});
+    if (inst>=0) return 0;
+    cs_sound_stop({(uint64_t)-inst});
     return 0;
 }
 

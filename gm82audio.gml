@@ -12,11 +12,11 @@
 
 
 #define __gm82audio_check
-    if (argument0==-1) {
+    if (argument0==0) {
         show_error("in function "+argument1+": sound "+string(argument2)+" does not exist!",0)
         return 0
     }
-    if (argument0==-2) {
+    if (argument0==0.1) {
         show_error("in function "+argument1+": sound "+string(argument2)+" is deleted!",0)
         return 0
     }
@@ -322,5 +322,4 @@
 /*
 TODO
 - loop points?
-- instances should be negative numbers
 */

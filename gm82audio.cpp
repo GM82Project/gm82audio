@@ -106,8 +106,8 @@ GMREAL __gm82audio_exists(double index) {
 
 GMREAL __gm82audio_global_volume(double vol) {
     ///audio_global_volume(volume)
-    //volume: global gain value
-    //Sets the global volume for the sound engine.
+    //volume: gain value
+    //Sets the global volume for the audio engine.
     cs_set_global_volume(vol);
     return 0;
 }
@@ -159,7 +159,7 @@ GMREAL __gm82audio_delete(double soundid) {
 //music
 GMREAL __gm82audio_music_volume(double volume) {
     ///audio_music_volume(volume)
-    //volume: gain factor
+    //volume: gain value
     //Changes the volume of the music. Volume above 1 is accepted.
     cs_music_set_volume((float)volume);    
     return 0;
@@ -271,6 +271,14 @@ GMREAL __gm82audio_music_stop(double fadeouttime) {
 
 
 //sounds
+GMREAL __gm82audio_set_sfx_volume(double vol) {
+    ///audio_sound_volume(volume)
+    //volume: gain factor
+    //Sets the volume for sound effect mixing.
+    cs_set_playing_sounds_volume(vol);
+    return 0;
+}
+
 GMREAL __gm82audio_set_volume(double inst,double vol) {
     ///audio_volume(inst,volume)
     //inst: audio instance

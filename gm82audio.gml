@@ -326,5 +326,4 @@
 /*
 TODO
 - loop points?
-- 8 bit wavs fucking crash the shit out of it
 */

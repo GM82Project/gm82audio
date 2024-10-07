@@ -119,6 +119,7 @@
 		Daniel Guzman     2.01 - compilation fixes for clang/llvm on MAC. 
 		Brie              2.06 - Looping sound rollover
 		ogam              x.xx - Lots of bugfixes over time, including support negative pitch
+        renex             x.xx - Fixes to popping issues and a crash in the mixer.
 
 
 	DOCUMENTATION (very quick intro)
@@ -2251,7 +2252,7 @@ void cs_mix()
 
 			if (!audio) goto remove;
 			if (!playing->active || !s_ctx->running) goto remove;
-			if (playing->paused) goto get_next_playing_sound;
+			if (playing->paused || playing->pitch==0.0f) goto get_next_playing_sound;
 			if (s_ctx->cull_duplicates) {
 				for (int i = 0; i < s_ctx->duplicate_count; ++i) {
 					if (s_ctx->duplicates[i] == (void*)audio) {
@@ -2716,17 +2717,15 @@ cs_audio_source_t* cs_read_mem_wav(const void* memory, size_t size, cs_error_t* 
 	{
 		int sample_size = *((uint32_t*)(data + 4));
 		int sample_count = sample_size / (fmt.nChannels * (fmt.wBitsPerSample/8));
-		audio->sample_count = sample_count;
+        //to account for interpolation in the pitch shifter, we lie about length
+        //this fixes random popping at the end of sounds
+        audio->sample_count = sample_count-1;
 		audio->channel_count = fmt.nChannels;
 
 		int wide_count = (int)CUTE_SOUND_ALIGN(sample_count, 4) / 4;
 		int wide_offset = sample_count & 3;
 		uint8_t* samples8 = (uint8_t*)(data + 8);
         int16_t* samples = (int16_t*)(data + 8);
-        
-        //to account for interpolation in the pitch shifter, we lie about length
-        //this fixes random popping at the end of sounds
-        audio->sample_count = sample_count-4;
 
 		switch (audio->channel_count) {
 		case 1:

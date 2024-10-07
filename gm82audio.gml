@@ -320,10 +320,25 @@
     }
     
     return __retlist
-//
-//
 
-/*
-TODO
-- loop points?
-*/
+
+#define audio_set_loop_points
+    ///audio_set_loop_points(soundid,a,[b])
+    //sound: sound index
+    //a: loop start in seconds
+    //b (optional): loop end in seconds
+    //Sets the loop points to use when playing a sound with looping enabled.
+    //When B isn't supplied, it is set to the end of the file.
+    var __b;
+    
+    if (argument_count<2 || argument_count>3) {
+        show_error("in function audio_set_loop_points: wrong number of arguments",0)
+        exit
+    }
+    
+    __b=-1
+    if (argument_count==3) __b=argument[2]
+    
+    __gm82audio_set_loop_points(argument[0],argument[1],__b)
+//
+//

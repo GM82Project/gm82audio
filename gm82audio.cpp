@@ -288,6 +288,25 @@ GMREAL __gm82audio_sound_stop_instances(double soundid) {
     return 0;
 }
 
+GMREAL __gm82audio_set_loop_points(double soundid,double pointa, double pointb) {
+    __CHECK_EXISTS_DEL(soundid,sound);
+    uint32_t sr=cs_get_sample_rate(sound->source);
+    uint32_t sc=cs_get_sample_count(sound->source)-1;
+    
+    uint32_t _a=(uint32_t)(sr*pointa);
+    uint32_t _b=(uint32_t)(sr*pointb);
+    
+    //i pass -1 when point b isn't set, use end of file
+    if (pointb<0) _b=sc;
+    
+    //range check to avoid errors
+    _a=max(0,min(sc-1,_a));
+    _b=max(_a+1,min(sc,_b));
+    
+    cs_set_loop_points(sound->source,_a,_b);
+    return 0;
+}
+
 GMREAL __gm82audio_delete(double soundid) {
     ///audio_delete(sound)
     //sound: sound to delete

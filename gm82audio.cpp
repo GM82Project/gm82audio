@@ -126,32 +126,9 @@ GMREAL __gm82audio_global_resume() {
     return 0;
 }
 
-GMREAL __gm82audio_get_length(double soundid) {
-    ///audio_get_length(sound)
-    //sound: sound index to get
-    //returns: the length of the sound, in seconds
-    __CHECK_EXISTS_DEL(soundid,sound);
-    return (double)(
-        cs_get_sample_count(sound->source)/((double)cs_get_sample_rate(sound->source))
-    );
-}
-
 GMREAL __gm82audio_stop_all(double musictoo) {
     cs_stop_all_playing_sounds();
     if (musictoo>=0.5) cs_music_stop(0);
-    return 0;
-}
-
-GMREAL __gm82audio_delete(double soundid) {
-    ///audio_delete(sound)
-    //sound: sound to delete
-    //Deletes a sound. New sounds don't reuse ids.
-    //If an instance of the sound is still playing, it finishes playing.
-    __CHECK_EXISTS(soundid,sound);
-    if (!sound->deleted) {
-        cs_free_audio_source(sound->source);
-        sound->deleted=true;
-    }
     return 0;
 }
 
@@ -279,6 +256,53 @@ GMREAL __gm82audio_set_sfx_volume(double vol) {
     return 0;
 }
 
+GMREAL __gm82audio_sfx_play(double soundid,double vol,double pan,double pitch,double loops) {
+    __CHECK_EXISTS_DEL(soundid,sound);
+    cs_audio_source_t* snd=sound->source;   
+    cs_sound_params_t params=cs_sound_params_default();
+    params.volume=vol;
+    params.pan=(pan+1)*0.5;
+    params.pitch=pitch;
+    params.looped=(loops>=0.5);
+    cs_playing_sound_t inst=cs_play_sound(snd,params);
+    if (pitch<0) cs_sound_set_sample_index(inst,cs_get_sample_count(snd));
+    return -(double)(uint32_t)(inst.id);
+}
+
+GMREAL __gm82audio_get_length(double soundid) {
+    ///audio_get_length(sound)
+    //sound: sound index to get
+    //returns: the length of the sound, in seconds
+    __CHECK_EXISTS_DEL(soundid,sound);
+    return (double)(
+        cs_get_sample_count(sound->source)/((double)cs_get_sample_rate(sound->source))
+    );
+}
+
+GMREAL __gm82audio_sound_stop_instances(double soundid) {
+    ///audio_stop_all(sound)
+    //sound: sound index to stop
+    //Deletes all instances of the sound.
+    __CHECK_EXISTS_DEL(soundid,sound);
+    cs_stop_all_instances_of(sound->source);
+    return 0;
+}
+
+GMREAL __gm82audio_delete(double soundid) {
+    ///audio_delete(sound)
+    //sound: sound to delete
+    //Deletes a sound. New sounds don't reuse ids.
+    //If an instance of the sound is still playing, it finishes playing.
+    __CHECK_EXISTS(soundid,sound);
+    if (!sound->deleted) {
+        cs_free_audio_source(sound->source);
+        sound->deleted=true;
+    }
+    return 0;
+}
+
+
+//instances
 GMREAL __gm82audio_set_volume(double inst,double vol) {
     ///audio_volume(inst,volume)
     //inst: audio instance
@@ -336,19 +360,6 @@ GMREAL __gm82audio_set_all(double inst,double vol,double pan,double pitch,double
     return 0;
 }
 
-GMREAL __gm82audio_sfx_play(double soundid,double vol,double pan,double pitch,double loops) {
-    __CHECK_EXISTS_DEL(soundid,sound);
-    cs_audio_source_t* snd=sound->source;   
-    cs_sound_params_t params=cs_sound_params_default();
-    params.volume=vol;
-    params.pan=(pan+1)*0.5;
-    params.pitch=pitch;
-    params.looped=(loops>=0.5);
-    cs_playing_sound_t inst=cs_play_sound(snd,params);
-    if (pitch<0) cs_sound_set_sample_index(inst,cs_get_sample_count(snd));
-    return -(double)(uint32_t)(inst.id);
-}
-
 GMREAL __gm82audio_sound_pause(double inst) {
     ///audio_pause(inst)
     //inst: sound instance
@@ -403,14 +414,5 @@ GMREAL __gm82audio_sound_stop(double inst) {
     //Deletes a sound instance.
     if (inst>=0) return 0;
     cs_sound_stop({(uint64_t)-inst});
-    return 0;
-}
-
-GMREAL __gm82audio_sound_stop_instances(double soundid) {
-    ///audio_stop_all(sound)
-    //sound: sound index to stop
-    //Deletes all instances of the sound.
-    __CHECK_EXISTS_DEL(soundid,sound);
-    cs_stop_all_instances_of(sound->source);
     return 0;
 }

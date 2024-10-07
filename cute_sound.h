@@ -2298,7 +2298,6 @@ void cs_mix()
 				float adjusted_pitch = playing->pitch * (((float)playing->audio->sample_rate) / s_ctx->global_sample_rate);
 
 				int prev_playing_sample_index = playing->sample_index;
-				int sample_index_wide = (int)CUTE_SOUND_TRUNC(playing->sample_index, 4) / 4;
 				int samples_to_read = (int)(samples_needed * adjusted_pitch);
 				if (samples_to_read + playing->sample_index > audio->sample_count) {
 					samples_to_read = audio->sample_count - playing->sample_index;
@@ -2307,7 +2306,8 @@ void cs_mix()
 					// be accounted for otherwise the sample index cursor gets stuck at sample count.
 					playing->sample_index = audio->sample_count + samples_to_read + playing->sample_index;
 				}
-				int samples_to_write = samples_needed;
+				int sample_index_wide = (int)CUTE_SOUND_TRUNC(playing->sample_index, 4) / 4;
+                int samples_to_write = (int)(samples_to_read / adjusted_pitch);
 				int write_wide = CUTE_SOUND_ALIGN(samples_to_write, 4) / 4;
 				int write_offset_wide = (int)CUTE_SOUND_ALIGN(write_offset, 4) / 4;
 				static int written_so_far = 0;
@@ -2716,13 +2716,17 @@ cs_audio_source_t* cs_read_mem_wav(const void* memory, size_t size, cs_error_t* 
 	{
 		int sample_size = *((uint32_t*)(data + 4));
 		int sample_count = sample_size / (fmt.nChannels * (fmt.wBitsPerSample/8));
-		audio->sample_count = sample_count-4;
+		audio->sample_count = sample_count;
 		audio->channel_count = fmt.nChannels;
 
 		int wide_count = (int)CUTE_SOUND_ALIGN(sample_count, 4) / 4;
 		int wide_offset = sample_count & 3;
 		uint8_t* samples8 = (uint8_t*)(data + 8);
         int16_t* samples = (int16_t*)(data + 8);
+        
+        //to account for interpolation in the pitch shifter, we lie about length
+        //this fixes random popping at the end of sounds
+        audio->sample_count = sample_count-4;
 
 		switch (audio->channel_count) {
 		case 1:

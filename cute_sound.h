@@ -2935,9 +2935,13 @@ cs_audio_source_t* cs_read_mem_ogg(const void* memory, size_t length, cs_error_t
 			if (err) *err = CUTE_SOUND_ERROR_OGG_UNSUPPORTED_CHANNEL_COUNT;
 			CUTE_SOUND_ASSERT(false);
 		}
+        
+        //by default, the loop points are the entire piece
+        audio->loop_point_a = 0;
+        audio->loop_point_b = sample_count;
 
 		audio->sample_rate = sample_rate;
-		audio->sample_count = sample_count;
+		audio->sample_count = sample_count-1;
 		audio->channel_count = channel_count;
 		audio->channels[0] = a;
 		audio->channels[1] = b;

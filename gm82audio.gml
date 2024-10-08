@@ -27,7 +27,7 @@
     ///audio_load(filename)
     //filename: full or relative path to a sound file
     //returns: sound index
-    //Loads a sound file. 16-bit pcm wav files and ogg vorbis are supported.
+    //Loads a sound file. wav files and ogg vorbis are supported.
     var __snd;__snd=noone;
     var __erstr;__erstr="in function audio_load: error loading "+argument0+": "
     
@@ -53,7 +53,7 @@
     ///audio_load_buffer(buffer)
     //buffer: a handle to a gm82net buffer
     //returns: sound index
-    //Loads a sound from a buffer. 16-bit pcm wav files and ogg vorbis are supported.
+    //Loads a sound from a buffer. wav files and ogg vorbis are supported.
     //You can delete the buffer afterwards.    
     var __snd;__snd=noone;
     var __erstr;__erstr="in function audio_load_buffer: "
@@ -364,5 +364,18 @@
     
     return __map
 
+
+#define audio_load_included
+    ///audio_load_included(filename)
+    //filename: name of the included file to load
+    //returns: sound index
+    //Loads an included file. Make sure the file is set to [ ] do not free memory,
+    //[x] overwrite, (x) Don't export. wav and ogg files are supported.
+    var __fname,__snd;
+    __fname=temp_directory+"\gm82\"+argument0
+    export_include_file_location(argument0,__fname)
+    __snd=audio_load(__fname)
+    file_delete(__fname)
+    return __snd
 //
 //

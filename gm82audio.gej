@@ -537,6 +537,28 @@
 					"returntype": 2
 				},
 				{
+					"name": "audio_load_directory",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_load_directory(dir)",
+					"hidden": false,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "audio_load_included",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_load_included(filename)",
+					"hidden": false,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
 					"name": "audio_load_pack",
 					"extname": "",
 					"calltype": 2,
@@ -707,17 +729,6 @@
 					"helpline": "",
 					"hidden": true,
 					"argtypes": null,
-					"returntype": 2
-				},
-				{
-					"name": "audio_load_directory",
-					"extname": "",
-					"calltype": 2,
-					"helpline": "audio_load_directory(dir)",
-					"hidden": false,
-					"argtypes": [
-						2
-					],
 					"returntype": 2
 				}
 			],

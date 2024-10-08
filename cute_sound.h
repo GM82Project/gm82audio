@@ -2347,17 +2347,17 @@ void cs_mix()
 							int i2 = cs_mm_extract_epi32(index_int, 1);
 							int i3 = cs_mm_extract_epi32(index_int, 0);
 
-							cs__m128 loA = cs_mm_set_ps(
-								i0 > loop_b ? loop_a : i0 < loop_a ? loop_b : ((float*)cA)[i0],
-								i1 > loop_b ? loop_a : i1 < loop_a ? loop_b : ((float*)cA)[i1],
-								i2 > loop_b ? loop_a : i2 < loop_a ? loop_b : ((float*)cA)[i2],
-								i3 > loop_b ? loop_a : i3 < loop_a ? loop_b : ((float*)cA)[i3]
+							cs__m128 loA = cs_mm_set_ps(                                
+								((float*)cA)[i0 > loop_b ? loop_b : i0 < loop_a ? loop_a : i0],
+								((float*)cA)[i1 > loop_b ? loop_b : i1 < loop_a ? loop_a : i1],
+								((float*)cA)[i2 > loop_b ? loop_b : i2 < loop_a ? loop_a : i2],
+								((float*)cA)[i3 > loop_b ? loop_b : i3 < loop_a ? loop_a : i3]
 							);
 							cs__m128 hiA = cs_mm_set_ps(
-								i0 + 1 > loop_b ? loop_a : i0 + 1 < loop_a ? loop_b : ((float*)cA)[i0 + 1],
-								i1 + 1 > loop_b ? loop_a : i1 + 1 < loop_a ? loop_b : ((float*)cA)[i1 + 1],
-								i2 + 1 > loop_b ? loop_a : i2 + 1 < loop_a ? loop_b : ((float*)cA)[i2 + 1],
-								i3 + 1 > loop_b ? loop_a : i3 + 1 < loop_a ? loop_b : ((float*)cA)[i3 + 1]
+								((float*)cA)[i0+1 > loop_b ? loop_b : i0+1 < loop_a ? loop_a : i0+1],
+								((float*)cA)[i1+1 > loop_b ? loop_b : i1+1 < loop_a ? loop_a : i1+1],
+								((float*)cA)[i2+1 > loop_b ? loop_b : i2+1 < loop_a ? loop_a : i2+1],
+								((float*)cA)[i3+1 > loop_b ? loop_b : i3+1 < loop_a ? loop_a : i3+1]
 							);
 
 							cs__m128 A = cs_mm_add_ps(loA, cs_mm_mul_ps(index_frac, cs_mm_sub_ps(hiA, loA)));
@@ -2380,30 +2380,30 @@ void cs_mix()
 							int i2 = cs_mm_extract_epi32(index_int, 1);
 							int i3 = cs_mm_extract_epi32(index_int, 0);
 
-							cs__m128 loA = cs_mm_set_ps(
-								i0 > loop_b ? loop_a : i0 < loop_a ? loop_b : ((float*)cA)[i0],
-								i1 > loop_b ? loop_a : i1 < loop_a ? loop_b : ((float*)cA)[i1],
-								i2 > loop_b ? loop_a : i2 < loop_a ? loop_b : ((float*)cA)[i2],
-								i3 > loop_b ? loop_a : i3 < loop_a ? loop_b : ((float*)cA)[i3]
+							cs__m128 loA = cs_mm_set_ps(                                
+								((float*)cA)[i0 > loop_b ? loop_b : i0 < loop_a ? loop_a : i0],
+								((float*)cA)[i1 > loop_b ? loop_b : i1 < loop_a ? loop_a : i1],
+								((float*)cA)[i2 > loop_b ? loop_b : i2 < loop_a ? loop_a : i2],
+								((float*)cA)[i3 > loop_b ? loop_b : i3 < loop_a ? loop_a : i3]
 							);
 							cs__m128 hiA = cs_mm_set_ps(
-								i0 + 1 > loop_b ? loop_a : i0 + 1 < loop_a ? loop_b : ((float*)cA)[i0 + 1],
-								i1 + 1 > loop_b ? loop_a : i1 + 1 < loop_a ? loop_b : ((float*)cA)[i1 + 1],
-								i2 + 1 > loop_b ? loop_a : i2 + 1 < loop_a ? loop_b : ((float*)cA)[i2 + 1],
-								i3 + 1 > loop_b ? loop_a : i3 + 1 < loop_a ? loop_b : ((float*)cA)[i3 + 1]
+								((float*)cA)[i0+1 > loop_b ? loop_b : i0+1 < loop_a ? loop_a : i0+1],
+								((float*)cA)[i1+1 > loop_b ? loop_b : i1+1 < loop_a ? loop_a : i1+1],
+								((float*)cA)[i2+1 > loop_b ? loop_b : i2+1 < loop_a ? loop_a : i2+1],
+								((float*)cA)[i3+1 > loop_b ? loop_b : i3+1 < loop_a ? loop_a : i3+1]
 							);
 
-							cs__m128 loB = cs_mm_set_ps(
-								i0 > loop_b ? loop_a : i0 < loop_a ? loop_b : ((float*)cB)[i0],
-								i1 > loop_b ? loop_a : i1 < loop_a ? loop_b : ((float*)cB)[i1],
-								i2 > loop_b ? loop_a : i2 < loop_a ? loop_b : ((float*)cB)[i2],
-								i3 > loop_b ? loop_a : i3 < loop_a ? loop_b : ((float*)cB)[i3]
+							cs__m128 loB = cs_mm_set_ps(                                
+								((float*)cA)[i0 > loop_b ? loop_b : i0 < loop_a ? loop_a : i0],
+								((float*)cA)[i1 > loop_b ? loop_b : i1 < loop_a ? loop_a : i1],
+								((float*)cA)[i2 > loop_b ? loop_b : i2 < loop_a ? loop_a : i2],
+								((float*)cA)[i3 > loop_b ? loop_b : i3 < loop_a ? loop_a : i3]
 							);
 							cs__m128 hiB = cs_mm_set_ps(
-								i0 + 1 > loop_b ? loop_a : i0 + 1 < loop_a ? loop_b : ((float*)cB)[i0 + 1],
-								i1 + 1 > loop_b ? loop_a : i1 + 1 < loop_a ? loop_b : ((float*)cB)[i1 + 1],
-								i2 + 1 > loop_b ? loop_a : i2 + 1 < loop_a ? loop_b : ((float*)cB)[i2 + 1],
-								i3 + 1 > loop_b ? loop_a : i3 + 1 < loop_a ? loop_b : ((float*)cB)[i3 + 1]
+								((float*)cB)[i0+1 > loop_b ? loop_b : i0+1 < loop_a ? loop_a : i0+1],
+								((float*)cB)[i1+1 > loop_b ? loop_b : i1+1 < loop_a ? loop_a : i1+1],
+								((float*)cB)[i2+1 > loop_b ? loop_b : i2+1 < loop_a ? loop_a : i2+1],
+								((float*)cB)[i3+1 > loop_b ? loop_b : i3+1 < loop_a ? loop_a : i3+1]
 							);
 
 							cs__m128 A = cs_mm_add_ps(loA, cs_mm_mul_ps(index_frac, cs_mm_sub_ps(hiA, loA)));
@@ -2752,7 +2752,7 @@ cs_audio_source_t* cs_read_mem_wav(const void* memory, size_t size, cs_error_t* 
 			audio->channels[1] = 0;
 			cs__m128* a = (cs__m128*)audio->channels[0];
 			for (int i = 0, j = 0; i < wide_count - 1; ++i, j += 4) {
-				if (is_8bit) a[i] = cs_mm_set_ps((float)((samples8[j+3]-127)*512), (float)((samples8[j+2]-127)*512), (float)((samples8[j+1]-127)*512), (float)((samples8[j]-127)*512));
+				if (is_8bit) a[i] = cs_mm_set_ps((float)((samples8[j+3]-127)*1024), (float)((samples8[j+2]-127)*1024), (float)((samples8[j+1]-127)*1024), (float)((samples8[j]-127)*1024));
                 else a[i] = cs_mm_set_ps((float)samples[j+3], (float)samples[j+2], (float)samples[j+1], (float)samples[j]);
 			}
 			if (is_8bit) cs_last_element8(a, wide_count - 1, (wide_count - 1) * 4, samples8, wide_offset);
@@ -2765,8 +2765,8 @@ cs_audio_source_t* cs_read_mem_wav(const void* memory, size_t size, cs_error_t* 
 			cs__m128* b = a + wide_count;
 			for (int i = 0, j = 0; i < wide_count - 1; ++i, j += 8){
 				if (is_8bit) {
-                    a[i] = cs_mm_set_ps((float)((samples8[j+6]-127)*512), (float)((samples8[j+4]-127)*512), (float)((samples8[j+2]-127)*512), (float)((samples8[j]-127)*512));
-                    b[i] = cs_mm_set_ps((float)((samples8[j+7]-127)*512), (float)((samples8[j+5]-127)*512), (float)((samples8[j+3]-127)*512), (float)((samples8[j+1]-127)*512));
+                    a[i] = cs_mm_set_ps((float)((samples8[j+6]-127)*1024), (float)((samples8[j+4]-127)*1024), (float)((samples8[j+2]-127)*1024), (float)((samples8[j]-127)*1024));
+                    b[i] = cs_mm_set_ps((float)((samples8[j+7]-127)*1024), (float)((samples8[j+5]-127)*1024), (float)((samples8[j+3]-127)*1024), (float)((samples8[j+1]-127)*1024));
                 } else {
                     a[i] = cs_mm_set_ps((float)samples[j+6], (float)samples[j+4], (float)samples[j+2], (float)samples[j]);
                     b[i] = cs_mm_set_ps((float)samples[j+7], (float)samples[j+5], (float)samples[j+3], (float)samples[j+1]);

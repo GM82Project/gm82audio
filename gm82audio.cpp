@@ -9,6 +9,7 @@
 #include "cute_sound.h"
 
 #include <vector>
+#include <stdlib.h>
 
 #define GMREAL extern "C" __declspec(dllexport) double __cdecl 
 #define GMSTR extern "C" __declspec(dllexport) char* __cdecl
@@ -30,6 +31,30 @@ struct sound_struct {
     bool deleted=false;
     sound_struct(cs_audio_source_t* source): source(source){};
 };
+
+struct TMemoryStream {
+    uint32_t vfp;
+    void* memory;
+    uint32_t size;
+    uint32_t position;
+    uint32_t capacity;
+};
+
+struct GMSound {
+    uint32_t vfp;
+    uint32_t kind;
+    char* extension;
+    char* origname;
+    TMemoryStream* memstream;
+    uint32_t preload;
+    uint32_t effects;
+    double volume;
+    double pan;
+    uint32_t index;
+    wchar_t* fname;
+};
+
+static GMSound*** gm_sound_mem = (GMSound***)0x6840c0;
 
 
 static double SAMPLE_RATE=44100;
@@ -86,6 +111,33 @@ GMREAL __gm82audio_load_mem(double gmbuffer,double length,double type) {
     cs_audio_source_t* snd;
     if (type>=0.5) snd=cs_read_mem_ogg((void*)(size_t)gmbuffer,(size_t)length,&error);
     else snd=cs_read_mem_wav((void*)(size_t)gmbuffer,(size_t)length,&error);
+    if (snd==NULL) strcpy(ERROR_STR,cs_error_as_string(error));
+    return (double)__gm82audio_store_sound(snd);
+}
+
+GMREAL __gm82audio_load_builtin(double index) {
+    cs_error_t error;
+    cs_audio_source_t* snd;
+    
+    GMSound* sound=(*gm_sound_mem)[(int)index];
+    TMemoryStream* memstream=sound->memstream;
+    
+    if (memstream==NULL) {
+        //we are looking at an exported sound file
+        wchar_t* fnwide=sound->fname;
+        size_t len=wcslen(fnwide);
+        char* fnchar=(char*)malloc(wcstombs(NULL,fnwide,len));
+        wcstombs(fnchar,fnwide,len);
+        if (memcmp("wav",sound->extension,3)) snd=cs_load_wav(fnchar,&error);
+        if (memcmp("ogg",sound->extension,3)) snd=cs_load_ogg(fnchar,&error);
+        free(fnchar);
+    } else {
+        void* buffer=sound->memstream->memory;
+        int length=sound->memstream->size;
+        if (cs_four_cc("RIFF", buffer)) snd=cs_read_mem_wav(buffer,length,&error);
+        if (cs_four_cc("OggS", buffer)) snd=cs_read_mem_ogg(buffer,length,&error);
+    }
+    
     if (snd==NULL) strcpy(ERROR_STR,cs_error_as_string(error));
     return (double)__gm82audio_store_sound(snd);
 }

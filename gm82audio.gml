@@ -346,7 +346,7 @@
     ///audio_load_directory(dir)
     //dir: relative or absolute path to search
     //returns: map with loaded sounds
-    //Note that this function uses file_find internally. wav and ogg files are supported.
+    //Note that this function uses file_find internally. wav and ogg vorbis are supported.
     var __fn,__i,__map,__list,__snd;
     
     __map=ds_map_create()
@@ -377,5 +377,17 @@
     __snd=audio_load(__fname)
     file_delete(__fname)
     return __snd
+#define audio_load_builtin
+    ///audio_load_builtin(index)
+    //index: a builtin sound to load
+    //returns: sound index for use with the other audio_ functions
+    //Loads a builtin game maker sound to use. wav and ogg vorbis are supported.
+    var __ret;
+    if (sound_exists(argument0)) {
+        __ret=__gm82audio_load_builtin(argument0)
+        if (!__ret) show_error("in function audio_load_builtin(): "+__gm82audio_get_error(),0)
+        return __ret
+    } else show_error("in function audio_load_builtin: sound index "+string(argument0)+" does not exist",0)
+    return 0
 //
 //

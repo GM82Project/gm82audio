@@ -340,5 +340,29 @@
     if (argument_count==3) __b=argument[2]
     
     __gm82audio_set_loop_points(argument[0],argument[1],__b)
+
+
+#define audio_load_directory
+    ///audio_load_directory(dir)
+    //dir: relative or absolute path to search
+    //returns: map with loaded sounds
+    //Note that this function uses file_find internally. wav and ogg files are supported.
+    var __fn,__i,__map,__list,__snd;
+    
+    __map=ds_map_create()
+    
+    __list=file_find_list(argument0,"*.*",0,1,1)
+    
+    __i=0 repeat (ds_list_size(__list)) {
+        __fn=ds_list_find_value(__list,__i)
+        if (string_pos(string_lower(filename_ext(__fn)),".wav;.ogg;")) {
+            __snd=audio_load(__fn)
+            if (__snd) ds_map_add(__map,filename_name(__fn),__snd)
+        }
+    __i+=1}
+    ds_list_destroy(__list)
+    
+    return __map
+
 //
 //

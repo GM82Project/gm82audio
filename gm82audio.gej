@@ -289,18 +289,7 @@
 					"name": "audio_stop",
 					"extname": "__gm82audio_sound_stop",
 					"calltype": 12,
-					"helpline": "audio_stop(instance)",
-					"hidden": false,
-					"argtypes": [
-						2
-					],
-					"returntype": 2
-				},
-				{
-					"name": "audio_stop_all",
-					"extname": "__gm82audio_sound_stop_instances",
-					"calltype": 12,
-					"helpline": "audio_stop_all(sound)",
+					"helpline": "audio_stop(sound/inst)",
 					"hidden": false,
 					"argtypes": [
 						2

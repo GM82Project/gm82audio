@@ -279,15 +279,6 @@ GMREAL __gm82audio_get_length(double soundid) {
     );
 }
 
-GMREAL __gm82audio_sound_stop_instances(double soundid) {
-    ///audio_stop_all(sound)
-    //sound: sound index to stop
-    //Deletes all instances of the sound.
-    __CHECK_EXISTS_DEL(soundid,sound);
-    cs_stop_all_instances_of(sound->source);
-    return 0;
-}
-
 GMREAL __gm82audio_set_loop_points(double soundid,double pointa, double pointb) {
     __CHECK_EXISTS_DEL(soundid,sound);
     uint32_t sr=cs_get_sample_rate(sound->source);
@@ -427,11 +418,15 @@ GMREAL __gm82audio_set_pos(double inst,double pos) {
     return 0;
 }
 
-GMREAL __gm82audio_sound_stop(double inst) {
-    ///audio_stop(inst)
-    //inst: sound instance to stop
-    //Deletes a sound instance.
-    if (inst>=0) return 0;
-    cs_sound_stop({(uint64_t)-inst});
+GMREAL __gm82audio_sound_stop(double index) {
+    ///audio_stop(sound/inst)
+    //sound/inst: sound index or instance to stop
+    //Deletes a sound instance, or all instances of a sound.
+    if (index>=0) {
+        __CHECK_EXISTS_DEL(index,sound);
+        cs_stop_all_instances_of(sound->source);
+        return 0;
+    }
+    cs_sound_stop({(uint64_t)-index});
     return 0;
 }

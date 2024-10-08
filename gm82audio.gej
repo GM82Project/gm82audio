@@ -94,6 +94,17 @@
 					"returntype": 2
 				},
 				{
+					"name": "audio_isplaying",
+					"extname": "__gm82audio_isplaying",
+					"calltype": 12,
+					"helpline": "audio_isplaying(index)",
+					"hidden": false,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
 					"name": "audio_loop",
 					"extname": "__gm82audio_set_loop",
 					"calltype": 12,

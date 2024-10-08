@@ -132,6 +132,29 @@ GMREAL __gm82audio_stop_all(double musictoo) {
     return 0;
 }
 
+GMREAL __gm82audio_sound_stop(double index) {
+    ///audio_stop(sound/inst)
+    //sound/inst: sound index or instance to stop
+    //Deletes a sound instance, or all instances of a sound.
+    if (index>=0) {
+        __CHECK_EXISTS_DEL(index,sound);
+        cs_stop_all_instances_of(sound->source);
+        return 0;
+    }
+    cs_sound_stop({(uint64_t)-index});
+    return 0;
+}
+
+GMREAL __gm82audio_isplaying(double index) {
+    ///audio_isplaying(sound/inst)
+    //sound/inst: sound index or instance to check
+    //Returns the number of instances of a sound, or if the instance is active.
+    if (index>=0) {
+        __CHECK_EXISTS_DEL(index,sound);
+        return sound->source->playing_count;
+    }
+    return cs_sound_is_active({(uint64_t)-index});    
+}
 
 //music
 GMREAL __gm82audio_music_volume(double volume) {
@@ -415,18 +438,5 @@ GMREAL __gm82audio_set_pos(double inst,double pos) {
             ))
         );
     }
-    return 0;
-}
-
-GMREAL __gm82audio_sound_stop(double index) {
-    ///audio_stop(sound/inst)
-    //sound/inst: sound index or instance to stop
-    //Deletes a sound instance, or all instances of a sound.
-    if (index>=0) {
-        __CHECK_EXISTS_DEL(index,sound);
-        cs_stop_all_instances_of(sound->source);
-        return 0;
-    }
-    cs_sound_stop({(uint64_t)-index});
     return 0;
 }

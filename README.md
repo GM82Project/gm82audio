@@ -10,6 +10,7 @@ Dependencies:
 - Game Maker 8.2 Network - used for loading sounds from memory and from WASD packs
 
 cute_sound is copyright (c) 2023 [Randy Gaul](https://github.com/RandyGaul), part of [Cute Framework](https://github.com/RandyGaul/cute_framework).
-contains contributions by [renex](https://github.com/omicronrex) - mainly 8-bit pcm support and loop points.
+
+Contains contributions by [renex](https://github.com/omicronrex) - mainly 8-bit pcm support and loop points.
 
 More detailed usage information is included in the GM 8.2 [Johnny](https://github.com/omicronrex/Johnny) manual.

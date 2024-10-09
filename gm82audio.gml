@@ -377,15 +377,23 @@
     __snd=audio_load(__fname)
     file_delete(__fname)
     return __snd
+
+
 #define audio_load_builtin
     ///audio_load_builtin(index)
     //index: a builtin sound to load
     //returns: sound index for use with the other audio_ functions
     //Loads a builtin game maker sound to use. wav and ogg vorbis are supported.
+    //Note that this function will not use the volume and pan values set in the sound editor.
+    //Additionally, please remember that the returned sound index will be different from the game maker sound index!
     var __ret;
     if (sound_exists(argument0)) {
         __ret=__gm82audio_load_builtin(argument0)
-        if (!__ret) show_error("in function audio_load_builtin(): "+__gm82audio_get_error(),0)
+        if (!__ret) {
+            show_error("in function audio_load_builtin(): "+__gm82audio_get_error(),0)
+            return 0
+        }
+        sound_discard(argument0)
         return __ret
     } else show_error("in function audio_load_builtin: sound index "+string(argument0)+" does not exist",0)
     return 0

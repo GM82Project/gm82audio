@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <stdlib.h>
+#include <stdio.h>
 
 #define GMREAL extern "C" __declspec(dllexport) double __cdecl 
 #define GMSTR extern "C" __declspec(dllexport) char* __cdecl
@@ -123,15 +124,34 @@ GMREAL __gm82audio_load_builtin(double index) {
     TMemoryStream* memstream=sound->memstream;
     
     if (memstream==NULL) {
-        //we are looking at an exported sound file
-        wchar_t* fnwide=sound->fname;
-        size_t len=wcslen(fnwide);
-        char* fnchar=(char*)malloc(wcstombs(NULL,fnwide,len));
-        wcstombs(fnchar,fnwide,len);
-        if (memcmp("wav",sound->extension,3)) snd=cs_load_wav(fnchar,&error);
-        if (memcmp("ogg",sound->extension,3)) snd=cs_load_ogg(fnchar,&error);
-        free(fnchar);
+        //we are looking at an exported "external codec" sound file...
+        void* data = NULL;
+        int size;
+
+        //the path to the temp file is stored on this field
+        FILE* fp = _wfopen(sound->fname, L"rb");
+
+        //load the file data
+        if (fp) {
+            fseek(fp, 0, SEEK_END);
+            size = (int)ftell(fp);
+            fseek(fp, 0, SEEK_SET);
+            data = malloc(size);
+            fread(data, size, 1, fp);
+            fclose(fp);
+        }
+
+        if (!data) {
+            strcpy(ERROR_STR,"somehow the file data was null? tell renex about this.");
+            return NULL;
+        }
+
+        if (memcmp("wav",sound->extension,3)) snd=cs_read_mem_wav(data,size,&error);
+        if (memcmp("ogg",sound->extension,3)) snd=cs_read_mem_ogg(data,size,&error);
+        
+        free(data);
     } else {
+        //it's a valid builtin sound type loaded in memory, we can just grab it...
         void* buffer=sound->memstream->memory;
         int length=sound->memstream->size;
         if (cs_four_cc("RIFF", buffer)) snd=cs_read_mem_wav(buffer,length,&error);

@@ -388,6 +388,8 @@
     //Additionally, please remember that the returned sound index will be different from the game maker sound index!
     var __ret;
     if (sound_exists(argument0)) {
+        //make sure the sound is preloaded or exported
+        sound_restore(argument0)
         __ret=__gm82audio_load_builtin(argument0)
         if (!__ret) {
             show_error("in function audio_load_builtin(): "+__gm82audio_get_error(),0)

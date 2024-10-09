@@ -393,6 +393,7 @@
             show_error("in function audio_load_builtin(): "+__gm82audio_get_error(),0)
             return 0
         }
+        //we don't need it anymore
         sound_discard(argument0)
         return __ret
     } else show_error("in function audio_load_builtin: sound index "+string(argument0)+" does not exist",0)

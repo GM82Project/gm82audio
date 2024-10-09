@@ -27,12 +27,7 @@ if (index<=0 || index>=SOUND_INDEX) return __ERROR_NONEXIST;\
     if (sound->deleted) return __ERROR_DELETED;
 
 
-struct sound_struct {
-    cs_audio_source_t* source;
-    bool deleted=false;
-    sound_struct(cs_audio_source_t* source): source(source){};
-};
-
+//game maker 8.1 sound memory structures
 struct TMemoryStream {
     uint32_t vfp;
     void* memory;
@@ -55,8 +50,17 @@ struct GMSound {
     wchar_t* fname;
 };
 
+//game maker 8.1 runner memory locations
 static GMSound*** gm_sound_mem = (GMSound***)0x6840c0;
+static uint32_t* gm_sound_count = (uint32_t*)0x6840c8;
 
+
+//audio extension globals
+struct sound_struct {
+    cs_audio_source_t* source;
+    bool deleted=false;
+    sound_struct(cs_audio_source_t* source): source(source){};
+};
 
 static double SAMPLE_RATE=44100;
 static int SOUND_INDEX=1;
@@ -120,10 +124,12 @@ GMREAL __gm82audio_load_builtin(double index) {
     cs_error_t error;
     cs_audio_source_t* snd;
     
+    //grab the gm sound struct's memory stream by traversing memory
     GMSound* sound=(*gm_sound_mem)[(int)index];
     TMemoryStream* memstream=sound->memstream;
     
     if (memstream==NULL) {
+        //if there is no memory stream in the sound struct, then that means
         //we are looking at an exported "external codec" sound file...
         void* data = NULL;
         int size;
@@ -227,6 +233,7 @@ GMREAL __gm82audio_isplaying(double index) {
     }
     return cs_sound_is_active({(uint64_t)-index});    
 }
+
 
 //music
 GMREAL __gm82audio_music_volume(double volume) {

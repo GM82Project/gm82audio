@@ -19,7 +19,7 @@
 #define __ERROR_DELETED -0x1000002
 
 #define __CHECK_EXISTS(index,sound) \
-if (index<=0 || index>=SOUND_INDEX) return __ERROR_NONEXIST;\
+if (index<0 || index>=SOUND_INDEX) return __ERROR_NONEXIST;\
     sound_struct* sound=SOUNDS[(int)index];\
     if (sound==NULL) return __ERROR_NONEXIST;
         

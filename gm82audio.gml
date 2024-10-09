@@ -250,13 +250,13 @@
     //Creates a sound pack containing supported files from the source directory.
     var __dir,__save,__q,__fn,__size,__mb,__b;
     
-    __dir=filename_dir(argument0)
+    __dir=string_replace_all(filename_dir(argument0),"/","\")
     __save=argument1
 
     __q=ds_queue_create()
 
     for (__fn=file_find_first(__dir+"\*.*",0);__fn!="";__fn=file_find_next()) {
-        if (string_pos(string_lower(filename_ext(string(_fn))),".wav;.ogg;"))
+        if (string_pos(string_lower(filename_ext(string(__fn))),".wav;.ogg;"))
             ds_queue_enqueue(__q,__dir+"\"+__fn)
     } file_find_close()
 
@@ -289,9 +289,7 @@
     //returns: map with the sounds added
     //Adds a sound pack for use.
     //Note: Make sure to delete the returned map when you're done.
-    var __fn,__mb,__retlist,__b,__count,__name,__index,__length,__pos;
-
-    __fn=temp_directory+"\gm82\sound\wasd"
+    var __mb,__retlist,__b,__count,__name,__index,__length,__pos;
 
     __mb=buffer_create()
     buffer_load(__mb,argument0)
@@ -328,7 +326,7 @@
     //Note: Make sure to delete the returned list when you're done with it.
     var __dir,__mb,__retlist,__b,__count,__name,__fname,__length,__pos;
 
-    __dir=argument1+"\"
+    __dir=string_replace_all(argument1,"/","\")+"\"
     directory_create(__dir)
 
     __mb=buffer_create()

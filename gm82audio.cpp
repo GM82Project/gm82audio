@@ -15,12 +15,13 @@
 #define GMREAL extern "C" __declspec(dllexport) double __cdecl 
 #define GMSTR extern "C" __declspec(dllexport) char* __cdecl
 
-#define __ERROR_NONEXIST 0
-#define __ERROR_DELETED 0.1
+#define __ERROR_NONEXIST -0x1000001
+#define __ERROR_DELETED -0x1000002
 
 #define __CHECK_EXISTS(index,sound) \
 if (index<=0 || index>=SOUND_INDEX) return __ERROR_NONEXIST;\
     sound_struct* sound=SOUNDS[(int)index];\
+    if (sound==NULL) return __ERROR_NONEXIST;
         
 #define __CHECK_EXISTS_DEL(index,sound) \
     __CHECK_EXISTS(index,sound);\
@@ -63,19 +64,35 @@ struct sound_struct {
 };
 
 static double SAMPLE_RATE=44100;
-static int SOUND_INDEX=1;
+static int SOUND_INDEX=0;
+static int BUILTIN_COUNT;
 static std::vector<sound_struct*> SOUNDS;
 static char ERROR_STR[255];
 static bool MUSIC_PAUSED=false;
 static cs_audio_source_t* CURRENT_MUSIC_SOURCE=NULL;
 
+GMREAL __gm82audio_load_builtin(double);
 
 //initialization and system
 GMREAL __gm82audio_init(double gm_hwnd) {
     cs_init((HWND)(int)gm_hwnd,(int)SAMPLE_RATE,1024,NULL);
     cs_spawn_mix_thread();
     cs_mix_thread_sleep_delay(1);
-    SOUNDS.push_back(NULL);
+    
+    //reserve space for builtin sounds
+    BUILTIN_COUNT=*gm_sound_count;
+    SOUND_INDEX=BUILTIN_COUNT;
+    SOUNDS.reserve(SOUND_INDEX+256);
+    
+    //preload any builtin sounds
+    GMSound* sound;
+    for (int i=0;i<SOUND_INDEX;i+=1) {
+        SOUNDS.push_back(NULL);
+        sound=(*gm_sound_mem)[i];
+        if (sound) if (sound->preload) {
+            __gm82audio_load_builtin(i);
+        }
+    }
     return 0;
 }
 
@@ -164,16 +181,29 @@ GMREAL __gm82audio_load_builtin(double index) {
         if (cs_four_cc("OggS", buffer)) snd=cs_read_mem_ogg(buffer,length,&error);
     }
     
-    if (snd==NULL) strcpy(ERROR_STR,cs_error_as_string(error));
-    return (double)__gm82audio_store_sound(snd);
+    if (snd==NULL) {
+        strcpy(ERROR_STR,cs_error_as_string(error));
+        return 0;
+    }
+    
+    sound_struct* existing=SOUNDS[(int)index];
+    
+    if (existing!=NULL) {       
+        if (!existing->deleted) {
+            cs_free_audio_source(existing->source);
+        }
+        free(existing);
+    }
+    SOUNDS[(int)index]=new sound_struct(snd);
+    
+    return 1;
+}
+
+GMREAL __gm82audio_get_builtin_count() {
+    return BUILTIN_COUNT;
 }
 
 GMREAL __gm82audio_exists(double index) {
-    ///audio_exists(sound/inst)
-    //sound/inst: sound index to check, or instance
-    //returns: various values
-    //If a sound id is passed: 1 if it exists, 0 if it doesn't, 0.1 if it was deleted
-    //If an instance id is passed: 1 if it's still playing, 0 if it's finished
     if (index>=0) {
         __CHECK_EXISTS_DEL(index,sound);
         return 1;
@@ -372,9 +402,6 @@ GMREAL __gm82audio_sfx_play(double soundid,double vol,double pan,double pitch,do
 }
 
 GMREAL __gm82audio_get_length(double soundid) {
-    ///audio_get_length(sound)
-    //sound: sound index to get
-    //returns: the length of the sound, in seconds
     __CHECK_EXISTS_DEL(soundid,sound);
     return (double)(
         cs_get_sample_count(sound->source)/((double)cs_get_sample_rate(sound->source))

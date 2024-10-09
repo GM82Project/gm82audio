@@ -12,15 +12,43 @@
 
 
 #define __gm82audio_check
-    if (argument0==0) {
+    if (argument0==-$1000001) {
         show_error("in function "+argument1+": sound "+string(argument2)+" does not exist!",0)
         return 0
     }
-    if (argument0==0.1) {
+    if (argument0==-$1000002) {
         show_error("in function "+argument1+": sound "+string(argument2)+" is deleted!",0)
         return 0
     }
     return 1
+
+
+#define audio_preload_sound
+    ///audio_preload_sound(gmsound)
+    //gmsound: built-in sound resource id
+    //returns: 0 on success, 1 on error
+    //Preloads a builtin game maker sound for use in the audio_ functions.
+    //Prevents a lag spike when the sound is used for the first time.
+    if (argument0<__gm82audio_get_builtin_count()) {
+        if (sound_exists(argument0)) {
+            status=__gm82audio_exists(argument0)
+            if (status==-$1000001 || status==-$1000002) {
+                //make sure the sound is preloaded or exported
+                sound_restore(argument0)
+                if (!__gm82audio_load_builtin(argument0)) {
+                    show_error("error preloading builtin sound: "+__gm82audio_get_error(),0)
+                    return 1
+                } else {
+                    //we don't need it anymore
+                    sound_discard(argument0)
+                }
+            }
+        } else {
+            show_error("builtin sound index "+string(argument0)+" does not exist",0)
+            return 1
+        }
+    }
+    return 0
 
 
 #define audio_load
@@ -84,6 +112,7 @@
     //sound: sound index to play
     //returns: instance id
     //Plays a sound and returns an instance id.
+    if (audio_preload_sound(argument0)) exit
     var __call;__call=__gm82audio_sfx_play(argument0,1,0,1,0)
     __gm82audio_check(__call,"audio_play",argument0)
     return __call
@@ -95,6 +124,7 @@
     //vol,pan,pitch,loop: sound properties
     //returns: instance id
     //Plays a sound with preset properties and returns an instance id.
+    if (audio_preload_sound(argument0)) exit
     var __call;__call=__gm82audio_sfx_play(
         argument0,argument1,argument2,argument3,argument4
     )
@@ -107,6 +137,7 @@
     //sound: sound index to play
     //fadeintime: optional time to fade in in ms
     //Plays a music piece. There can only be one music instance.
+    if (audio_preload_sound(argument0)) exit
     var __fade;__fade=0
     
     if (argument_count==0 || argument_count>2) {
@@ -125,6 +156,7 @@
     //fadeintime: time to fade in in ms
     //vol,pan,pitch,loop: sound properties    
     //Plays a music piece with preset properties. There can only be one music instance.
+    if (audio_preload_sound(argument0)) exit
     __gm82audio_check(__gm82audio_music_play(
         argument0,argument1,argument2,argument3,argument4,argument5>=0.5
     ),"audio_music_play_ext",argument0)
@@ -135,6 +167,7 @@
     //sound: sound index to play
     //fadetime: time to crossfade in in ms
     //Plays a new music piece and crossfades it with the old one.
+    if (audio_preload_sound(argument0)) exit
     __gm82audio_check(__gm82audio_music_crossfade(
         argument0,argument1,1,0,1,1
     ),"audio_music_crossfade",argument0)
@@ -146,6 +179,7 @@
     //fadetime: time to crossfade in in ms
     //vol,pan,pitch,loop: sound properties   
     //Plays a new music piece with preset properties and crossfades it with the old one.
+    if (audio_preload_sound(argument0)) exit
     __gm82audio_check(__gm82audio_music_crossfade(
         argument0,argument1,argument2,argument3,argument4,argument5>=0.5
     ),"audio_music_crossfade_ext",argument0)
@@ -157,6 +191,7 @@
     //fadeouttime: time to fade out in ms
     //fadeintime: optional, time to fade in in ms
     //Plays a new music piece and fades out and in to it.
+    if (audio_preload_sound(argument0)) exit
     var __fadein;
     
     if (argument_count<2 || argument_count>3) {
@@ -179,6 +214,7 @@
     //fadeintime: time to fade in in ms
     //vol,pan,pitch,loop: sound properties
     //Plays a new music piece with preset properties and fades out and in to it.
+    if (audio_preload_sound(argument0)) exit
     __gm82audio_check(__gm82audio_music_switch(
         argument0,argument1,argument2,argument3,argument4,argument5,argument6>=0.5
     ),"audio_music_switch_ext",argument0)
@@ -329,6 +365,7 @@
     //b (optional): loop end in seconds
     //Sets the loop points to use when playing a sound with looping enabled.
     //When B isn't supplied, it is set to the end of the file.
+    if (audio_preload_sound(argument0)) exit
     var __b;
     
     if (argument_count<2 || argument_count>3) {
@@ -379,26 +416,28 @@
     return __snd
 
 
-#define audio_load_builtin
-    ///audio_load_builtin(index)
-    //index: a builtin sound to load
-    //returns: sound index for use with the other audio_ functions
-    //Loads a builtin game maker sound to use. wav and ogg vorbis are supported.
-    //Note that this function will not use the volume and pan values set in the sound editor.
-    //Additionally, please remember that the returned sound index will be different from the game maker sound index!
-    var __ret;
-    if (sound_exists(argument0)) {
-        //make sure the sound is preloaded or exported
-        sound_restore(argument0)
-        __ret=__gm82audio_load_builtin(argument0)
-        if (!__ret) {
-            show_error("in function audio_load_builtin(): "+__gm82audio_get_error(),0)
-            return 0
-        }
-        //we don't need it anymore
-        sound_discard(argument0)
-        return __ret
-    } else show_error("in function audio_load_builtin: sound index "+string(argument0)+" does not exist",0)
-    return 0
+#define audio_get_length
+    ///audio_get_length(sound)
+    //sound: sound index to get
+    //returns: the length of the sound, in seconds
+    if (audio_preload_sound(argument0)) return 0
+    return __gm82audio_get_length(argument0)
+
+
+#define audio_exists
+    ///audio_exists(sound/inst)
+    //sound/inst: sound index to check, or instance
+    //returns: various values
+    //If a sound id is passed: 1 if it exists, 0 if it doesn't, 0.1 if it was deleted
+    //If an instance id is passed: 1 if it's still playing, 0 if it's finished
+    if (argument0<__gm82audio_get_builtin_count()) {
+        return sound_exists(argument0)
+    } else {
+        return __gm82audio_exists(argument0)
+    }
+
+
+#define sound_add
+    show_error("in function sound_add: please use audio_load instead!",0)
 //
 //

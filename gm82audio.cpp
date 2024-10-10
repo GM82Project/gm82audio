@@ -186,6 +186,9 @@ GMREAL __gm82audio_load_builtin(double index) {
         return 0;
     }
     
+    snd->default_volume = (sound->volume-0.3)/0.7;
+    snd->default_pan = sound->pan;
+    
     sound_struct* existing=SOUNDS[(int)index];
     
     if (existing!=NULL) {       
@@ -262,6 +265,16 @@ GMREAL __gm82audio_isplaying(double index) {
         return sound->source->playing_count;
     }
     return cs_sound_is_active({(uint64_t)-index});    
+}
+
+GMREAL __gm82audio_get_def_vol(double soundid) {
+    __CHECK_EXISTS_DEL(soundid,sound);
+    return sound->source->default_volume;
+}
+
+GMREAL __gm82audio_get_def_pan(double soundid) {
+    __CHECK_EXISTS_DEL(soundid,sound);
+    return sound->source->default_pan;
 }
 
 

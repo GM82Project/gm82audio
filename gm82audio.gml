@@ -113,7 +113,7 @@
     //returns: instance id
     //Plays a sound and returns an instance id.
     if (audio_preload_sound(argument0)) exit
-    var __call;__call=__gm82audio_sfx_play(argument0,1,0,1,0)
+    var __call;__call=__gm82audio_sfx_play(argument0,__gm82audio_get_def_vol(argument0),__gm82audio_get_def_pan(argument0),1,0)
     __gm82audio_check(__call,"audio_play",argument0)
     return __call
 
@@ -146,7 +146,7 @@
     }
     if (argument_count==2) __fade=max(0,argument[1])
     __gm82audio_check(__gm82audio_music_play(
-        argument[0],__fade,1,0,1,1
+        argument[0],__fade,__gm82audio_get_def_vol(argument0),__gm82audio_get_def_pan(argument0),1,1
     ),"audio_music_play",argument0)
 
 
@@ -169,7 +169,7 @@
     //Plays a new music piece and crossfades it with the old one.
     if (audio_preload_sound(argument0)) exit
     __gm82audio_check(__gm82audio_music_crossfade(
-        argument0,argument1,1,0,1,1
+        argument0,argument1,__gm82audio_get_def_vol(argument0),__gm82audio_get_def_pan(argument0),1,1
     ),"audio_music_crossfade",argument0)
 
 
@@ -203,7 +203,7 @@
     if (argument_count==3) __fadein=argument[2]
     
     __gm82audio_check(__gm82audio_music_switch(
-        argument[0],argument[1],__fadein,1,0,1,1
+        argument[0],argument[1],__fadein,__gm82audio_get_def_vol(argument0),__gm82audio_get_def_pan(argument0),1,1
     ),"audio_music_switch",argument[0])
 
 

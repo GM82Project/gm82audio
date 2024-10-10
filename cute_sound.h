@@ -1390,6 +1390,10 @@ typedef struct cs_audio_source_t
     // Loop point information.
     uint32_t loop_point_a;
     uint32_t loop_point_b;
+    
+    //default options.
+    double default_volume;
+    double default_pan;
 } cs_audio_source_t;
 
 typedef struct cs_sound_inst_t
@@ -2735,10 +2739,12 @@ cs_audio_source_t* cs_read_mem_wav(const void* memory, size_t size, cs_error_t* 
 		//this fixes random popping at the end of sounds
 		audio->sample_count = sample_count-1;
 		audio->channel_count = fmt.nChannels;
-        
-        //by default, the loop points are the entire piece
-        audio->loop_point_a = 0;
-        audio->loop_point_b = audio->sample_count;
+		
+		//default properties
+		audio->loop_point_a = 0;
+		audio->loop_point_b = audio->sample_count;
+		audio->default_volume = 1.0;
+		audio->default_pan = 0.5;
 
 		int wide_count = (int)CUTE_SOUND_ALIGN(sample_count, 4) / 4;
 		int wide_offset = sample_count & 3;
@@ -2836,13 +2842,13 @@ int cs_get_channel_count(const cs_audio_source_t* audio)
 
 cs_error_t cs_set_loop_points(cs_audio_source_t* audio, uint32_t point_a, uint32_t point_b)
 {
-    if ((point_a<0 || point_a>=audio->sample_count || point_b<=point_a || point_b>=audio->sample_count))
-    {
-        return CUTE_SOUND_ERROR_INVALID_RANGE_FOR_ARGUMENTS;
-    }
-    audio->loop_point_a = point_a;
-    audio->loop_point_b = point_b;
-    return CUTE_SOUND_ERROR_NONE;
+	if ((point_a<0 || point_a>=audio->sample_count || point_b<=point_a || point_b>=audio->sample_count))
+	{
+	    return CUTE_SOUND_ERROR_INVALID_RANGE_FOR_ARGUMENTS;
+	}
+	audio->loop_point_a = point_a;
+	audio->loop_point_b = point_b;
+	return CUTE_SOUND_ERROR_NONE;
 }
 
 #if CUTE_SOUND_PLATFORM == CUTE_SOUND_SDL && defined(SDL_rwops_h_) && defined(CUTE_SOUND_SDL_RWOPS)
@@ -2935,10 +2941,6 @@ cs_audio_source_t* cs_read_mem_ogg(const void* memory, size_t length, cs_error_t
 			if (err) *err = CUTE_SOUND_ERROR_OGG_UNSUPPORTED_CHANNEL_COUNT;
 			CUTE_SOUND_ASSERT(false);
 		}
-        
-        //by default, the loop points are the entire piece
-        audio->loop_point_a = 0;
-        audio->loop_point_b = sample_count;
 
 		audio->sample_rate = sample_rate;
 		audio->sample_count = sample_count-1;
@@ -2947,6 +2949,12 @@ cs_audio_source_t* cs_read_mem_ogg(const void* memory, size_t length, cs_error_t
 		audio->channels[1] = b;
 		audio->playing_count = 0;
 		CUTE_SOUND_FREE(samples, s_mem_ctx);
+
+		//default properties
+		audio->loop_point_a = 0;
+		audio->loop_point_b = audio->sample_count;
+		audio->default_volume = 1.0;
+		audio->default_pan = 0.5;
 	}
 
 	if (err) *err = CUTE_SOUND_ERROR_NONE;

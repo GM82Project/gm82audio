@@ -148,6 +148,10 @@ GMREAL __gm82audio_load_builtin(double index) {
     if (memstream==NULL) {
         //if there is no memory stream in the sound struct, then that means
         //we are looking at an exported "external codec" sound file...
+        
+        //or an empty sound resource.
+        if (sound->fname==NULL) return 0;
+        
         void* data = NULL;
         int size;
 

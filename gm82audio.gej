@@ -742,10 +742,36 @@
 					"returntype": 2
 				},
 				{
+					"name": "audio_play_single",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_play_single(sound)",
+					"hidden": false,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
 					"name": "audio_play_ext",
 					"extname": "",
 					"calltype": 2,
 					"helpline": "audio_play_ext(sound,vol,pan,pitch,loop)",
+					"hidden": false,
+					"argtypes": [
+						2,
+						2,
+						2,
+						2,
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "audio_play_single_ext",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_play_single_ext(sound,vol,pan,pitch,loop)",
 					"hidden": false,
 					"argtypes": [
 						2,

@@ -118,6 +118,15 @@
     return __call
 
 
+#define audio_play_single
+    ///audio_play_single(sound)
+    //sound: sound index to play
+    //returns: instance id
+    //Plays a single instance of the sound and returns an instance id.
+    audio_stop(argument0)
+    return audio_play(argument0)
+
+
 #define audio_loop
     ///audio_loop(sound)
     //sound: sound index to loop
@@ -141,6 +150,16 @@
     )
     __gm82audio_check(__call,"audio_play_ext",argument0)
     return __call
+
+
+#define audio_play_single_ext
+    ///audio_play_single_ext(sound,vol,pan,pitch,loop)
+    //sound: sound index to play
+    //vol,pan,pitch,loop: sound properties
+    //returns: instance id
+    //Plays a single instance of the sound with preset properties and returns an instance id.
+    audio_stop(argument0)
+    return audio_play_ext(argument0, argument1, argument2, argument3, argument4)
 
 
 #define audio_music_play

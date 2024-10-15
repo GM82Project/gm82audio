@@ -15,8 +15,9 @@
 #define GMREAL extern "C" __declspec(dllexport) double __cdecl 
 #define GMSTR extern "C" __declspec(dllexport) char* __cdecl
 
-#define __ERROR_NONEXIST -0x1000001
-#define __ERROR_DELETED -0x1000002
+#define __ERROR_NONEXIST    -0x1000001
+#define __ERROR_DELETED     -0x1000002
+#define __ERROR_FAIL_LOAD   -0x1000003
 
 #define __CHECK_EXISTS(index,sound) \
 if (index<0 || index>=SOUND_INDEX) return __ERROR_NONEXIST;\
@@ -111,7 +112,7 @@ GMSTR  __gm82audio_get_error() {
 }
 
 int __gm82audio_store_sound(cs_audio_source_t* snd) {
-    if (snd==NULL) return 0;
+    if (snd==NULL) return __ERROR_FAIL_LOAD;
     SOUNDS.reserve((((SOUND_INDEX+1)/256)+1)*256);
     SOUNDS.push_back(new sound_struct(snd));
     return SOUND_INDEX++;
@@ -134,7 +135,7 @@ GMREAL __gm82audio_load_mem(double gmbuffer,double length,double type) {
     if (type>=0.5) snd=cs_read_mem_ogg((void*)(size_t)gmbuffer,(size_t)length,&error);
     else snd=cs_read_mem_wav((void*)(size_t)gmbuffer,(size_t)length,&error);
     if (snd==NULL) strcpy(ERROR_STR,cs_error_as_string(error));
-    return (double)__gm82audio_store_sound(snd);
+    return __gm82audio_store_sound(snd);
 }
 
 GMREAL __gm82audio_load_builtin(double index) {

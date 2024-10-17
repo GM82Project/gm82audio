@@ -131,17 +131,6 @@
     return audio_play(argument0)
 
 
-#define audio_loop
-    ///audio_loop(sound)
-    //sound: sound index to loop
-    //returns: instance id
-    //Loops a sound and returns an instance id.
-    if (audio_preload_sound(argument0)) exit
-    var __call;__call=__gm82audio_sfx_play(argument0,__gm82audio_get_def_vol(argument0),__gm82audio_get_def_pan(argument0),1,1)
-    __gm82audio_check(__call,"audio_play",argument0)
-    return __call
-
-
 #define audio_play_ext
     ///audio_play_ext(sound,vol,pan,pitch,loop)
     //sound: sound index to play

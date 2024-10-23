@@ -11,6 +11,7 @@
 #include <vector>
 #include <stdlib.h>
 #include <stdio.h>
+#include <windows.h>
 
 #define GMREAL extern "C" __declspec(dllexport) double __cdecl 
 #define GMSTR extern "C" __declspec(dllexport) char* __cdecl
@@ -76,7 +77,12 @@ GMREAL __gm82audio_load_builtin(double);
 
 //initialization and system
 GMREAL __gm82audio_init(double gm_hwnd) {
-    cs_init((HWND)(int)gm_hwnd,(int)SAMPLE_RATE,1024,NULL);
+    cs_error_t error = cs_init((HWND)(int)gm_hwnd,(int)SAMPLE_RATE,1024,NULL);
+    if (error) {
+        MessageBoxA(NULL,cs_error_as_string(error),"gm82audio error!",MB_OK|MB_ICONSTOP);
+        exit(1);
+        return 0;
+    }
     cs_spawn_mix_thread();
     cs_mix_thread_sleep_delay(1);
     

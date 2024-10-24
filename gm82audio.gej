@@ -632,6 +632,28 @@
 					"returntype": 2
 				},
 				{
+					"name": "audio_loop",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_loop(sound)",
+					"hidden": false,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "audio_loop_single",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_loop_single(sound)",
+					"hidden": false,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
 					"name": "audio_music_crossfade",
 					"extname": "",
 					"calltype": 2,
@@ -731,17 +753,6 @@
 					"returntype": 2
 				},
 				{
-					"name": "audio_play_single",
-					"extname": "",
-					"calltype": 2,
-					"helpline": "audio_play_single(sound)",
-					"hidden": false,
-					"argtypes": [
-						2
-					],
-					"returntype": 2
-				},
-				{
 					"name": "audio_play_ext",
 					"extname": "",
 					"calltype": 2,
@@ -752,6 +763,17 @@
 						2,
 						2,
 						2,
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "audio_play_single",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_play_single(sound)",
+					"hidden": false,
+					"argtypes": [
 						2
 					],
 					"returntype": 2

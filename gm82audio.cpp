@@ -464,18 +464,22 @@ GMREAL __gm82audio_delete(double soundid) {
     return 0;
 }
 
-
-//instances
-GMREAL __gm82audio_set_volume(double inst,double vol) {
-    ///audio_volume(inst,volume)
-    //inst: audio instance
+GMREAL __gm82audio_set_volume(double index,double vol) {
+    ///audio_set_volume(index,volume)
+    //index: sound index or audio instance
     //volume: gain factor
-    //Changes the volume of an audio instance. Volume above 1 is accepted.
-    if (inst>=0) return 0;
-    cs_sound_set_volume({(uint64_t)-inst},vol);
+    //Changes the volume of a sound source or audio instance. Volume above 1 is accepted.
+    if (index>=0) {
+        __CHECK_EXISTS_DEL(index,sound);
+        sound->source->default_volume=vol;
+        return 0;
+    }    
+    
+    cs_sound_set_volume({(uint64_t)-index},vol);
     return 0;
 }
 
+//instances
 GMREAL __gm82audio_set_pitch(double inst,double pitch) {
     ///audio_set_pitch(inst,pitch)
     //inst: audio instance

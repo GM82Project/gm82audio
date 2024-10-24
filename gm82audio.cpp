@@ -198,7 +198,7 @@ GMREAL __gm82audio_load_builtin(double index) {
     }
     
     snd->default_volume = (sound->volume-0.3)/0.7;
-    snd->default_pan = sound->pan;
+    snd->default_pan = sound->pan/2.0+0.5;
     
     sound_struct* existing=SOUNDS[(int)index];
     
@@ -285,7 +285,7 @@ GMREAL __gm82audio_get_def_vol(double soundid) {
 
 GMREAL __gm82audio_get_def_pan(double soundid) {
     __CHECK_EXISTS_DEL(soundid,sound);
-    return sound->source->default_pan;
+    return sound->source->default_pan*2.0-1.0;
 }
 
 

@@ -3,7 +3,7 @@
 	"folder": "gm82",
 	"version": "1.1",
 	"author": "renex, RandyGaul",
-	"date": "17/10/2024",
+	"date": "24/10/2024",
 	"license": "Free to use, also for commercial games.",
 	"description": "Part of the standard Game Maker 8.2 distribution. This extension package provides a custom C++ Audio Engine wrapping cute_sound. The extension does not override the builtin audio engine - functions start with audio_. cute_sound is copyright (c) 2023 Randy Gaul https://randygaul.github.io/",
 	"helpfile": "",
@@ -83,10 +83,10 @@
 					"returntype": 2
 				},
 				{
-					"name": "audio_loop",
+					"name": "audio_set_loop",
 					"extname": "__gm82audio_set_loop",
 					"calltype": 12,
-					"helpline": "audio_loop(inst,enabled)",
+					"helpline": "audio_set_loop(inst,enabled)",
 					"hidden": false,
 					"argtypes": [
 						2,
@@ -191,10 +191,10 @@
 					"returntype": 2
 				},
 				{
-					"name": "audio_pan",
+					"name": "audio_set_pan",
 					"extname": "__gm82audio_set_pan",
 					"calltype": 12,
-					"helpline": "audio_pan(inst,pan)",
+					"helpline": "audio_set_pan(inst,pan)",
 					"hidden": false,
 					"argtypes": [
 						2,
@@ -214,10 +214,10 @@
 					"returntype": 2
 				},
 				{
-					"name": "audio_pitch",
+					"name": "audio_set_pitch",
 					"extname": "__gm82audio_set_pitch",
 					"calltype": 12,
-					"helpline": "audio_pitch(inst,pitch)",
+					"helpline": "audio_set_pitch(inst,pitch)",
 					"hidden": false,
 					"argtypes": [
 						2,
@@ -286,10 +286,10 @@
 					"returntype": 2
 				},
 				{
-					"name": "audio_volume",
+					"name": "audio_set_volume",
 					"extname": "__gm82audio_set_volume",
 					"calltype": 12,
-					"helpline": "audio_volume(inst,volume)",
+					"helpline": "audio_set_volume(index,volume)",
 					"hidden": false,
 					"argtypes": [
 						2,

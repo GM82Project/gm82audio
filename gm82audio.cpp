@@ -477,7 +477,7 @@ GMREAL __gm82audio_set_volume(double inst,double vol) {
 }
 
 GMREAL __gm82audio_set_pitch(double inst,double pitch) {
-    ///audio_pitch(inst,pitch)
+    ///audio_set_pitch(inst,pitch)
     //inst: audio instance
     //pitch: pitch shifting factor
     //Changes the pitch of an audio instance. Negative pitch is accepted.
@@ -487,7 +487,7 @@ GMREAL __gm82audio_set_pitch(double inst,double pitch) {
 }
 
 GMREAL __gm82audio_set_pan(double inst,double pan) {
-    ///audio_pan(inst,pan)
+    ///audio_set_pan(inst,pan)
     //inst: audio instance
     //pan: panning value
     //Changes the horizontal positioning of an audio instance.
@@ -497,7 +497,7 @@ GMREAL __gm82audio_set_pan(double inst,double pan) {
 }
 
 GMREAL __gm82audio_set_loop(double inst,double loops) {
-    ///audio_loop(inst,enabled)
+    ///audio_set_loop(inst,enabled)
     //inst: audio instance
     //enabled: boolean
     //Enables or disables looping a sound instance.

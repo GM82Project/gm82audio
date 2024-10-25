@@ -563,6 +563,7 @@ void cs_set_global_user_allocator_context(void* user_allocator_context);
 
 	#ifdef _MSC_VER
 		#pragma comment(lib, "dsound.lib")
+		#pragma comment(lib, "dxguid.lib")
 	#endif
 
 #elif CUTE_SOUND_PLATFORM == CUTE_SOUND_APPLE
@@ -1481,7 +1482,7 @@ typedef struct cs_context_t
 	DWORD last_cursor;
 	unsigned running_index;
 	int buffer_size;
-	LPDIRECTSOUND dsound;
+	LPDIRECTSOUND8 dsound;
 	LPDIRECTSOUNDBUFFER primary;
 	LPDIRECTSOUNDBUFFER secondary;
 
@@ -1721,7 +1722,7 @@ cs_error_t cs_init(void* os_handle, unsigned play_frequency_in_Hz, int buffered_
 #if CUTE_SOUND_PLATFORM == CUTE_SOUND_WINDOWS
 
 	int buffer_size = buffered_samples * bps;
-	LPDIRECTSOUND dsound = NULL;
+	LPDIRECTSOUND8 dsound = NULL;
 	LPDIRECTSOUNDBUFFER primary_buffer = NULL;
 	LPDIRECTSOUNDBUFFER secondary_buffer = NULL;
 
@@ -1729,9 +1730,9 @@ cs_error_t cs_init(void* os_handle, unsigned play_frequency_in_Hz, int buffered_
 	{
 		WAVEFORMATEX format = { 0, 0, 0, 0, 0, 0, 0 };
 		DSBUFFERDESC bufdesc = { 0, 0, 0, 0, 0, { 0, 0, 0, 0 } };
-		HRESULT res = DirectSoundCreate(0, &dsound, 0);
+		HRESULT res = DirectSoundCreate8(0, &dsound, 0);
 		if (res != DS_OK) return CUTE_SOUND_ERROR_DIRECTSOUND_CREATE_FAILED;
-		IDirectSound_SetCooperativeLevel(dsound, (HWND)os_handle, DSSCL_PRIORITY);
+		IDirectSound8_SetCooperativeLevel(dsound, (HWND)os_handle, DSSCL_PRIORITY);
 		bufdesc.dwSize = sizeof(bufdesc);
 		bufdesc.dwFlags = DSBCAPS_PRIMARYBUFFER;
 
@@ -1745,11 +1746,11 @@ cs_error_t cs_init(void* os_handle, unsigned play_frequency_in_Hz, int buffered_
 		format.nBlockAlign = (format.nChannels * format.wBitsPerSample) / 8;
 		format.nAvgBytesPerSec = format.nSamplesPerSec * format.nBlockAlign;
 		format.cbSize = 0;
-		res = IDirectSoundBuffer_SetFormat(primary_buffer, &format);
+		res = IDirectSoundBuffer8_SetFormat(primary_buffer, &format);
 		if (res != DS_OK) return CUTE_SOUND_ERROR_SETFORMAT_FAILED;
 
 		bufdesc.dwSize = sizeof(bufdesc);
-		bufdesc.dwFlags = DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_GLOBALFOCUS;
+		bufdesc.dwFlags = DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLFX;
 		bufdesc.dwBufferBytes = buffer_size;
 		bufdesc.lpwfxFormat = &format;
 		res = IDirectSound_CreateSoundBuffer(dsound, &bufdesc, &secondary_buffer, 0);
@@ -1760,11 +1761,20 @@ cs_error_t cs_init(void* os_handle, unsigned play_frequency_in_Hz, int buffered_
 		DWORD size1;
 		void* region2;
 		DWORD size2;
-		res = IDirectSoundBuffer_Lock(secondary_buffer, 0, bufdesc.dwBufferBytes, &region1, &size1, &region2, &size2, DSBLOCK_ENTIREBUFFER);
+		res = IDirectSoundBuffer8_Lock(secondary_buffer, 0, bufdesc.dwBufferBytes, &region1, &size1, &region2, &size2, DSBLOCK_ENTIREBUFFER);
 		if (res == DS_OK) {
 			CUTE_SOUND_MEMSET(region1, 0, size1);
-			IDirectSoundBuffer_Unlock(secondary_buffer, region1, size1, region2, size2);
+			IDirectSoundBuffer8_Unlock(secondary_buffer, region1, size1, region2, size2);
 		}
+        
+        DSEFFECTDESC effectdesc;
+        memset(&effectdesc, 0, sizeof(DSEFFECTDESC));
+        
+        effectdesc.dwSize = sizeof(DSEFFECTDESC);
+        effectdesc.dwFlags = 0;
+        effectdesc.guidDSFXClass = GUID_DSFX_WAVES_REVERB;
+        
+        res=IDirectSoundBuffer8_SetFX((LPDIRECTSOUNDBUFFER8)secondary_buffer,1,&effectdesc,NULL);
 	}
 
 #elif CUTE_SOUND_PLATFORM == CUTE_SOUND_APPLE

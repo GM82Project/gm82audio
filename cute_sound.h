@@ -1390,10 +1390,6 @@ typedef struct cs_audio_source_t
     // Loop point information.
     uint32_t loop_point_a;
     uint32_t loop_point_b;
-    
-    //default options.
-    double default_volume;
-    double default_pan;
 } cs_audio_source_t;
 
 typedef struct cs_sound_inst_t
@@ -2743,8 +2739,6 @@ cs_audio_source_t* cs_read_mem_wav(const void* memory, size_t size, cs_error_t* 
 		//default properties
 		audio->loop_point_a = 0;
 		audio->loop_point_b = audio->sample_count;
-		audio->default_volume = 1.0;
-		audio->default_pan = 0.5;
 
 		int wide_count = (int)CUTE_SOUND_ALIGN(sample_count, 4) / 4;
 		int wide_offset = sample_count & 3;
@@ -2953,8 +2947,6 @@ cs_audio_source_t* cs_read_mem_ogg(const void* memory, size_t length, cs_error_t
 		//default properties
 		audio->loop_point_a = 0;
 		audio->loop_point_b = audio->sample_count;
-		audio->default_volume = 1.0;
-		audio->default_pan = 0.5;
 	}
 
 	if (err) *err = CUTE_SOUND_ERROR_NONE;

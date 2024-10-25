@@ -69,6 +69,9 @@ static double SAMPLE_RATE=44100;
 static int SOUND_INDEX=0;
 static int BUILTIN_COUNT;
 static std::vector<sound_struct*> SOUNDS;
+static std::vector<double> SOUND_VOLUME;
+static std::vector<double> SOUND_PAN;
+static std::vector<double> SOUND_PITCH;
 static char ERROR_STR[255];
 static bool MUSIC_PAUSED=false;
 static cs_audio_source_t* CURRENT_MUSIC_SOURCE=NULL;
@@ -90,11 +93,17 @@ GMREAL __gm82audio_init(double gm_hwnd) {
     BUILTIN_COUNT=*gm_sound_count;
     SOUND_INDEX=BUILTIN_COUNT;
     SOUNDS.reserve(SOUND_INDEX+256);
+    SOUND_VOLUME.reserve(SOUND_INDEX+256);
+    SOUND_PAN.reserve(SOUND_INDEX+256);
+    SOUND_PITCH.reserve(SOUND_INDEX+256);
     
     //preload any builtin sounds
     GMSound* sound;
     for (int i=0;i<SOUND_INDEX;i+=1) {
         SOUNDS.push_back(NULL);
+        SOUND_VOLUME.push_back(1);
+        SOUND_PAN.push_back(0);
+        SOUND_PITCH.push_back(1);
         sound=(*gm_sound_mem)[i];
         if (sound) if (sound->preload) {
             __gm82audio_load_builtin(i);
@@ -120,7 +129,13 @@ GMSTR  __gm82audio_get_error() {
 int __gm82audio_store_sound(cs_audio_source_t* snd) {
     if (snd==NULL) return __ERROR_FAIL_LOAD;
     SOUNDS.reserve((((SOUND_INDEX+1)/256)+1)*256);
+    SOUND_VOLUME.reserve((((SOUND_INDEX+1)/256)+1)*256);
+    SOUND_PAN.reserve((((SOUND_INDEX+1)/256)+1)*256);
+    SOUND_PITCH.reserve((((SOUND_INDEX+1)/256)+1)*256);
     SOUNDS.push_back(new sound_struct(snd));
+    SOUND_VOLUME.push_back(1);
+    SOUND_PAN.push_back(0);
+    SOUND_PITCH.push_back(1);
     return SOUND_INDEX++;
 }
 
@@ -197,9 +212,6 @@ GMREAL __gm82audio_load_builtin(double index) {
         return 0;
     }
     
-    snd->default_volume = (sound->volume-0.3)/0.7;
-    snd->default_pan = sound->pan/2.0+0.5;
-    
     sound_struct* existing=SOUNDS[(int)index];
     
     if (existing!=NULL) {       
@@ -209,6 +221,9 @@ GMREAL __gm82audio_load_builtin(double index) {
         free(existing);
     }
     SOUNDS[(int)index]=new sound_struct(snd);
+    SOUND_VOLUME[(int)index]=(sound->volume-0.3)/0.7;
+    SOUND_PAN[(int)index]=sound->pan/2.0+0.5;
+    SOUND_PITCH[(int)index]=1;
     
     return 1;
 }
@@ -279,13 +294,15 @@ GMREAL __gm82audio_isplaying(double index) {
 }
 
 GMREAL __gm82audio_get_def_vol(double soundid) {
-    __CHECK_EXISTS_DEL(soundid,sound);
-    return sound->source->default_volume;
+    return SOUND_VOLUME[(int)soundid];
 }
 
 GMREAL __gm82audio_get_def_pan(double soundid) {
-    __CHECK_EXISTS_DEL(soundid,sound);
-    return sound->source->default_pan*2.0-1.0;
+    return SOUND_PAN[(int)soundid];
+}
+
+GMREAL __gm82audio_get_def_pitch(double soundid) {
+    return SOUND_PITCH[(int)soundid];
 }
 
 
@@ -471,7 +488,7 @@ GMREAL __gm82audio_set_volume(double index,double vol) {
     //Changes the volume of a sound source or audio instance. Volume above 1 is accepted.
     if (index>=0) {
         __CHECK_EXISTS_DEL(index,sound);
-        sound->source->default_volume=vol;
+        SOUND_VOLUME[(int)index]=vol;
         return 0;
     }    
     
@@ -479,27 +496,37 @@ GMREAL __gm82audio_set_volume(double index,double vol) {
     return 0;
 }
 
-//instances
-GMREAL __gm82audio_set_pitch(double inst,double pitch) {
-    ///audio_set_pitch(inst,pitch)
-    //inst: audio instance
+GMREAL __gm82audio_set_pitch(double index,double pitch) {
+    ///audio_set_pitch(index,pitch)
+    //inst: sound index or audio instance
     //pitch: pitch shifting factor
-    //Changes the pitch of an audio instance. Negative pitch is accepted.
-    if (inst>=0) return 0;
-    cs_sound_set_pitch({(uint64_t)-inst},pitch);
+    //Changes the pitch of a sound source or an audio instance. Negative pitch is accepted.
+    if (index>=0) {
+        __CHECK_EXISTS_DEL(index,sound);
+        SOUND_PITCH[(int)index]=pitch;
+        return 0;
+    }
+    
+    cs_sound_set_pitch({(uint64_t)-index},pitch);
     return 0;
 }
 
-GMREAL __gm82audio_set_pan(double inst,double pan) {
-    ///audio_set_pan(inst,pan)
-    //inst: audio instance
+GMREAL __gm82audio_set_pan(double index,double pan) {
+    ///audio_set_pan(index,pan)
+    //inst: sound index or audio instance
     //pan: panning value
-    //Changes the horizontal positioning of an audio instance.
-    if (inst>=0) return 0;
-    cs_sound_set_pan({(uint64_t)-inst},max(0,min(1,(pan+1)/2)));
+    //Changes the horizontal positioning of a sound source or an audio instance.
+    if (index>=0) {
+        __CHECK_EXISTS_DEL(index,sound);
+        SOUND_PAN[(int)index]=pan;
+        return 0;
+    }
+    
+    cs_sound_set_pan({(uint64_t)-index},max(0,min(1,(pan+1)/2)));
     return 0;
 }
 
+//instances
 GMREAL __gm82audio_set_loop(double inst,double loops) {
     ///audio_set_loop(inst,enabled)
     //inst: audio instance

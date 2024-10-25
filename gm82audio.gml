@@ -52,6 +52,8 @@
             return 1
         }
     }
+    //note: this function is also used internally to prevent dll a/vs:
+    if (!__gm82audio_exists(argument0)) return 1
     return 0
 
 
@@ -479,6 +481,6 @@
 
 
 #define sound_add
-    show_error("in function sound_add: please use audio_load instead!",0)
+    show_error("in function sound_add: adding new sounds at runtime while using the Audio extension causes unwanted behavior. Please use audio_load instead!",0)
 //
 //

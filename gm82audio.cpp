@@ -601,3 +601,13 @@ GMREAL __gm82audio_set_pos(double inst,double pos) {
     }
     return 0;
 }
+
+GMREAL __gm82audio_instance_count() {
+    int count=0;
+    for (int i=0;i<SOUND_INDEX;i++) {
+        auto sound=SOUNDS[i];
+        if (sound) count+=sound->source->playing_count;
+    }
+    
+    return count;
+}

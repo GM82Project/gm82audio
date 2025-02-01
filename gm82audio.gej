@@ -612,7 +612,7 @@
 				{
 					"name": "audio_get_loop_point_a",
 					"extname": "",
-					"calltype": 12,
+					"calltype": 2,
 					"helpline": "audio_get_loop_point_a(sound)",
 					"hidden": false,
 					"argtypes": [
@@ -623,7 +623,7 @@
 				{
 					"name": "audio_get_loop_point_b",
 					"extname": "",
-					"calltype": 12,
+					"calltype": 2,
 					"helpline": "audio_get_loop_point_b(sound)",
 					"hidden": false,
 					"argtypes": [

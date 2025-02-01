@@ -449,6 +449,20 @@ GMREAL __gm82audio_get_length(double soundid) {
     );
 }
 
+GMREAL __gm82audio_music_get_loop_point_a() {
+    ///__gm82audio_music_get_loop_point_a()
+    //returns: current music loop point 'a'
+    if (!CURRENT_MUSIC_SOURCE) return 0;
+    return (double)(CURRENT_MUSIC_SOURCE->loop_point_a);
+}
+
+GMREAL __gm82audio_music_get_loop_point_b() {
+    ///__gm82audio_music_get_loop_point_b()
+    //returns: current music loop point 'b'
+    if (!CURRENT_MUSIC_SOURCE) return 0;
+    return (double)(CURRENT_MUSIC_SOURCE->loop_point_b);
+}
+
 GMREAL __gm82audio_set_loop_points(double soundid,double pointa, double pointb) {
     __CHECK_EXISTS_DEL(soundid,sound);
     uint32_t sr=cs_get_sample_rate(sound->source);

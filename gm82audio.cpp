@@ -393,20 +393,6 @@ GMREAL __gm82audio_music_resume() {
     return 0;
 }
 
-GMREAL __gm82audio_music_get_loop_point_a() {
-    ///__gm82audio_music_get_loop_point_a()
-    //returns: current music loop point 'a'
-    if (!CURRENT_MUSIC_SOURCE) return 0;
-    return (double)(CURRENT_MUSIC_SOURCE->loop_point_a);
-}
-
-GMREAL __gm82audio_music_get_loop_point_b() {
-    ///__gm82audio_music_get_loop_point_b()
-    //returns: current music loop point 'b'
-    if (!CURRENT_MUSIC_SOURCE) return 0;
-    return (double)(CURRENT_MUSIC_SOURCE->loop_point_b);
-}
-
 GMREAL __gm82audio_music_get_pos() {
     ///audio_music_get_pos()
     //returns: current music position in seconds
@@ -461,6 +447,16 @@ GMREAL __gm82audio_get_length(double soundid) {
     return (double)(
         cs_get_sample_count(sound->source)/((double)cs_get_sample_rate(sound->source))
     );
+}
+
+GMREAL __gm82audio_get_loop_point_a(double soundid) {
+    __CHECK_EXISTS_DEL(soundid,sound);
+    return (double)(sound->source->loop_point_a);
+}
+
+GMREAL __gm82audio_get_loop_point_b(double soundid) {
+    __CHECK_EXISTS_DEL(soundid,sound);
+    return (double)(sound->source->loop_point_b);
 }
 
 GMREAL __gm82audio_set_loop_points(double soundid,double pointa, double pointb) {

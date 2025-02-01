@@ -451,12 +451,12 @@ GMREAL __gm82audio_get_length(double soundid) {
 
 GMREAL __gm82audio_get_loop_point_a(double soundid) {
     __CHECK_EXISTS_DEL(soundid,sound);
-    return (double)(sound->source->loop_point_a);
+    return (double)(sound->source->loop_point_a/cs_get_sample_rate(sound->source));
 }
 
 GMREAL __gm82audio_get_loop_point_b(double soundid) {
     __CHECK_EXISTS_DEL(soundid,sound);
-    return (double)(sound->source->loop_point_b);
+    return (double)(sound->source->loop_point_b/cs_get_sample_rate(sound->source));
 }
 
 GMREAL __gm82audio_set_loop_points(double soundid,double pointa, double pointb) {

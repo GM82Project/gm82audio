@@ -40,7 +40,7 @@
                 //make sure the sound is preloaded or exported
                 sound_restore(argument0)
                 if (!__gm82audio_load_builtin(argument0)) {
-                    show_error("error preloading builtin sound: "+__gm82audio_get_error(),0)
+                    show_error("error preloading builtin '" + sound_get_name(argument0) + "': "+__gm82audio_get_error(),0)
                     return 1
                 } else {
                     //we don't need it anymore

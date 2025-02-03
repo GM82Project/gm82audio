@@ -389,6 +389,28 @@
 					"returntype": 2
 				},
 				{
+					"name": "__gm82audio_get_loop_point_a",
+					"extname": "",
+					"calltype": 12,
+					"helpline": "",
+					"hidden": false,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "__gm82audio_get_loop_point_b",
+					"extname": "",
+					"calltype": 12,
+					"helpline": "",
+					"hidden": false,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
 					"name": "__gm82audio_init",
 					"extname": "",
 					"calltype": 12,
@@ -581,6 +603,28 @@
 					"extname": "",
 					"calltype": 2,
 					"helpline": "audio_get_length(sound)",
+					"hidden": false,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "audio_get_loop_point_a",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_get_loop_point_a(sound)",
+					"hidden": false,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "audio_get_loop_point_b",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_get_loop_point_b(sound)",
 					"hidden": false,
 					"argtypes": [
 						2

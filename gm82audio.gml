@@ -467,6 +467,22 @@
     return __gm82audio_get_length(argument0)
 
 
+#define audio_get_loop_point_a
+    ///audio_get_loop_point_a(sound)
+    //sound: sound index to get
+    //returns: sound loop point 'a'
+    if (audio_preload_sound(argument0)) return 0
+    return __gm82audio_get_loop_point_a(argument0)
+
+
+#define audio_get_loop_point_b
+    ///audio_get_loop_point_b(sound)
+    //sound: sound index to get
+    //returns: sound loop point 'b'
+    if (audio_preload_sound(argument0)) return 0
+    return __gm82audio_get_loop_point_b(argument0)
+
+
 #define audio_exists
     ///audio_exists(sound/inst)
     //sound/inst: sound index to check, or instance

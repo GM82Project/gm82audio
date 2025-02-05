@@ -295,7 +295,7 @@
     //Creates a sound pack containing supported files from the source directory.
     var __dir,__save,__q,__fn,__size,__mb,__b;
     
-    __dir=string_replace_all(filename_dir(argument0),"/","\")
+    __dir=string_replace_all(filename_dir(argument0+"\"),"/","\")
     __save=argument1
 
     __q=ds_queue_create()

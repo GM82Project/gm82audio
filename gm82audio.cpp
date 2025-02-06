@@ -208,7 +208,7 @@ GMREAL __gm82audio_load_builtin(double index) {
         }
         free(existing);
     }
-    SOUNDS[(int)index]=new sound_struct(snd, (sound->volume-0.3)/0.7, sound->pan/2.0+0.5);
+    SOUNDS[(int)index]=new sound_struct(snd, (sound->volume-0.3)/0.7, sound->pan);
     
     return 1;
 }

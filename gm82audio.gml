@@ -24,6 +24,10 @@
         show_error("in function "+argument1+": sound "+string(argument2)+" failed to load!",0)
         return 0
     }
+    if (argument0==-$1000004) {
+        show_error("in function "+argument1+": sound "+string(argument2)+" failed to load! error code:"+__gm82audio_get_error(),0)
+        return 0
+    }
     return 1
 
 
@@ -76,7 +80,7 @@
         if (__fourcc=="OggS") __snd=__gm82audio_load(argument0,1)
         
         if (__snd==noone) show_error(__erstr+"unrecognized audio format "+__fourcc,0)
-        __gm82audio_check(__snd)
+        __gm82audio_check(__snd,"audio_load",argument0)
     } else {    
         show_error(__erstr+"file does not exist",0)
     }
@@ -106,7 +110,7 @@
         if (__fourcc=="OggS") __snd=__gm82audio_load_mem(__addr,__size,1)
         
         if (__snd==noone) show_error(__erstr+"unrecognized audio format "+__fourcc,0)
-        if (__snd==0) show_error(__erstr+__gm82audio_get_error(),0)
+        __gm82audio_check(__snd)
     } else {    
         show_error(__erstr+"buffer does not exist",0)
     }
@@ -341,7 +345,7 @@
     __mb=buffer_create()
     buffer_load(__mb,argument0)
 
-    if (buffer_read_string(__mb)!="WASD1.0") {buffer_destroy(__mb) show_error("Error loading WASD pack: file "+argument0+"is not a valid WASD pack.",0) return noone}
+    if (buffer_read_string(__mb)!="WASD1.0") {buffer_destroy(__mb) show_error("Error loading WASD pack: file "+argument0+" is not a valid WASD pack.",0) return noone}
 
     __retlist=ds_map_create()
     __b=buffer_create()

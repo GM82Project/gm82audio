@@ -19,6 +19,7 @@
 #define __ERROR_NONEXIST    -0x1000001
 #define __ERROR_DELETED     -0x1000002
 #define __ERROR_FAIL_LOAD   -0x1000003
+#define __ERROR_GENERIC     -0x1000004
 
 #define __CHECK_EXISTS(index,sound) \
 if (index<0 || index>=SOUND_INDEX) return __ERROR_NONEXIST;\
@@ -160,7 +161,10 @@ GMREAL __gm82audio_load_builtin(double index) {
         //we are looking at an exported "external codec" sound file...
         
         //or an empty sound resource.
-        if (sound->fname==NULL) return 0;
+        if (sound->fname==NULL) {
+            strcpy(ERROR_STR,"looks like this sound resource is empty...");
+            return __ERROR_GENERIC;
+        }
         
         void* data = NULL;
         int size;
@@ -180,7 +184,7 @@ GMREAL __gm82audio_load_builtin(double index) {
 
         if (!data) {
             strcpy(ERROR_STR,"somehow the file data was null? tell renex about this.");
-            return NULL;
+            return __ERROR_GENERIC;
         }
 
         if (memcmp("wav",sound->extension,3)) snd=cs_read_mem_wav(data,size,&error);

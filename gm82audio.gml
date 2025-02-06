@@ -336,6 +336,8 @@
     //Note: Make sure to delete the returned map when you're done.
     var __mb,__retlist,__b,__count,__name,__index,__length,__pos;
 
+    if (!file_exists(argument0)) {show_error("Error loading WASD pack: file "+argument0+" does not exist.",0) return noone}
+
     __mb=buffer_create()
     buffer_load(__mb,argument0)
 

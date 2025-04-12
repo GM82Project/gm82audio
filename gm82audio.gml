@@ -337,7 +337,7 @@
     //pack: path to pack file to load
     //returns: map with the sounds added
     //Adds a sound pack for use.
-    //Note: Make sure to delete the returned map when you're done.
+    //Note: Make sure to destroy the returned map when you're done.
     var __mb,__retlist,__b,__count,__name,__index,__length,__pos;
 
     if (!file_exists(argument0)) {show_error("Error loading WASD pack: file "+argument0+" does not exist.",0) return noone}

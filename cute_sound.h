@@ -2394,10 +2394,10 @@ void cs_mix()
 							);
 
 							cs__m128 loB = cs_mm_set_ps(                                
-								((float*)cA)[i0 > loop_b ? loop_b : i0 < loop_a ? loop_a : i0],
-								((float*)cA)[i1 > loop_b ? loop_b : i1 < loop_a ? loop_a : i1],
-								((float*)cA)[i2 > loop_b ? loop_b : i2 < loop_a ? loop_a : i2],
-								((float*)cA)[i3 > loop_b ? loop_b : i3 < loop_a ? loop_a : i3]
+								((float*)cB)[i0 > loop_b ? loop_b : i0 < loop_a ? loop_a : i0],
+								((float*)cB)[i1 > loop_b ? loop_b : i1 < loop_a ? loop_a : i1],
+								((float*)cB)[i2 > loop_b ? loop_b : i2 < loop_a ? loop_a : i2],
+								((float*)cB)[i3 > loop_b ? loop_b : i3 < loop_a ? loop_a : i3]
 							);
 							cs__m128 hiB = cs_mm_set_ps(
 								((float*)cB)[i0+1 > loop_b ? loop_b : i0+1 < loop_a ? loop_a : i0+1],

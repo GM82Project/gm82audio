@@ -502,6 +502,69 @@
     }
 
 
+#define audio_apply_3d
+    ///audio_apply_3d(inst,vol,pitch,x,y,z,hspeed,vspeed,zspeed,mindist,maxdist,listener_direction,falloff_model,volume_model)
+    //inst: sound instance to apply the model to
+    //vol, pitch: default volume and pitch of the sound source
+    //x, y, z: position of the sound source relative to the listener
+    //h, v, zspeed: speed of the sound source
+    //min, maxdist: distances when to start and end fading the volume
+    //listener_direction: angle the listener is facing
+    //falloff_model: falloff_ constant defining the fall off slope to use
+    //volume_model: volume_ constant defining which volume model to use
+    //falloff_exp: default. volume decreases the same way it would in real-life
+    //falloff_invexp: inverse of exponential, the sound is mostly fully audible until close to the max distance
+    //falloff_linear: a middle term between the other two models
+    //volume_front: default. volume is quieter behind the listener. models hearing loss based on ear and head geometry
+    //volume_omni: volume is the same in front and behind the listener
+    //Applies a 3D audio model to a sound instance.
+    //The instance's volume, pitch and pan values are modified.
+    //Call every step on the instance to simulate 3D sound.
+    var __snd,__base_vol,__base_pitch,__sndx,__sndy,__sndz,__sndh,__sndv,__sndw,__dist,__dir,__mindist,__maxdist,__lis_dir,__lis_speed,__fo_model,__vl_model,__vol,__pitch,__pan;
+    
+    __snd=argument0
+    __base_vol=argument1
+    __base_pitch=argument2
+    __sndx=argument3
+    __sndy=argument4
+    __sndz=argument5
+    __sndh=argument6
+    __sndv=argument7      
+    __sndw=argument8      
+    __mindist=max(0,argument9)
+    __maxdist=max(__mindist,argument10)
+    
+    //properties relative to the listener
+    __dist=point_distance_3d(__sndx,__sndy,__sndz,0,0,0)
+    __dir=point_direction(__sndx,__sndy,0,0)    
+    __lis_dir=__dir-argument11
+    __lis_speed=point_distance_3d(0,0,0,__sndh,__sndv,__sndw)*dot_product_3d_normalized(dcos(__dir),-dsin(__dir),0,__sndh,__sndv,__sndw)
+    
+    //models
+    __fo_model=argument12
+    __vl_model=argument13      
+    
+    //modulate
+    __vol=saturate(unlerp(__maxdist,__mindist,__dist))
+    if (__lis_speed>=343) __pitch=0 else __pitch=((343+__lis_speed)/(343-__lis_speed))*__base_pitch //doppler formula
+    __pan=-lengthdir_y(0.7,__lis_dir) //70% because full pan to one side sounds hella annoying
+    
+    if (__mindist) __pan*=min(1,__dist/__mindist) //saturate pan near the listener
+    
+    //falloff model
+        if (__fo_model==0) __vol=sqr(__vol) //0 exp (default)
+        if (__fo_model==1) __vol=sqrt(__vol) //1 invexp
+        //2 linear
+    
+    //volume model
+        if (__vl_model==0) __vol*=min(1,1-lengthdir_x(0.7,__lis_dir)) //0 front (default)
+        //1 omni doesn't muffle behind the listener
+    
+    audio_set_volume(__snd,__vol*__base_vol)
+    audio_set_pitch(__snd,__pitch)
+    audio_set_pan(__snd,__pan)
+
+
 #define sound_add
     show_error("in function sound_add: adding new sounds at runtime while using the Audio extension causes unwanted behavior. Please use audio_load instead!",0)
 //

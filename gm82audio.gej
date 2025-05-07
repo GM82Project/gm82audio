@@ -3,7 +3,7 @@
 	"folder": "gm82",
 	"version": "1.1",
 	"author": "renex, RandyGaul",
-	"date": "29/11/2024",
+	"date": "07/05/2025",
 	"license": "Free to use, also for commercial games.",
 	"description": "Part of the standard Game Maker 8.2 distribution. This extension package provides a custom C++ Audio Engine wrapping cute_sound. The extension does not override the builtin audio engine - functions start with audio_. cute_sound is copyright (c) 2023 Randy Gaul https://randygaul.github.io/",
 	"helpfile": "",
@@ -389,28 +389,6 @@
 					"returntype": 2
 				},
 				{
-					"name": "__gm82audio_get_loop_point_a",
-					"extname": "",
-					"calltype": 12,
-					"helpline": "",
-					"hidden": false,
-					"argtypes": [
-						2
-					],
-					"returntype": 2
-				},
-				{
-					"name": "__gm82audio_get_loop_point_b",
-					"extname": "",
-					"calltype": 12,
-					"helpline": "",
-					"hidden": false,
-					"argtypes": [
-						2
-					],
-					"returntype": 2
-				},
-				{
 					"name": "__gm82audio_init",
 					"extname": "",
 					"calltype": 12,
@@ -578,6 +556,30 @@
 			"final": "",
 			"functions": [
 				{
+					"name": "audio_apply_3d",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_apply_3d(inst,vol,pitch,x,y,z,hspeed,vspeed,zspeed,mindist,maxdist,listener_direction,falloff_model,volume_model)",
+					"hidden": false,
+					"argtypes": [
+						2,
+						2,
+						2,
+						2,
+						2,
+						2,
+						2,
+						2,
+						2,
+						2,
+						2,
+						2,
+						2,
+						2
+					],
+					"returntype": 2
+				},
+				{
 					"name": "audio_create_pack",
 					"extname": "",
 					"calltype": 2,
@@ -603,28 +605,6 @@
 					"extname": "",
 					"calltype": 2,
 					"helpline": "audio_get_length(sound)",
-					"hidden": false,
-					"argtypes": [
-						2
-					],
-					"returntype": 2
-				},
-				{
-					"name": "audio_get_loop_point_a",
-					"extname": "",
-					"calltype": 2,
-					"helpline": "audio_get_loop_point_a(sound)",
-					"hidden": false,
-					"argtypes": [
-						2
-					],
-					"returntype": 2
-				},
-				{
-					"name": "audio_get_loop_point_b",
-					"extname": "",
-					"calltype": 2,
-					"helpline": "audio_get_loop_point_b(sound)",
 					"hidden": false,
 					"argtypes": [
 						2
@@ -926,7 +906,33 @@
 					"returntype": 2
 				}
 			],
-			"constants": []
+			"constants": [
+				{
+					"name": "falloff_exp",
+					"value": "0",
+					"hidden": false
+				},
+				{
+					"name": "falloff_invexp",
+					"value": "1",
+					"hidden": false
+				},
+				{
+					"name": "falloff_linear",
+					"value": "2",
+					"hidden": false
+				},
+				{
+					"name": "volume_front",
+					"value": "0",
+					"hidden": false
+				},
+				{
+					"name": "volume_omni",
+					"value": "1",
+					"hidden": false
+				}
+			]
 		}
 	]
 }

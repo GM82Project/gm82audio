@@ -602,6 +602,8 @@ GMREAL __gm82audio_set_pos(double inst,double pos) {
 }
 
 GMREAL __gm82audio_instance_count() {
+    ///audio_instance_count()
+    //Returns the total number of active sound instances.
     int count=0;
     for (int i=0;i<SOUND_INDEX;i++) {
         auto sound=SOUNDS[i];

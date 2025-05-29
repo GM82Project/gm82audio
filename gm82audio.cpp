@@ -592,7 +592,7 @@ GMREAL __gm82audio_set_pos(double inst,double pos) {
     cs_sound_inst_t* instance = s_get_inst({(uint64_t)-inst});
     if (instance) {
         cs_sound_set_sample_index(
-            {(uint64_t)inst},
+            {(uint64_t)-inst},
             max(0,min(cs_get_sample_count(instance->audio),
                 (int)(pos*cs_get_sample_rate(instance->audio))
             ))

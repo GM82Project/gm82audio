@@ -473,7 +473,7 @@ GMREAL __gm82audio_delete(double soundid) {
     //Deletes a sound. New sounds don't reuse ids.
     //If an instance of the sound is still playing, it finishes playing.
     __CHECK_EXISTS(soundid,sound);
-    if (!sound->deleted) {
+    if (!sound->deleted) {            
         cs_free_audio_source(sound->source);
         sound->deleted=true;
     }
@@ -604,6 +604,27 @@ GMREAL __gm82audio_set_pos(double inst,double pos) {
 GMREAL __gm82audio_instance_count() {
     ///audio_instance_count()
     //Returns the total number of active sound instances.
+    int count=0;
+    for (int i=0;i<SOUND_INDEX;i++) {
+        auto sound=SOUNDS[i];
+        if (sound) count+=sound->source->playing_count;
+    }
+    
+    return count;
+}
+
+GMREAL __gm82audio_instance_number(double soundid) {
+    ///audio_instance_number()
+    //Returns the number of active instances of a sound.
+    
+    __CHECK_EXISTS(soundid,sound);    
+    return sound->source->playing_count;
+}
+
+GMREAL __gm82audio_fill_inst_list(double soundid,double bufaddr) {
+    //fills the list
+    __CHECK_EXISTS(soundid,sound);
+    
     int count=0;
     for (int i=0;i<SOUND_INDEX;i++) {
         auto sound=SOUNDS[i];

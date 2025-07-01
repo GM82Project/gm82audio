@@ -565,6 +565,20 @@
     audio_set_pan(__snd,__pan)
 
 
+#define audio_get_instance_list
+    ///audio_get_instance_list(sound)
+    //Returns a ds_list filled with the ids of playing instances of a sound.
+    
+    get count
+    b=buffer_create()
+    resize buffer
+    call buffer filler
+    list=ds_list_create()
+    iterate buffer
+    delete buffer
+    return list
+    
+
 #define sound_add
     show_error("in function sound_add: adding new sounds at runtime while using the Audio extension causes unwanted behavior. Please use audio_load instead!",0)
 //

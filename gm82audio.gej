@@ -3,7 +3,7 @@
 	"folder": "gm82",
 	"version": "1.1",
 	"author": "renex, RandyGaul",
-	"date": "29/05/2025",
+	"date": "02/07/2025",
 	"license": "Free to use, also for commercial games.",
 	"description": "Part of the standard Game Maker 8.2 distribution. This extension package provides a custom C++ Audio Engine wrapping cute_sound. The extension does not override the builtin audio engine - functions start with audio_. cute_sound is copyright (c) 2023 Randy Gaul https://randygaul.github.io/",
 	"helpfile": "",
@@ -78,6 +78,17 @@
 					"helpline": "audio_instance_count()",
 					"hidden": false,
 					"argtypes": [],
+					"returntype": 2
+				},
+				{
+					"name": "audio_instance_number",
+					"extname": "__gm82audio_instance_number",
+					"calltype": 12,
+					"helpline": "audio_instance_number(sound)",
+					"hidden": false,
+					"argtypes": [
+						2
+					],
 					"returntype": 2
 				},
 				{
@@ -322,6 +333,18 @@
 					"helpline": "",
 					"hidden": true,
 					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "__gm82audio_fill_inst_list",
+					"extname": "",
+					"calltype": 12,
+					"helpline": "",
+					"hidden": false,
+					"argtypes": [
+						2,
 						2
 					],
 					"returntype": 2
@@ -598,6 +621,17 @@
 					"helpline": "audio_exists(sound/inst)",
 					"hidden": false,
 					"argtypes": null,
+					"returntype": 2
+				},
+				{
+					"name": "audio_get_instance_list",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_get_instance_list(sound)",
+					"hidden": false,
+					"argtypes": [
+						2
+					],
 					"returntype": 2
 				},
 				{

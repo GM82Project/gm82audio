@@ -614,7 +614,7 @@ GMREAL __gm82audio_instance_count() {
 }
 
 GMREAL __gm82audio_instance_number(double soundid) {
-    ///audio_instance_number()
+    ///audio_instance_number(sound)
     //Returns the number of active instances of a sound.
     
     __CHECK_EXISTS(soundid,sound);    
@@ -625,11 +625,7 @@ GMREAL __gm82audio_fill_inst_list(double soundid,double bufaddr) {
     //fills the list
     __CHECK_EXISTS(soundid,sound);
     
-    int count=0;
-    for (int i=0;i<SOUND_INDEX;i++) {
-        auto sound=SOUNDS[i];
-        if (sound) count+=sound->source->playing_count;
-    }
+    uint64_t* dest=(uint64_t*)(int)bufaddr;
     
-    return count;
+    return cs_fill_buffer_with_instances_of(sound->source,dest);
 }

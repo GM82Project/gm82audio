@@ -568,15 +568,21 @@
 #define audio_get_instance_list
     ///audio_get_instance_list(sound)
     //Returns a ds_list filled with the ids of playing instances of a sound.
+    var __num,__list,__b;
     
-    get count
-    b=buffer_create()
-    resize buffer
-    call buffer filler
-    list=ds_list_create()
-    iterate buffer
-    delete buffer
-    return list
+    __num=audio_instance_number(argument0)
+    __list=ds_list_create()
+    if (__num>0) {
+        __b=buffer_create()
+        buffer_set_size(__b,8*__num)        
+        if (__gm82audio_fill_inst_list(argument0,buffer_get_address(__b,0))) {
+            repeat (__num) {
+                ds_list_add(__list,buffer_read_u64(__b))
+            }
+        }
+        buffer_destroy(__b)
+    }
+    return __list
     
 
 #define sound_add

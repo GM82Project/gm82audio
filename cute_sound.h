@@ -3536,9 +3536,9 @@ void cs_stop_all_instances_of(cs_audio_source_t* soundsource)
 	cs_unlock();
 }
 
-int cs_fill_buffer_with_instances_of(cs_audio_source_t* soundsource, double bufaddr)
+int cs_fill_buffer_with_instances_of(cs_audio_source_t* soundsource, uint64_t* buffer)
 {
-	/*cs_lock();
+	cs_lock();
 
 	if (cs_list_empty(&s_ctx->playing_sounds)) {
 		cs_unlock();
@@ -3547,16 +3547,20 @@ int cs_fill_buffer_with_instances_of(cs_audio_source_t* soundsource, double bufa
 	cs_list_node_t* playing_sound = cs_list_begin(&s_ctx->playing_sounds);
 	cs_list_node_t* end = cs_list_end(&s_ctx->playing_sounds);
 
+    int pos=0;
+    
 	do {
 		cs_sound_inst_t* inst = CUTE_SOUND_LIST_HOST(cs_sound_inst_t, node, playing_sound);
 		cs_list_node_t* next = playing_sound->next;
 		if (inst->audio==soundsource) {
-            inst->active = false;
+            buffer[pos++]=(inst->id);
         }
 		playing_sound = next;
 	} while (playing_sound != end);
 
-	cs_unlock();*/
+	cs_unlock();
+    
+    return 1;
 }
 
 void cs_cull_duplicates(bool true_to_enable)

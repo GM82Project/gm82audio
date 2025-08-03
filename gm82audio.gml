@@ -103,7 +103,7 @@
             chr(buffer_peek(argument0,2))+
             chr(buffer_peek(argument0,3))
         
-        var __addr;__addr=buffer_get_address(argument0,0)
+        var __addr;__addr=buffer_get_address(argument0)
         var __size;__size=buffer_get_size(argument0)
         
         if (__fourcc=="RIFF") __snd=__gm82audio_load_mem(__addr,__size,0)
@@ -575,7 +575,7 @@
     if (__num>0) {
         __b=buffer_create()
         buffer_set_size(__b,8*__num)        
-        if (__gm82audio_fill_inst_list(argument0,buffer_get_address(__b,0))) {
+        if (__gm82audio_fill_inst_list(argument0,buffer_get_address(__b))) {
             repeat (__num) {
                 ds_list_add(__list,buffer_read_u64(__b))
             }

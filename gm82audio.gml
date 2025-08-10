@@ -89,10 +89,11 @@
 
 #define audio_load_buffer
     ///audio_load_buffer(buffer)
-    //buffer: a handle to a gm82net buffer
+    //buffer: a handle to a gm82buf buffer
     //returns: sound index
     //Loads a sound from a buffer. wav files and ogg vorbis are supported.
     //You can delete the buffer afterwards.    
+    
     var __snd;__snd=noone;
     var __erstr;__erstr="in function audio_load_buffer: "
 
@@ -110,7 +111,7 @@
         if (__fourcc=="OggS") __snd=__gm82audio_load_mem(__addr,__size,1)
         
         if (__snd==noone) show_error(__erstr+"unrecognized audio format "+__fourcc,0)
-        __gm82audio_check(__snd)
+        __gm82audio_check(__snd,"audio_load_buffer","buffer data")
     } else {    
         show_error(__erstr+"buffer does not exist",0)
     }

@@ -148,6 +148,14 @@ GMREAL __gm82audio_load_mem(double gmbuffer,double length,double type) {
     return __gm82audio_store_sound(snd);
 }
 
+GMREAL __gm82audio_load_raw(double gmbuffer,double length,double samplerate,double channels,double bits,double is_signed) {
+    cs_error_t error;
+    cs_audio_source_t* snd;
+    snd=cs_read_mem_raw((void*)(size_t)gmbuffer,(size_t)length,(uint32_t)samplerate,(bits==8),(is_signed>0.5),(uint16_t)channels,&error);//uint32_t samplerate, bool is_8bit, uint16_t channels,
+    if (snd==NULL) strcpy(ERROR_STR,cs_error_as_string(error));
+    return __gm82audio_store_sound(snd);
+}
+
 GMREAL __gm82audio_load_builtin(double index) {
     cs_error_t error;
     cs_audio_source_t* snd;

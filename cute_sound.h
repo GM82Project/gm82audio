@@ -2838,6 +2838,152 @@ cs_audio_source_t* cs_read_mem_wav(const void* memory, size_t size, cs_error_t* 
 	return audio;
 }
 
+cs_audio_source_t* cs_read_mem_raw(const void* memory, size_t size, uint32_t samplerate, bool is_8bit, bool is_signed, uint16_t channels, cs_error_t* err)
+{
+	if (err) *err = CUTE_SOUND_ERROR_NONE;
+
+	#pragma pack(push, 1)
+	typedef struct
+	{
+		uint16_t wFormatTag;
+		uint16_t nChannels;
+		uint32_t nSamplesPerSec;
+		uint32_t nAvgBytesPerSec;
+		uint16_t nBlockAlign;
+		uint16_t wBitsPerSample;
+		uint16_t cbSize;
+		uint16_t wValidBitsPerSample;
+		uint32_t dwChannelMask;
+		uint8_t SubFormat[18];
+	} Fmt;
+	#pragma pack(pop)
+
+	cs_audio_source_t* audio = NULL;
+	char* data = (char*)memory;
+	
+	audio = (cs_audio_source_t*)CUTE_SOUND_ALLOC(sizeof(cs_audio_source_t), s_mem_ctx);
+	CUTE_SOUND_MEMSET(audio, 0, sizeof(*audio));
+    
+	audio->sample_rate = (int)samplerate;    
+	
+	{
+        int bepis = is_8bit?1:2;
+		int sample_count = size / (channels * bepis);
+		//to account for interpolation in the pitch shifter, we lie about length
+		//this fixes random popping at the end of sounds
+		audio->sample_count = sample_count-1;
+		audio->channel_count = channels;
+		
+		//default properties
+		audio->loop_point_a = 0;
+		audio->loop_point_b = audio->sample_count;
+
+		int wide_count = (int)CUTE_SOUND_ALIGN(sample_count, 4) / 4;
+		int wide_offset = sample_count & 3;
+        
+        int8_t* samples8 = (int8_t*)(data);
+        int16_t* samples = (int16_t*)(data);
+        uint8_t* samples8u = (uint8_t*)(data);
+        uint16_t* samplesu = (uint16_t*)(data);            
+
+        if (is_signed) {
+            switch (audio->channel_count) {
+                case 1:
+                {
+                    audio->channels[0] = cs_malloc16(wide_count * sizeof(cs__m128));
+                    audio->channels[1] = 0;
+                    cs__m128* a = (cs__m128*)audio->channels[0];
+                    for (int i = 0, j = 0; i < wide_count - 1; ++i, j += 4) {
+                        if (is_8bit) a[i] = cs_mm_set_ps((float)((samples8[j+3]-127)*512), (float)((samples8[j+2]-127)*512), (float)((samples8[j+1]-127)*512), (float)((samples8[j]-127)*512));
+                        else a[i] = cs_mm_set_ps((float)samples[j+3], (float)samples[j+2], (float)samples[j+1], (float)samples[j]);
+                    }
+                    if (is_8bit) cs_last_element8(a, wide_count - 1, (wide_count - 1) * 4, samples8, wide_offset);
+                    else cs_last_element(a, wide_count - 1, (wide_count - 1) * 4, samples, wide_offset);
+                }	break;
+
+                case 2:
+                {
+                    cs__m128* a = (cs__m128*)cs_malloc16(wide_count * sizeof(cs__m128) * 2);
+                    cs__m128* b = a + wide_count;
+                    for (int i = 0, j = 0; i < wide_count - 1; ++i, j += 8){
+                        if (is_8bit) {
+                            a[i] = cs_mm_set_ps((float)((samples8[j+6]-127)*512), (float)((samples8[j+4]-127)*512), (float)((samples8[j+2]-127)*512), (float)((samples8[j  ]-127)*512));
+                            b[i] = cs_mm_set_ps((float)((samples8[j+7]-127)*512), (float)((samples8[j+5]-127)*512), (float)((samples8[j+3]-127)*512), (float)((samples8[j+1]-127)*512));
+                        } else {
+                            a[i] = cs_mm_set_ps((float)samples[j+6], (float)samples[j+4], (float)samples[j+2], (float)samples[j]);
+                            b[i] = cs_mm_set_ps((float)samples[j+7], (float)samples[j+5], (float)samples[j+3], (float)samples[j+1]);
+                        }
+                    }
+                    if (is_8bit) {
+                        cs_last_element8(a, wide_count - 1, (wide_count - 1) * 4, samples8, wide_offset);
+                        cs_last_element8(b, wide_count - 1, (wide_count - 1) * 4 + 4, samples8, wide_offset);
+                    } else {
+                        cs_last_element(a, wide_count - 1, (wide_count - 1) * 4, samples, wide_offset);
+                        cs_last_element(b, wide_count - 1, (wide_count - 1) * 4 + 4, samples, wide_offset);
+                    }
+                    audio->channels[0] = a;
+                    audio->channels[1] = b;
+                }	break;
+
+                default:
+                    if (err) *err = CUTE_SOUND_ERROR_WAV_ONLY_MONO_OR_STEREO_IS_SUPPORTED;
+                    CUTE_SOUND_ASSERT(false);
+            }
+        } else {
+            switch (audio->channel_count) {
+                case 1:
+                {
+                    audio->channels[0] = cs_malloc16(wide_count * sizeof(cs__m128));
+                    audio->channels[1] = 0;
+                    cs__m128* a = (cs__m128*)audio->channels[0];
+                    if (is_8bit) {
+                        for (int i = 0, j = 0; i < wide_count - 1; ++i, j += 4) {
+                            a[i] = cs_mm_set_ps((float)((samples8u[j+3]-127)*512), (float)((samples8u[j+2]-127)*512), (float)((samples8u[j+1]-127)*512), (float)((samples8u[j]-127)*512));
+                        }                
+                        cs_last_element8u(a, wide_count - 1, (wide_count - 1) * 4, samples8u, wide_offset);
+                    } else {
+                        for (int i = 0, j = 0; i < wide_count - 1; ++i, j += 4) {
+                            a[i] = cs_mm_set_ps((float)samplesu[j+3], (float)samplesu[j+2], (float)samplesu[j+1], (float)samplesu[j]);
+                        }                
+                        cs_last_elementu(a, wide_count - 1, (wide_count - 1) * 4, samplesu, wide_offset);
+                    }
+                }	break;
+
+                case 2:
+                {
+                    cs__m128* a = (cs__m128*)cs_malloc16(wide_count * sizeof(cs__m128) * 2);
+                    cs__m128* b = a + wide_count;
+                    for (int i = 0, j = 0; i < wide_count - 1; ++i, j += 8){
+                        if (is_8bit) {
+                            a[i] = cs_mm_set_ps((float)((samples8u[j+6]-127)*512), (float)((samples8u[j+4]-127)*512), (float)((samples8u[j+2]-127)*512), (float)((samples8u[j  ]-127)*512));
+                            b[i] = cs_mm_set_ps((float)((samples8u[j+7]-127)*512), (float)((samples8u[j+5]-127)*512), (float)((samples8u[j+3]-127)*512), (float)((samples8u[j+1]-127)*512));
+                        } else {
+                            a[i] = cs_mm_set_ps((float)samplesu[j+6], (float)samplesu[j+4], (float)samplesu[j+2], (float)samplesu[j]);
+                            b[i] = cs_mm_set_ps((float)samplesu[j+7], (float)samplesu[j+5], (float)samplesu[j+3], (float)samplesu[j+1]);
+                        }
+                    }
+                    if (is_8bit) {
+                        cs_last_element8u(a, wide_count - 1, (wide_count - 1) * 4, samples8u, wide_offset);
+                        cs_last_element8u(b, wide_count - 1, (wide_count - 1) * 4 + 4, samples8u, wide_offset);
+                    } else {
+                        cs_last_elementu(a, wide_count - 1, (wide_count - 1) * 4, samplesu, wide_offset);
+                        cs_last_elementu(b, wide_count - 1, (wide_count - 1) * 4 + 4, samplesu, wide_offset);
+                    }
+                    audio->channels[0] = a;
+                    audio->channels[1] = b;
+                }	break;
+
+                default:
+                    if (err) *err = CUTE_SOUND_ERROR_WAV_ONLY_MONO_OR_STEREO_IS_SUPPORTED;
+                    CUTE_SOUND_ASSERT(false);
+            }
+        }
+	}
+
+	if (err) *err = CUTE_SOUND_ERROR_NONE;
+	return audio;
+}
+
 void cs_free_audio_source(cs_audio_source_t* audio)
 {
 	if (s_ctx) {

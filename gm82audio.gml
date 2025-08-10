@@ -118,6 +118,52 @@
     return __snd
 
 
+#define audio_load_raw
+    ///audio_load_raw(filename,samplerate,channels,bits,signed)
+    //filename: file to load
+    //samplerate: Sample rate (2000-44100)
+    //channels: 1 or 2
+    //bits: 8 or 16
+    //signed: true for signed, false for unsigned
+    //returns: sound index
+    //Loads raw sound data from a file.
+    var __b,__snd;
+    __b=buffer_create(argument0)
+    __snd=audio_load_buffer_raw(__b,argument1,argument2,argument3,argument4)
+    buffer_destroy(__b)
+    return __snd
+    
+    
+#define audio_load_buffer_raw
+    ///audio_load_buffer_raw(buffer,samplerate,channels,bits,signed)
+    //buffer: a handle to a gm82buf buffer
+    //samplerate: Sample rate (2000-44100)
+    //channels: 1 or 2
+    //bits: 8 or 16
+    //signed: true for signed, false for unsigned
+    //returns: sound index
+    //Loads raw sound data from a buffer.
+    //You can delete the buffer afterwards.
+    
+    var __snd;__snd=noone;
+    var __erstr;__erstr="in function audio_load_buffer_raw: "
+
+    if (buffer_exists(argument0)) {
+        if (argument1!=median(2000,argument1,44100)) {show_error(__erstr+"invalid sample rate "+string(argument1),0) return noone}
+        if (argument2!=1 and argument2!=2) {show_error(__erstr+"invalid channel count "+string(argument2),0) return noone}
+        if (argument3!=8 and argument3!=16) {show_error(__erstr+"invalid bit depth "+string(argument3),0) return noone}
+        
+        var __addr;__addr=buffer_get_address(argument0)
+        var __size;__size=buffer_get_size(argument0)
+        
+        __snd=__gm82audio_load_raw(__addr,__size,argument1,argument2,argument3,!!argument4)
+        __gm82audio_check(__snd,"audio_load_raw","buffer data")
+    } else {    
+        show_error(__erstr+"buffer does not exist",0)
+    }
+    return __snd
+
+
 #define audio_play
     ///audio_play(sound)
     //sound: sound index to play

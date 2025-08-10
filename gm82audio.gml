@@ -99,8 +99,8 @@
     var __erstr;__erstr="in function audio_load_buffer: "
 
     if (buffer_exists(argument0)) {
-        buffer_set_pos(__b,0)
-        var __fourcc;__fourcc=buffer_read_data(__b,3)
+        buffer_set_pos(argument0,0)
+        var __fourcc;__fourcc=buffer_read_data(argument0,3)
         
         var __addr;__addr=buffer_get_address(argument0)
         var __size;__size=buffer_get_size(argument0)

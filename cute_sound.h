@@ -2649,19 +2649,19 @@ static void cs_last_elementu(cs__m128* a, int i, int j, uint16_t* samples, int o
 {
 	switch (offset) {
 	case 1:
-		a[i] = cs_mm_set_ps((float)samples[j], 0.0f, 0.0f, 0.0f);
+		a[i] = cs_mm_set_ps((float)(samples[j]-32767), 0.0f, 0.0f, 0.0f);
 		break;
 
 	case 2:
-		a[i] = cs_mm_set_ps((float)samples[j], (float)samples[j + 1], 0.0f, 0.0f);
+		a[i] = cs_mm_set_ps((float)(samples[j]-32767), (float)(samples[j + 1]-32767), 0.0f, 0.0f);
 		break;
 
 	case 3:
-		a[i] = cs_mm_set_ps((float)samples[j], (float)samples[j + 1], (float)samples[j + 2], 0.0f);
+		a[i] = cs_mm_set_ps((float)(samples[j]-32767), (float)(samples[j + 1]-32767), (float)(samples[j + 2]-32767), 0.0f);
 		break;
 
 	case 0:
-		a[i] = cs_mm_set_ps((float)samples[j], (float)samples[j + 1], (float)samples[j + 2], (float)samples[j + 3]);
+		a[i] = cs_mm_set_ps((float)(samples[j]-32767), (float)(samples[j + 1]-32767), (float)(samples[j + 2]-32767), (float)(samples[j + 3]-32767));
 		break;
 	}
 }
@@ -2669,19 +2669,19 @@ static void cs_last_element8(cs__m128* a, int i, int j, int8_t* samples8, int of
 {
 	switch (offset) {
 	case 1:
-		a[i] = cs_mm_set_ps((float)((samples8[j]-127)*256), 0.0f, 0.0f, 0.0f);
+		a[i] = cs_mm_set_ps((float)(samples8[j]*256), 0.0f, 0.0f, 0.0f);
 		break;
 
 	case 2:
-		a[i] = cs_mm_set_ps((float)((samples8[j]-127)*256), (float)((samples8[j+1]-127)*256), 0.0f, 0.0f);
+		a[i] = cs_mm_set_ps((float)(samples8[j]*256), (float)(samples8[j+1]*256), 0.0f, 0.0f);
 		break;
 
 	case 3:
-		a[i] = cs_mm_set_ps((float)((samples8[j]-127)*256), (float)((samples8[j+1]-127)*256), (float)((samples8[j+2]-127)*256), 0.0f);
+		a[i] = cs_mm_set_ps((float)(samples8[j]*256), (float)(samples8[j+1]*256), (float)(samples8[j+2]*256), 0.0f);
 		break;
 
 	case 0:
-		a[i] = cs_mm_set_ps((float)((samples8[j]-127)*256), (float)((samples8[j+1]-127)*256), (float)((samples8[j+2]-127)*256), (float)((samples8[j+3]-127)*256));
+		a[i] = cs_mm_set_ps((float)(samples8[j]*256), (float)(samples8[j+1]*256), (float)(samples8[j+2]*256), (float)(samples8[j+3]*256));
 		break;
 	}
 }
@@ -2896,7 +2896,7 @@ cs_audio_source_t* cs_read_mem_raw(const void* memory, size_t size, uint32_t sam
                     audio->channels[1] = 0;
                     cs__m128* a = (cs__m128*)audio->channels[0];
                     for (int i = 0, j = 0; i < wide_count - 1; ++i, j += 4) {
-                        if (is_8bit) a[i] = cs_mm_set_ps((float)((samples8[j+3]-127)*256), (float)((samples8[j+2]-127)*256), (float)((samples8[j+1]-127)*256), (float)((samples8[j]-127)*256));
+                        if (is_8bit) a[i] = cs_mm_set_ps((float)(samples8[j+3]*256), (float)(samples8[j+2]*256), (float)(samples8[j+1]*256), (float)(samples8[j]*256));
                         else a[i] = cs_mm_set_ps((float)samples[j+3], (float)samples[j+2], (float)samples[j+1], (float)samples[j]);
                     }
                     if (is_8bit) cs_last_element8(a, wide_count - 1, (wide_count - 1) * 4, samples8, wide_offset);
@@ -2909,8 +2909,8 @@ cs_audio_source_t* cs_read_mem_raw(const void* memory, size_t size, uint32_t sam
                     cs__m128* b = a + wide_count;
                     for (int i = 0, j = 0; i < wide_count - 1; ++i, j += 8){
                         if (is_8bit) {
-                            a[i] = cs_mm_set_ps((float)((samples8[j+6]-127)*256), (float)((samples8[j+4]-127)*256), (float)((samples8[j+2]-127)*256), (float)((samples8[j  ]-127)*256));
-                            b[i] = cs_mm_set_ps((float)((samples8[j+7]-127)*256), (float)((samples8[j+5]-127)*256), (float)((samples8[j+3]-127)*256), (float)((samples8[j+1]-127)*256));
+                            a[i] = cs_mm_set_ps((float)(samples8[j+6]*256), (float)(samples8[j+4]*256), (float)(samples8[j+2]*256), (float)(samples8[j  ]*256));
+                            b[i] = cs_mm_set_ps((float)(samples8[j+7]*256), (float)(samples8[j+5]*256), (float)(samples8[j+3]*256), (float)(samples8[j+1]*256));
                         } else {
                             a[i] = cs_mm_set_ps((float)samples[j+6], (float)samples[j+4], (float)samples[j+2], (float)samples[j]);
                             b[i] = cs_mm_set_ps((float)samples[j+7], (float)samples[j+5], (float)samples[j+3], (float)samples[j+1]);
@@ -2945,7 +2945,7 @@ cs_audio_source_t* cs_read_mem_raw(const void* memory, size_t size, uint32_t sam
                         cs_last_element8u(a, wide_count - 1, (wide_count - 1) * 4, samples8u, wide_offset);
                     } else {
                         for (int i = 0, j = 0; i < wide_count - 1; ++i, j += 4) {
-                            a[i] = cs_mm_set_ps((float)samplesu[j+3], (float)samplesu[j+2], (float)samplesu[j+1], (float)samplesu[j]);
+                            a[i] = cs_mm_set_ps((float)(samplesu[j+3]-32767), (float)(samplesu[j+2]-32767), (float)(samplesu[j+1]-32767), (float)(samplesu[j]-32767));
                         }                
                         cs_last_elementu(a, wide_count - 1, (wide_count - 1) * 4, samplesu, wide_offset);
                     }
@@ -2960,8 +2960,8 @@ cs_audio_source_t* cs_read_mem_raw(const void* memory, size_t size, uint32_t sam
                             a[i] = cs_mm_set_ps((float)((samples8u[j+6]-127)*256), (float)((samples8u[j+4]-127)*256), (float)((samples8u[j+2]-127)*256), (float)((samples8u[j  ]-127)*256));
                             b[i] = cs_mm_set_ps((float)((samples8u[j+7]-127)*256), (float)((samples8u[j+5]-127)*256), (float)((samples8u[j+3]-127)*256), (float)((samples8u[j+1]-127)*256));
                         } else {
-                            a[i] = cs_mm_set_ps((float)samplesu[j+6], (float)samplesu[j+4], (float)samplesu[j+2], (float)samplesu[j]);
-                            b[i] = cs_mm_set_ps((float)samplesu[j+7], (float)samplesu[j+5], (float)samplesu[j+3], (float)samplesu[j+1]);
+                            a[i] = cs_mm_set_ps((float)(samplesu[j+6]-32767), (float)(samplesu[j+4]-32767), (float)(samplesu[j+2]-32767), (float)(samplesu[j  ]-32767));
+                            b[i] = cs_mm_set_ps((float)(samplesu[j+7]-32767), (float)(samplesu[j+5]-32767), (float)(samplesu[j+3]-32767), (float)(samplesu[j+1]-32767));
                         }
                     }
                     if (is_8bit) {

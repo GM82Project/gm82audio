@@ -256,6 +256,7 @@ typedef enum cs_error_t
 	CUTE_SOUND_ERROR_CANNOT_FADEOUT_WHILE_MUSIC_IS_PAUSED,
 	CUTE_SOUND_ERROR_TRIED_TO_SET_SAMPLE_INDEX_BEYOND_THE_AUDIO_SOURCES_SAMPLE_COUNT,
 	CUTE_SOUND_ERROR_STB_VORBIS_DECODE_FAILED,
+	CUTE_SOUND_ERROR_MP3_DECODE_FAILED,
 	CUTE_SOUND_ERROR_OGG_UNSUPPORTED_CHANNEL_COUNT,
 	CUTE_SOUND_ERROR_INVALID_RANGE_FOR_ARGUMENTS,
 } cs_error_t;
@@ -1363,6 +1364,7 @@ const char* cs_error_as_string(cs_error_t error) {
 	case CUTE_SOUND_ERROR_CANNOT_FADEOUT_WHILE_MUSIC_IS_PAUSED: return "CUTE_SOUND_ERROR_CANNOT_FADEOUT_WHILE_MUSIC_IS_PAUSED";
 	case CUTE_SOUND_ERROR_TRIED_TO_SET_SAMPLE_INDEX_BEYOND_THE_AUDIO_SOURCES_SAMPLE_COUNT: return "CUTE_SOUND_ERROR_TRIED_TO_SET_SAMPLE_INDEX_BEYOND_THE_AUDIO_SOURCES_SAMPLE_COUNT";
 	case CUTE_SOUND_ERROR_STB_VORBIS_DECODE_FAILED: return "CUTE_SOUND_ERROR_STB_VORBIS_DECODE_FAILED";
+	case CUTE_SOUND_ERROR_MP3_DECODE_FAILED: return "CUTE_SOUND_ERROR_MP3_DECODE_FAILED";
 	case CUTE_SOUND_ERROR_OGG_UNSUPPORTED_CHANNEL_COUNT: return "CUTE_SOUND_ERROR_OGG_UNSUPPORTED_CHANNEL_COUN";
 	case CUTE_SOUND_ERROR_INVALID_RANGE_FOR_ARGUMENTS: return "CUTE_SOUND_ERROR_INVALID_RANGE_FOR_ARGUMENTS";
 	default: return "UNKNOWN";
@@ -2290,8 +2292,8 @@ void cs_mix()
 
 				float gpan0 = 1.0f - s_ctx->global_pan;
 				float gpan1 = s_ctx->global_pan;
-				float vA0 = playing->volume * playing->pan0 * gpan0 * s_ctx->global_volume;
-				float vB0 = playing->volume * playing->pan1 * gpan1 * s_ctx->global_volume;
+				float vA0 = playing->volume * playing->pan0 * gpan0 * s_ctx->global_volume * 4.0;
+				float vB0 = playing->volume * playing->pan1 * gpan1 * s_ctx->global_volume * 4.0;
 				if (!playing->is_music) {
 					vA0 *= s_ctx->sound_volume;
 					vB0 *= s_ctx->sound_volume;
@@ -2612,7 +2614,7 @@ static void* cs_read_file_to_memory(const char* path, int* size)
 
 static int cs_four_cc(const char* CC, void* memory)
 {
-	if (!CUTE_SOUND_MEMCMP(CC, memory, 4)) return 1;
+	if (CUTE_SOUND_MEMCMP(CC, memory, 4)==0) return 1;
 	return 0;
 }
 
@@ -2667,19 +2669,19 @@ static void cs_last_element8(cs__m128* a, int i, int j, int8_t* samples8, int of
 {
 	switch (offset) {
 	case 1:
-		a[i] = cs_mm_set_ps((float)((samples8[j]-127)*512), 0.0f, 0.0f, 0.0f);
+		a[i] = cs_mm_set_ps((float)((samples8[j]-127)*256), 0.0f, 0.0f, 0.0f);
 		break;
 
 	case 2:
-		a[i] = cs_mm_set_ps((float)((samples8[j]-127)*512), (float)((samples8[j+1]-127)*512), 0.0f, 0.0f);
+		a[i] = cs_mm_set_ps((float)((samples8[j]-127)*256), (float)((samples8[j+1]-127)*256), 0.0f, 0.0f);
 		break;
 
 	case 3:
-		a[i] = cs_mm_set_ps((float)((samples8[j]-127)*512), (float)((samples8[j+1]-127)*512), (float)((samples8[j+2]-127)*512), 0.0f);
+		a[i] = cs_mm_set_ps((float)((samples8[j]-127)*256), (float)((samples8[j+1]-127)*256), (float)((samples8[j+2]-127)*256), 0.0f);
 		break;
 
 	case 0:
-		a[i] = cs_mm_set_ps((float)((samples8[j]-127)*512), (float)((samples8[j+1]-127)*512), (float)((samples8[j+2]-127)*512), (float)((samples8[j+3]-127)*512));
+		a[i] = cs_mm_set_ps((float)((samples8[j]-127)*256), (float)((samples8[j+1]-127)*256), (float)((samples8[j+2]-127)*256), (float)((samples8[j+3]-127)*256));
 		break;
 	}
 }
@@ -2687,19 +2689,19 @@ static void cs_last_element8u(cs__m128* a, int i, int j, uint8_t* samples8, int 
 {
 	switch (offset) {
 	case 1:
-		a[i] = cs_mm_set_ps((float)((samples8[j]-127)*512), 0.0f, 0.0f, 0.0f);
+		a[i] = cs_mm_set_ps((float)((samples8[j]-127)*256), 0.0f, 0.0f, 0.0f);
 		break;
 
 	case 2:
-		a[i] = cs_mm_set_ps((float)((samples8[j]-127)*512), (float)((samples8[j+1]-127)*512), 0.0f, 0.0f);
+		a[i] = cs_mm_set_ps((float)((samples8[j]-127)*256), (float)((samples8[j+1]-127)*256), 0.0f, 0.0f);
 		break;
 
 	case 3:
-		a[i] = cs_mm_set_ps((float)((samples8[j]-127)*512), (float)((samples8[j+1]-127)*512), (float)((samples8[j+2]-127)*512), 0.0f);
+		a[i] = cs_mm_set_ps((float)((samples8[j]-127)*256), (float)((samples8[j+1]-127)*256), (float)((samples8[j+2]-127)*256), 0.0f);
 		break;
 
 	case 0:
-		a[i] = cs_mm_set_ps((float)((samples8[j]-127)*512), (float)((samples8[j+1]-127)*512), (float)((samples8[j+2]-127)*512), (float)((samples8[j+3]-127)*512));
+		a[i] = cs_mm_set_ps((float)((samples8[j]-127)*256), (float)((samples8[j+1]-127)*256), (float)((samples8[j+2]-127)*256), (float)((samples8[j+3]-127)*256));
 		break;
 	}
 }
@@ -2794,7 +2796,7 @@ cs_audio_source_t* cs_read_mem_wav(const void* memory, size_t size, cs_error_t* 
 			cs__m128* a = (cs__m128*)audio->channels[0];
 			if (is_8bit) {
                 for (int i = 0, j = 0; i < wide_count - 1; ++i, j += 4) {
-                    a[i] = cs_mm_set_ps((float)((samples8u[j+3]-127)*512), (float)((samples8u[j+2]-127)*512), (float)((samples8u[j+1]-127)*512), (float)((samples8u[j]-127)*512));
+                    a[i] = cs_mm_set_ps((float)((samples8u[j+3]-127)*256), (float)((samples8u[j+2]-127)*256), (float)((samples8u[j+1]-127)*256), (float)((samples8u[j]-127)*256));
                 }
                 cs_last_element8u(a, wide_count - 1, (wide_count - 1) * 4, samples8u, wide_offset);
 			} else {
@@ -2811,8 +2813,8 @@ cs_audio_source_t* cs_read_mem_wav(const void* memory, size_t size, cs_error_t* 
 			cs__m128* b = a + wide_count;
 			if (is_8bit) {
                 for (int i = 0, j = 0; i < wide_count - 1; ++i, j += 8){
-                    a[i] = cs_mm_set_ps((float)((samples8u[j+6]-127)*512), (float)((samples8u[j+4]-127)*512), (float)((samples8u[j+2]-127)*512), (float)((samples8u[j  ]-127)*512));
-                    b[i] = cs_mm_set_ps((float)((samples8u[j+7]-127)*512), (float)((samples8u[j+5]-127)*512), (float)((samples8u[j+3]-127)*512), (float)((samples8u[j+1]-127)*512));
+                    a[i] = cs_mm_set_ps((float)((samples8u[j+6]-127)*256), (float)((samples8u[j+4]-127)*256), (float)((samples8u[j+2]-127)*256), (float)((samples8u[j  ]-127)*256));
+                    b[i] = cs_mm_set_ps((float)((samples8u[j+7]-127)*256), (float)((samples8u[j+5]-127)*256), (float)((samples8u[j+3]-127)*256), (float)((samples8u[j+1]-127)*256));
                 }
 				cs_last_element8u(a, wide_count - 1, (wide_count - 1) * 4, samples8u, wide_offset);
 				cs_last_element8u(b, wide_count - 1, (wide_count - 1) * 4 + 4, samples8u, wide_offset);
@@ -2894,7 +2896,7 @@ cs_audio_source_t* cs_read_mem_raw(const void* memory, size_t size, uint32_t sam
                     audio->channels[1] = 0;
                     cs__m128* a = (cs__m128*)audio->channels[0];
                     for (int i = 0, j = 0; i < wide_count - 1; ++i, j += 4) {
-                        if (is_8bit) a[i] = cs_mm_set_ps((float)((samples8[j+3]-127)*512), (float)((samples8[j+2]-127)*512), (float)((samples8[j+1]-127)*512), (float)((samples8[j]-127)*512));
+                        if (is_8bit) a[i] = cs_mm_set_ps((float)((samples8[j+3]-127)*256), (float)((samples8[j+2]-127)*256), (float)((samples8[j+1]-127)*256), (float)((samples8[j]-127)*256));
                         else a[i] = cs_mm_set_ps((float)samples[j+3], (float)samples[j+2], (float)samples[j+1], (float)samples[j]);
                     }
                     if (is_8bit) cs_last_element8(a, wide_count - 1, (wide_count - 1) * 4, samples8, wide_offset);
@@ -2907,8 +2909,8 @@ cs_audio_source_t* cs_read_mem_raw(const void* memory, size_t size, uint32_t sam
                     cs__m128* b = a + wide_count;
                     for (int i = 0, j = 0; i < wide_count - 1; ++i, j += 8){
                         if (is_8bit) {
-                            a[i] = cs_mm_set_ps((float)((samples8[j+6]-127)*512), (float)((samples8[j+4]-127)*512), (float)((samples8[j+2]-127)*512), (float)((samples8[j  ]-127)*512));
-                            b[i] = cs_mm_set_ps((float)((samples8[j+7]-127)*512), (float)((samples8[j+5]-127)*512), (float)((samples8[j+3]-127)*512), (float)((samples8[j+1]-127)*512));
+                            a[i] = cs_mm_set_ps((float)((samples8[j+6]-127)*256), (float)((samples8[j+4]-127)*256), (float)((samples8[j+2]-127)*256), (float)((samples8[j  ]-127)*256));
+                            b[i] = cs_mm_set_ps((float)((samples8[j+7]-127)*256), (float)((samples8[j+5]-127)*256), (float)((samples8[j+3]-127)*256), (float)((samples8[j+1]-127)*256));
                         } else {
                             a[i] = cs_mm_set_ps((float)samples[j+6], (float)samples[j+4], (float)samples[j+2], (float)samples[j]);
                             b[i] = cs_mm_set_ps((float)samples[j+7], (float)samples[j+5], (float)samples[j+3], (float)samples[j+1]);
@@ -2938,7 +2940,7 @@ cs_audio_source_t* cs_read_mem_raw(const void* memory, size_t size, uint32_t sam
                     cs__m128* a = (cs__m128*)audio->channels[0];
                     if (is_8bit) {
                         for (int i = 0, j = 0; i < wide_count - 1; ++i, j += 4) {
-                            a[i] = cs_mm_set_ps((float)((samples8u[j+3]-127)*512), (float)((samples8u[j+2]-127)*512), (float)((samples8u[j+1]-127)*512), (float)((samples8u[j]-127)*512));
+                            a[i] = cs_mm_set_ps((float)((samples8u[j+3]-127)*256), (float)((samples8u[j+2]-127)*256), (float)((samples8u[j+1]-127)*256), (float)((samples8u[j]-127)*256));
                         }                
                         cs_last_element8u(a, wide_count - 1, (wide_count - 1) * 4, samples8u, wide_offset);
                     } else {
@@ -2955,8 +2957,8 @@ cs_audio_source_t* cs_read_mem_raw(const void* memory, size_t size, uint32_t sam
                     cs__m128* b = a + wide_count;
                     for (int i = 0, j = 0; i < wide_count - 1; ++i, j += 8){
                         if (is_8bit) {
-                            a[i] = cs_mm_set_ps((float)((samples8u[j+6]-127)*512), (float)((samples8u[j+4]-127)*512), (float)((samples8u[j+2]-127)*512), (float)((samples8u[j  ]-127)*512));
-                            b[i] = cs_mm_set_ps((float)((samples8u[j+7]-127)*512), (float)((samples8u[j+5]-127)*512), (float)((samples8u[j+3]-127)*512), (float)((samples8u[j+1]-127)*512));
+                            a[i] = cs_mm_set_ps((float)((samples8u[j+6]-127)*256), (float)((samples8u[j+4]-127)*256), (float)((samples8u[j+2]-127)*256), (float)((samples8u[j  ]-127)*256));
+                            b[i] = cs_mm_set_ps((float)((samples8u[j+7]-127)*256), (float)((samples8u[j+5]-127)*256), (float)((samples8u[j+3]-127)*256), (float)((samples8u[j+1]-127)*256));
                         } else {
                             a[i] = cs_mm_set_ps((float)samplesu[j+6], (float)samplesu[j+4], (float)samplesu[j+2], (float)samplesu[j]);
                             b[i] = cs_mm_set_ps((float)samplesu[j+7], (float)samplesu[j+5], (float)samplesu[j+3], (float)samplesu[j+1]);
@@ -2981,6 +2983,88 @@ cs_audio_source_t* cs_read_mem_raw(const void* memory, size_t size, uint32_t sam
 	}
 
 	if (err) *err = CUTE_SOUND_ERROR_NONE;
+	return audio;
+}
+
+cs_audio_source_t* cs_read_mem_mp3(const void* memory, size_t length, cs_error_t* err)
+{
+	mp3dec_t mp3d;
+    mp3dec_file_info_t info;
+    if (mp3dec_load_buf(&mp3d, (const uint8_t*)memory, length, &info, NULL, NULL))
+    {
+        if (err) *err = CUTE_SOUND_ERROR_MP3_DECODE_FAILED; return NULL;
+    }    
+    
+    int16_t* samples = info.buffer;
+    
+	cs_audio_source_t* audio = NULL;
+    
+	int channel_count = info.channels;
+	int sample_rate = info.hz;
+	int sample_count = info.samples / info.channels;
+	if (sample_count <= 0) { if (err) *err = CUTE_SOUND_ERROR_MP3_DECODE_FAILED; free(info.buffer); return NULL; }
+	
+    audio = (cs_audio_source_t*)CUTE_SOUND_ALLOC(sizeof(cs_audio_source_t), s_mem_ctx);
+	CUTE_SOUND_MEMSET(audio, 0, sizeof(*audio));
+
+	{
+		int wide_count = (int)CUTE_SOUND_ALIGN(sample_count, 4) / 4;
+		int wide_offset = sample_count & 3;
+		cs__m128* a = NULL;
+		cs__m128* b = NULL;
+
+		switch (channel_count)
+		{
+		case 1:
+		{
+			a = (cs__m128*)cs_malloc16(wide_count * sizeof(cs__m128));
+			b = 0;
+			for (int i = 0, j = 0; i < wide_count - 1; ++i, j += 4) {
+				a[i] = cs_mm_set_ps((float)samples[j+3], (float)samples[j+2], (float)samples[j+1], (float)samples[j]);
+			}
+			cs_last_element(a, wide_count - 1, (wide_count - 1) * 4, samples, wide_offset);
+		}	break;
+
+		case 2:
+			a = (cs__m128*)cs_malloc16(wide_count * sizeof(cs__m128) * 2);
+			b = a + wide_count;
+			for (int i = 0, j = 0; i < wide_count - 1; ++i, j += 8) {
+				a[i] = cs_mm_set_ps((float)samples[j+6], (float)samples[j+4], (float)samples[j+2], (float)samples[j]);
+				b[i] = cs_mm_set_ps((float)samples[j+7], (float)samples[j+5], (float)samples[j+3], (float)samples[j+1]);
+			}
+			cs_last_element(a, wide_count - 1, (wide_count - 1) * 4, samples, wide_offset);
+			cs_last_element(b, wide_count - 1, (wide_count - 1) * 4 + 4, samples, wide_offset);
+			break;
+
+		default:
+			if (err) *err = CUTE_SOUND_ERROR_OGG_UNSUPPORTED_CHANNEL_COUNT;
+			CUTE_SOUND_ASSERT(false);
+		}
+
+		audio->sample_rate = sample_rate;
+		audio->sample_count = sample_count-1;
+		audio->channel_count = channel_count;
+		audio->channels[0] = a;
+		audio->channels[1] = b;
+		audio->playing_count = 0;
+		free(info.buffer);
+
+		//default properties
+		audio->loop_point_a = 0;
+		audio->loop_point_b = audio->sample_count;
+	}
+
+	if (err) *err = CUTE_SOUND_ERROR_NONE;
+	return audio;
+}
+
+cs_audio_source_t* cs_load_mp3(const char* path, cs_error_t* err)
+{
+	int length;
+	void* memory = cs_read_file_to_memory(path, &length);
+	if (!memory) return NULL;
+	cs_audio_source_t* audio = cs_read_mem_mp3(memory, length, err);
+	CUTE_SOUND_FREE(memory, s_mem_ctx);
 	return audio;
 }
 

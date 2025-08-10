@@ -1,7 +1,7 @@
 #define __gm82audio_init
     object_event_add(gm82core_object,ev_step,ev_step_end,"__gm82audio_step()")
     __gm82audio_init(window_handle())
-    globalvar __gm82audio_version; __gm82audio_version=110
+    globalvar __gm82audio_version; __gm82audio_version=120
     global.__gm82audio_last_update=get_timer()
 
 
@@ -65,19 +65,20 @@
     ///audio_load(filename)
     //filename: full or relative path to a sound file
     //returns: sound index
-    //Loads a sound file. wav files and ogg vorbis are supported.
+    //Loads a sound file. wav, mp3 and ogg vorbis are supported.
     var __snd;__snd=noone;
     var __erstr;__erstr="in function audio_load: error loading "+argument0+": "
     
     if (file_exists(argument0)) {
         __b=buffer_create()
-        buffer_load_part(__b,argument[0],0,4)
+        buffer_load_part(__b,argument[0],0,3)
         buffer_set_pos(__b,0)
-        var __fourcc;__fourcc=buffer_read_data(__b,4)
+        var __fourcc;__fourcc=buffer_read_data(__b,3)
         buffer_destroy(__b)
         
-        if (__fourcc=="RIFF") __snd=__gm82audio_load(argument0,0)
-        if (__fourcc=="OggS") __snd=__gm82audio_load(argument0,1)
+        if (__fourcc=="RIF") __snd=__gm82audio_load(argument0,0)
+        if (__fourcc=="Ogg") __snd=__gm82audio_load(argument0,1)
+        if (__fourcc=="ID3") __snd=__gm82audio_load(argument0,2)
         
         if (__snd==noone) show_error(__erstr+"unrecognized audio format "+__fourcc,0)
         __gm82audio_check(__snd,"audio_load",argument0)
@@ -91,24 +92,22 @@
     ///audio_load_buffer(buffer)
     //buffer: a handle to a gm82buf buffer
     //returns: sound index
-    //Loads a sound from a buffer. wav files and ogg vorbis are supported.
+    //Loads a sound from a buffer. wav, mp3 and ogg vorbis are supported.
     //You can delete the buffer afterwards.    
     
     var __snd;__snd=noone;
     var __erstr;__erstr="in function audio_load_buffer: "
 
     if (buffer_exists(argument0)) {
-        var __fourcc;__fourcc=
-            chr(buffer_peek(argument0,0))+
-            chr(buffer_peek(argument0,1))+
-            chr(buffer_peek(argument0,2))+
-            chr(buffer_peek(argument0,3))
+        buffer_set_pos(__b,0)
+        var __fourcc;__fourcc=buffer_read_data(__b,3)
         
         var __addr;__addr=buffer_get_address(argument0)
         var __size;__size=buffer_get_size(argument0)
         
-        if (__fourcc=="RIFF") __snd=__gm82audio_load_mem(__addr,__size,0)
-        if (__fourcc=="OggS") __snd=__gm82audio_load_mem(__addr,__size,1)
+        if (__fourcc=="RIF") __snd=__gm82audio_load_mem(__addr,__size,0)
+        if (__fourcc=="Ogg") __snd=__gm82audio_load_mem(__addr,__size,1)
+        if (__fourcc=="ID3") __snd=__gm82audio_load_mem(__addr,__size,2)
         
         if (__snd==noone) show_error(__erstr+"unrecognized audio format "+__fourcc,0)
         __gm82audio_check(__snd,"audio_load_buffer","buffer data")
@@ -127,6 +126,7 @@
     //signed: true for signed, false for unsigned
     //returns: sound index
     //Loads raw sound data from a file.
+    
     var __b,__snd;
     __b=buffer_create(argument0)
     __snd=audio_load_buffer_raw(__b,argument1,argument2,argument3,argument4)
@@ -352,7 +352,7 @@
     __q=ds_queue_create()
 
     for (__fn=file_find_first(__dir+"\*.*",0);__fn!="";__fn=file_find_next()) {
-        if (string_pos(string_lower(filename_ext(string(__fn))),".wav;.ogg;"))
+        if (string_pos(string_lower(filename_ext(string(__fn))),".wav;.ogg;.mp3;"))
             ds_queue_enqueue(__q,__dir+"\"+__fn)
     } file_find_close()
 
@@ -479,7 +479,7 @@
     ///audio_load_directory(dir)
     //dir: relative or absolute path to search
     //returns: map with loaded sounds
-    //Note that this function uses file_find internally. wav and ogg vorbis are supported.
+    //Note that this function uses file_find internally. wav, mp3 and ogg vorbis are supported.
     var __fn,__i,__map,__list,__snd;
     
     __map=ds_map_create()
@@ -488,7 +488,7 @@
     
     __i=0 repeat (ds_list_size(__list)) {
         __fn=ds_list_find_value(__list,__i)
-        if (string_pos(string_lower(filename_ext(__fn)),".wav;.ogg;")) {
+        if (string_pos(string_lower(filename_ext(__fn)),".wav;.ogg;.mp3;")) {
             __snd=audio_load(__fn)
             if (__snd) ds_map_add(__map,filename_name(__fn),__snd)
         }
@@ -503,7 +503,7 @@
     //filename: name of the included file to load
     //returns: sound index
     //Loads an included file. Make sure the file is set to [ ] do not free memory,
-    //[x] overwrite, (x) Don't export. wav and ogg files are supported.
+    //[x] overwrite, (x) Don't export. wav, mp3 and ogg files are supported.
     var __fname,__snd;
     __fname=temp_directory+"\gm82\"+argument0
     export_include_file_location(argument0,__fname)

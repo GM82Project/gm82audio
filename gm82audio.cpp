@@ -4,6 +4,12 @@
 #undef R
 #undef C
 
+#define MINIMP3_IMPLEMENTATION
+#include "minimp3.h"
+
+#define MINIMP3_NO_STDIO
+#include "minimp3_ex.h"
+
 #include "intrin.h"
 #define CUTE_SOUND_IMPLEMENTATION
 #include "cute_sound.h"
@@ -133,8 +139,9 @@ int __gm82audio_store_sound(cs_audio_source_t* snd) {
 GMREAL __gm82audio_load(char* fn,double type) {
     cs_error_t error;
     cs_audio_source_t* snd;
-    if (type>=0.5) snd=cs_load_ogg(fn,&error);
-    else snd=cs_load_wav(fn,&error);
+    if (type>=1.5)      snd=cs_load_mp3(fn,&error);
+    else if (type>=0.5) snd=cs_load_ogg(fn,&error);
+    else                snd=cs_load_wav(fn,&error);
     if (snd==NULL) strcpy(ERROR_STR,cs_error_as_string(error));
     return __gm82audio_store_sound(snd);
 }
@@ -142,8 +149,9 @@ GMREAL __gm82audio_load(char* fn,double type) {
 GMREAL __gm82audio_load_mem(double gmbuffer,double length,double type) {
     cs_error_t error;
     cs_audio_source_t* snd;
-    if (type>=0.5) snd=cs_read_mem_ogg((void*)(size_t)gmbuffer,(size_t)length,&error);
-    else snd=cs_read_mem_wav((void*)(size_t)gmbuffer,(size_t)length,&error);
+    if (type>=1.5)      snd=cs_read_mem_mp3((void*)(size_t)gmbuffer,(size_t)length,&error);
+    else if (type>=0.5) snd=cs_read_mem_ogg((void*)(size_t)gmbuffer,(size_t)length,&error);
+    else                snd=cs_read_mem_wav((void*)(size_t)gmbuffer,(size_t)length,&error);
     if (snd==NULL) strcpy(ERROR_STR,cs_error_as_string(error));
     return __gm82audio_store_sound(snd);
 }
@@ -195,16 +203,18 @@ GMREAL __gm82audio_load_builtin(double index) {
             return __ERROR_GENERIC;
         }
 
-        if (memcmp("wav",sound->extension,3)) snd=cs_read_mem_wav(data,size,&error);
-        if (memcmp("ogg",sound->extension,3)) snd=cs_read_mem_ogg(data,size,&error);
+        if (memcmp("RIF",data,3)==0) snd=cs_read_mem_wav(data,size,&error);
+        if (memcmp("Ogg",data,3)==0) snd=cs_read_mem_ogg(data,size,&error);
+        if (memcmp("ID3",data,3)==0) snd=cs_read_mem_mp3(data,size,&error);
         
         free(data);
     } else {
         //it's a valid builtin sound type loaded in memory, we can just grab it...
         void* buffer=sound->memstream->memory;
         int length=sound->memstream->size;
-        if (cs_four_cc("RIFF", buffer)) snd=cs_read_mem_wav(buffer,length,&error);
-        if (cs_four_cc("OggS", buffer)) snd=cs_read_mem_ogg(buffer,length,&error);
+        if (memcmp("RIF",buffer,3)==0) snd=cs_read_mem_wav(buffer,length,&error);
+        if (memcmp("Ogg",buffer,3)==0) snd=cs_read_mem_ogg(buffer,length,&error);
+        if (memcmp("ID3",buffer,3)==0) snd=cs_read_mem_mp3(buffer,length,&error);
     }
     
     if (snd==NULL) {

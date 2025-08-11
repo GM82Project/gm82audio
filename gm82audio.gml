@@ -1,7 +1,7 @@
 #define __gm82audio_init
     object_event_add(gm82core_object,ev_step,ev_step_end,"__gm82audio_step()")
     __gm82audio_init(window_handle())
-    globalvar __gm82audio_version; __gm82audio_version=120
+    globalvar gm82audio_version; gm82audio_version=120
     global.__gm82audio_last_update=get_timer()
 
 

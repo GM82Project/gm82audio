@@ -682,6 +682,28 @@
 					"returntype": 2
 				},
 				{
+					"name": "audio_get_loop_point_a",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_get_loop_point_a(sound)",
+					"hidden": false,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
+					"name": "audio_get_loop_point_b",
+					"extname": "",
+					"calltype": 2,
+					"helpline": "audio_get_loop_point_b(sound)",
+					"hidden": false,
+					"argtypes": [
+						2
+					],
+					"returntype": 2
+				},
+				{
 					"name": "audio_load_buffer",
 					"extname": "",
 					"calltype": 2,

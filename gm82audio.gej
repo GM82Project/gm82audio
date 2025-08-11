@@ -342,7 +342,7 @@
 					"extname": "",
 					"calltype": 12,
 					"helpline": "",
-					"hidden": false,
+					"hidden": true,
 					"argtypes": [
 						2,
 						2
@@ -416,7 +416,7 @@
 					"extname": "",
 					"calltype": 12,
 					"helpline": "",
-					"hidden": false,
+					"hidden": true,
 					"argtypes": [
 						2
 					],
@@ -427,7 +427,7 @@
 					"extname": "",
 					"calltype": 12,
 					"helpline": "",
-					"hidden": false,
+					"hidden": true,
 					"argtypes": [
 						2
 					],

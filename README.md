@@ -7,7 +7,7 @@ The extension does not override the builtin audio engine - functions start with 
 
 Dependencies:
 - Game Maker 8.2 Core - used for persistent updater object
-- Game Maker 8.2 Network - used for loading sounds from memory and from WASD packs
+- Game Maker 8.2 Buffer - used for loading sounds from memory and from WASD packs
 
 cute_sound is copyright (c) 2023 [Randy Gaul](https://github.com/RandyGaul), part of [Cute Framework](https://github.com/RandyGaul/cute_framework).
 

@@ -249,7 +249,7 @@ GMREAL __gm82audio_exists(double index) {
 }
 
 GMREAL __gm82audio_global_volume(double vol) {
-    ///audio_global_volume(volume)
+    ///audio_all_volume(volume)
     //volume: gain value
     //Sets the global volume for the audio engine.
     cs_set_global_volume(vol);
@@ -257,22 +257,23 @@ GMREAL __gm82audio_global_volume(double vol) {
 }
 
 GMREAL __gm82audio_global_pause() {
-    ///audio_global_pause()
+    ///audio_all_pause()
     //Pauses execution of the audio engine.
     cs_set_global_pause(true);
     return 0;
 }
 
 GMREAL __gm82audio_global_resume() {
-    ///audio_global_resume()
+    ///audio_all_resume()
     //Resumes execution of the audio engine.
     cs_set_global_pause(false);
     return 0;
 }
 
-GMREAL __gm82audio_stop_all(double musictoo) {
+GMREAL __gm82audio_stop_all() {
+    ///audio_sfx_stop()
+    //Stops all sound effects.
     cs_stop_all_playing_sounds();
-    if (musictoo>=0.5) cs_music_stop(0);
     return 0;
 }
 

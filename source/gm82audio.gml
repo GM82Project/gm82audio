@@ -319,7 +319,7 @@
 #define audio_music_stop
     ///audio_music_stop([fadeouttime])
     //fadeouttime: optional time to fade the music out
-    //Stops the currently playing music piece with a fade out time.
+    //Stops the currently playing music piece with an optional fade out time.
     var __fade;__fade=0
     
     if (argument_count>1) {
@@ -331,16 +331,15 @@
     __gm82audio_music_stop(__fade)
 
 
-#define audio_global_stop
-    ///audio_global_stop([music too])
-    //music too: stop music as well as sounds
-    //Stops all playing sounds.
-    if (argument_count) __gm82audio_stop_all(argument[0])
-    else __gm82audio_stop_all(0)
+#define audio_all_stop
+    ///audio_all_stop()
+    //Stops all sound.
+    audio_sfx_stop()
+    __gm82audio_music_stop(0)
 
 
-#define audio_create_pack
-    ///audio_create_pack(sourcedir,filename)
+#define audio_pack_create
+    ///audio_pack_create(sourcedir,filename)
     //sourcedir: directory to load files from
     //filename: filename to save the pack to
     //Creates a sound pack containing supported files from the source directory.
@@ -379,12 +378,13 @@
     ds_queue_destroy(__q)
 
 
-#define audio_load_pack
-    ///audio_load_pack(pack)
+#define audio_pack_load
+    ///audio_pack_load(pack)
     //pack: path to pack file to load
     //returns: map with the sounds added
     //Adds a sound pack for use.
-    //Note: Make sure to destroy the returned map when you're done.
+    //Note: Make sure to destroy the returned map when you're done with it.
+    //Alernatively, give the returned map to audio_pack_unload() which will unload all of the sounds and destroy the map for you.
     var __mb,__retlist,__b,__count,__name,__index,__length,__pos;
 
     if (!file_exists(argument0)) {show_error("Error loading WASD pack: file "+argument0+" does not exist.",0) return noone}
@@ -415,8 +415,19 @@
     return __retlist
 
 
-#define audio_unpack_pack
-    ///sound_unpack_pack(pack,dir)
+#define audio_pack_unload
+    ///audio_pack_unload(packmap)
+    //Unloads a previously loaded audio pack.
+    var __key;
+    
+    __key=ds_map_find_first(argument0) repeat (ds_map_size(argument0)) {
+        audio_delete(ds_map_find_value(argument0,__key))
+    __key=ds_map_find_next(argument0,__key)}
+    ds_map_destroy(argument0)
+    
+
+#define audio_pack_extract
+    ///audio_pack_extract(pack,dir)
     //pack: path to pack file
     //dir: directory to unpack to
     //returns: list of files unpacked

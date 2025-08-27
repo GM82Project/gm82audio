@@ -2290,10 +2290,12 @@ void cs_mix()
 				// Make sure the audio file was loaded properly.
 				CUTE_SOUND_ASSERT(cA);
 
-				float gpan0 = 1.0f - s_ctx->global_pan;
-				float gpan1 = s_ctx->global_pan;
-				float vA0 = playing->volume * playing->pan0 * gpan0 * s_ctx->global_volume * 4.0;
-				float vB0 = playing->volume * playing->pan1 * gpan1 * s_ctx->global_volume * 4.0;
+				float gpan0 = min(1.0f,(1.0f-s_ctx->global_pan)*2.0f);
+				float gpan1 = min(1.0f,s_ctx->global_pan*2.0f);
+                
+				float vA0 = playing->volume * playing->pan0 * gpan0 * s_ctx->global_volume;
+				float vB0 = playing->volume * playing->pan1 * gpan1 * s_ctx->global_volume;
+                
 				if (!playing->is_music) {
 					vA0 *= s_ctx->sound_volume;
 					vB0 *= s_ctx->sound_volume;
@@ -3279,8 +3281,8 @@ static cs_sound_inst_t* s_inst_music(cs_audio_source_t* src, float volume)
 	inst->looped = s_ctx->music_looped;
 	if (!s_ctx->music_paused) inst->paused = false;
 	inst->volume = volume;
-	inst->pan0 = 0.5f;
-	inst->pan1 = 0.5f;
+	inst->pan0 = 1.0f;
+	inst->pan1 = 1.0f;
 	inst->pitch = 1.0f;
 	inst->audio = src;
 	inst->sample_index = 0;
@@ -3299,8 +3301,8 @@ static cs_sound_inst_t* s_inst(cs_audio_source_t* src, cs_sound_params_t params)
 	float pan = params.pan;
 	if (pan > 1.0f) pan = 1.0f;
 	else if (pan < 0.0f) pan = 0.0f;
-	float panl = 1.0f - pan;
-	float panr = pan;
+	float panl = min(1.0f,(1.0f-pan)*2.0f);
+	float panr = min(1.0f,pan*2.0f);
 	inst->is_music = false;
 	inst->paused = params.paused;
 	inst->looped = params.looped;
@@ -3421,12 +3423,12 @@ if (pan_0_to_1 < 0) pan_0_to_1 = 0;
 	if (pan_0_to_1 > 1) pan_0_to_1 = 1;
 
 	if (s_ctx->music_playing) {
-		s_ctx->music_playing->pan0 = 1.0f - pan_0_to_1;
-		s_ctx->music_playing->pan1 = pan_0_to_1;
+		s_ctx->music_playing->pan0 = min(1.0f,(1.0f-pan_0_to_1)*2.0f);
+		s_ctx->music_playing->pan1 = min(1.0f,pan_0_to_1*2.0f);
 	}
 	if (s_ctx->music_next) {
-		s_ctx->music_next->pan0 = 1.0f - pan_0_to_1;
-		s_ctx->music_next->pan1 = pan_0_to_1;
+		s_ctx->music_next->pan0 = min(1.0f,(1.0f-pan_0_to_1)*2.0f);
+		s_ctx->music_next->pan1 = min(1.0f,pan_0_to_1*2.0f);
 	}
 }
 
@@ -3737,8 +3739,8 @@ void cs_sound_set_pan(cs_playing_sound_t sound, float pan_0_to_1)
 	if (pan_0_to_1 > 1) pan_0_to_1 = 1;
 	cs_sound_inst_t* inst = s_get_inst(sound);
 	if (!inst) return;
-	inst->pan0 = 1.0f - pan_0_to_1;
-	inst->pan1 = pan_0_to_1;
+	inst->pan0 = min(1.0f,(1.0f-pan_0_to_1)*2.0f);
+	inst->pan1 = min(1.0f,pan_0_to_1*2.0f);
 }
 
 cs_error_t cs_sound_set_sample_index(cs_playing_sound_t sound, int sample_index)

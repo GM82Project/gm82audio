@@ -430,7 +430,7 @@ GMREAL __gm82audio_music_stop(double fadeouttime) {
 
 //sounds
 GMREAL __gm82audio_set_sfx_volume(double vol) {
-    ///audio_sound_volume(volume)
+    ///audio_sfx_volume(volume)
     //volume: gain factor
     //Sets the volume for sound effect mixing.
     cs_set_playing_sounds_volume(vol);

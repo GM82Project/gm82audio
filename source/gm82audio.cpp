@@ -1,23 +1,10 @@
-#include "stb_vorbis.c"
-//bruhhh
-#undef L
-#undef R
-#undef C
-
-#define MINIMP3_IMPLEMENTATION
-#include "minimp3.h"
-
-#define MINIMP3_NO_STDIO
-#include "minimp3_ex.h"
-
-#include "intrin.h"
-#define CUTE_SOUND_IMPLEMENTATION
-#include "cute_sound.h"
-
 #include <vector>
 #include <stdlib.h>
 #include <stdio.h>
 #include <windows.h>
+
+#include "../soloud/include/soloud.h"
+#include "../soloud/include/soloud_speech.h"
 
 #define GMREAL extern "C" __declspec(dllexport) double __cdecl 
 #define GMSTR extern "C" __declspec(dllexport) char* __cdecl
@@ -64,15 +51,16 @@ struct GMSound {
 static GMSound*** gm_sound_mem = (GMSound***)0x6840c0;
 static uint32_t* gm_sound_count = (uint32_t*)0x6840c8;
 
+typedef void source_t;
 
 //audio extension globals
 struct sound_struct {
-    cs_audio_source_t* source;
+    source_t* source;
     double volume;
     double pan;
 	double pitch;
     bool deleted=false;
-    sound_struct(cs_audio_source_t* source, double volume = 1, double pan = 0, double pitch = 1): source(source), volume(volume), pan(pan), pitch(pitch){};
+    sound_struct(source_t* source, double volume = 1, double pan = 0, double pitch = 1): source(source), volume(volume), pan(pan), pitch(pitch){};
 };
 
 static double SAMPLE_RATE=44100;
@@ -81,20 +69,20 @@ static int BUILTIN_COUNT;
 static std::vector<sound_struct*> SOUNDS;
 static char ERROR_STR[255];
 static bool MUSIC_PAUSED=false;
-static cs_audio_source_t* CURRENT_MUSIC_SOURCE=NULL;
+static source_t* CURRENT_MUSIC_SOURCE=NULL;
 
 GMREAL __gm82audio_load_builtin(double);
 
 //initialization and system
 GMREAL __gm82audio_init(double gm_hwnd) {
-    cs_error_t error = cs_init((HWND)(int)gm_hwnd,(int)SAMPLE_RATE,4096,NULL);
+    /*cs_error_t error = cs_init((HWND)(int)gm_hwnd,(int)SAMPLE_RATE,4096,NULL);
     if (error) {
         MessageBoxA(NULL,cs_error_as_string(error),"gm82audio error!",MB_OK|MB_ICONSTOP);
         exit(1);
         return 0;
     }
     cs_spawn_mix_thread();
-    cs_mix_thread_sleep_delay(1);
+    cs_mix_thread_sleep_delay(1);*/
     
     //reserve space for builtin sounds
     BUILTIN_COUNT=*gm_sound_count;
@@ -107,19 +95,19 @@ GMREAL __gm82audio_init(double gm_hwnd) {
         SOUNDS.push_back(NULL);
         sound=(*gm_sound_mem)[i];
         if (sound) if (sound->preload) {
-            __gm82audio_load_builtin(i);
+            //__gm82audio_load_builtin(i);
         }
     }
     return 0;
 }
 
 GMREAL __gm82audio_update(double dt) {
-    cs_update(dt);
+    //cs_update(dt);
     return 0;
 }
 
 GMREAL __gm82audio_end() {
-    cs_shutdown();
+    //cs_shutdown();
     return 0;
 }
 
@@ -127,18 +115,18 @@ GMSTR  __gm82audio_get_error() {
     return ERROR_STR;
 }
 
-int __gm82audio_store_sound(cs_audio_source_t* snd) {
+int __gm82audio_store_sound(source_t* snd) {
     if (snd==NULL) return __ERROR_FAIL_LOAD;
     SOUNDS.reserve((((SOUND_INDEX+1)/256)+1)*256);
     SOUNDS.push_back(new sound_struct(snd));
     return SOUND_INDEX++;
 }
-
+/*
 
 //general functions
 GMREAL __gm82audio_load(char* fn,double type) {
     cs_error_t error;
-    cs_audio_source_t* snd;
+    source_t* snd;
     if (type>=1.5)      snd=cs_load_mp3(fn,&error);
     else if (type>=0.5) snd=cs_load_ogg(fn,&error);
     else                snd=cs_load_wav(fn,&error);
@@ -148,7 +136,7 @@ GMREAL __gm82audio_load(char* fn,double type) {
 
 GMREAL __gm82audio_load_mem(double gmbuffer,double length,double type) {
     cs_error_t error;
-    cs_audio_source_t* snd;
+    source_t* snd;
     if (type>=1.5)      snd=cs_read_mem_mp3((void*)(size_t)gmbuffer,(size_t)length,&error);
     else if (type>=0.5) snd=cs_read_mem_ogg((void*)(size_t)gmbuffer,(size_t)length,&error);
     else                snd=cs_read_mem_wav((void*)(size_t)gmbuffer,(size_t)length,&error);
@@ -158,7 +146,7 @@ GMREAL __gm82audio_load_mem(double gmbuffer,double length,double type) {
 
 GMREAL __gm82audio_load_raw(double gmbuffer,double length,double samplerate,double channels,double bits,double is_signed) {
     cs_error_t error;
-    cs_audio_source_t* snd;
+    source_t* snd;
     snd=cs_read_mem_raw((void*)(size_t)gmbuffer,(size_t)length,(uint32_t)samplerate,(bits==8),(is_signed>0.5),(uint16_t)channels,&error);//uint32_t samplerate, bool is_8bit, uint16_t channels,
     if (snd==NULL) strcpy(ERROR_STR,cs_error_as_string(error));
     return __gm82audio_store_sound(snd);
@@ -166,7 +154,7 @@ GMREAL __gm82audio_load_raw(double gmbuffer,double length,double samplerate,doub
 
 GMREAL __gm82audio_load_builtin(double index) {
     cs_error_t error;
-    cs_audio_source_t* snd;
+    source_t* snd;
     
     //grab the gm sound struct's memory stream by traversing memory
     GMSound* sound=(*gm_sound_mem)[(int)index];
@@ -439,7 +427,7 @@ GMREAL __gm82audio_set_sfx_volume(double vol) {
 
 GMREAL __gm82audio_sfx_play(double soundid,double vol,double pan,double pitch,double loops) {
     __CHECK_EXISTS_DEL(soundid,sound);
-    cs_audio_source_t* snd=sound->source;   
+    source_t* snd=sound->source;   
     cs_sound_params_t params=cs_sound_params_default();
     params.volume=vol;
     params.pan=(pan+1)*0.5;
@@ -647,4 +635,4 @@ GMREAL __gm82audio_fill_inst_list(double soundid,double bufaddr) {
     uint64_t* dest=(uint64_t*)(int)bufaddr;
     
     return cs_fill_buffer_with_instances_of(sound->source,dest);
-}
+}*/

@@ -1,0 +1,4 @@
+[submodule "soloud"]
+	path = soloud
+	url = https://github.com/jarikomppa/soloud.git
+	branch = master

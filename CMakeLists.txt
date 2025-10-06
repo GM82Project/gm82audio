@@ -7,6 +7,8 @@ set(CMAKE_CXX_FLAGS "/O2 /W2 /WX /EHsc")
 
 add_library(gm82audio SHARED source/gm82audio.cpp)
 
+target_link_options(gm82audio PUBLIC "/NODEFAULTLIB:LIBCMT")
+
 option(INSTALL_GEX "Install the generated .gex" OFF)
 
 find_package(Python COMPONENTS Interpreter)

@@ -4,7 +4,12 @@
 #include <windows.h>
 
 #include "../soloud/include/soloud.h"
-#include "../soloud/include/soloud_speech.h"
+//#include "../soloud/include/soloud_wav.h"
+//#include "../soloud/include/soloud_speech.h"
+//#include "../soloud/include/soloud_echofilter.h"
+//#include "../soloud/include/soloud_freeverbfilter.h"
+//#include "../soloud/include/soloud_openmpt.h"
+#pragma comment(lib,"../soloud/lib/soloud_static_x86.lib")
 
 #define GMREAL extern "C" __declspec(dllexport) double __cdecl 
 #define GMSTR extern "C" __declspec(dllexport) char* __cdecl
@@ -58,10 +63,15 @@ struct sound_struct {
     source_t* source;
     double volume;
     double pan;
-	double pitch;
+    double pitch;
     bool deleted=false;
     sound_struct(source_t* source, double volume = 1, double pan = 0, double pitch = 1): source(source), volume(volume), pan(pan), pitch(pitch){};
 };
+
+
+using namespace SoLoud;
+
+static Soloud gSoloud;
 
 static double SAMPLE_RATE=44100;
 static int SOUND_INDEX=0;
@@ -73,8 +83,11 @@ static source_t* CURRENT_MUSIC_SOURCE=NULL;
 
 GMREAL __gm82audio_load_builtin(double);
 
+
 //initialization and system
 GMREAL __gm82audio_init(double gm_hwnd) {
+    gSoloud.init(Soloud::FLAGS::CLIP_ROUNDOFF+Soloud::FLAGS::LEFT_HANDED_3D,0,0,0);
+    
     /*cs_error_t error = cs_init((HWND)(int)gm_hwnd,(int)SAMPLE_RATE,4096,NULL);
     if (error) {
         MessageBoxA(NULL,cs_error_as_string(error),"gm82audio error!",MB_OK|MB_ICONSTOP);
@@ -107,7 +120,7 @@ GMREAL __gm82audio_update(double dt) {
 }
 
 GMREAL __gm82audio_end() {
-    //cs_shutdown();
+    gSoloud.deinit();
     return 0;
 }
 

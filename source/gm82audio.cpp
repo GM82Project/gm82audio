@@ -4,7 +4,7 @@
 #include <windows.h>
 
 #include "../soloud/include/soloud.h"
-//#include "../soloud/include/soloud_wav.h"
+#include "../soloud/include/soloud_wav.h"
 //#include "../soloud/include/soloud_speech.h"
 //#include "../soloud/include/soloud_echofilter.h"
 //#include "../soloud/include/soloud_freeverbfilter.h"
@@ -28,6 +28,8 @@ if (index<0 || index>=SOUND_INDEX) return __ERROR_NONEXIST;\
     __CHECK_EXISTS(index,sound);\
     if (sound->deleted) return __ERROR_DELETED;
 
+#define VIBE_CHECK(code) \
+    ERROR_LAST=code;
 
 //game maker 8.1 sound memory structures
 struct TMemoryStream {
@@ -56,7 +58,7 @@ struct GMSound {
 static GMSound*** gm_sound_mem = (GMSound***)0x6840c0;
 static uint32_t* gm_sound_count = (uint32_t*)0x6840c8;
 
-typedef void source_t;
+typedef SoLoud::AudioSource source_t;
 
 //audio extension globals
 struct sound_struct {
@@ -77,6 +79,7 @@ static double SAMPLE_RATE=44100;
 static int SOUND_INDEX=0;
 static int BUILTIN_COUNT;
 static std::vector<sound_struct*> SOUNDS;
+static int ERROR_LAST;
 static char ERROR_STR[255];
 static bool MUSIC_PAUSED=false;
 static source_t* CURRENT_MUSIC_SOURCE=NULL;
@@ -125,6 +128,7 @@ GMREAL __gm82audio_end() {
 }
 
 GMSTR  __gm82audio_get_error() {
+    strncpy(ERROR_STR,gSoloud.getErrorString(ERROR_LAST),254);
     return ERROR_STR;
 }
 
@@ -134,19 +138,16 @@ int __gm82audio_store_sound(source_t* snd) {
     SOUNDS.push_back(new sound_struct(snd));
     return SOUND_INDEX++;
 }
-/*
+
 
 //general functions
-GMREAL __gm82audio_load(char* fn,double type) {
-    cs_error_t error;
-    source_t* snd;
-    if (type>=1.5)      snd=cs_load_mp3(fn,&error);
-    else if (type>=0.5) snd=cs_load_ogg(fn,&error);
-    else                snd=cs_load_wav(fn,&error);
-    if (snd==NULL) strcpy(ERROR_STR,cs_error_as_string(error));
+GMREAL __gm82audio_load(char* fn,double type) {    
+    SoLoud::Wav snd;
+    VIBE_CHECK(snd.load(fn));
+    
     return __gm82audio_store_sound(snd);
 }
-
+/*
 GMREAL __gm82audio_load_mem(double gmbuffer,double length,double type) {
     cs_error_t error;
     source_t* snd;

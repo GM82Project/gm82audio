@@ -39,8 +39,8 @@
     //Prevents a lag spike when the sound is used for the first time.
     if (argument0<__gm82audio_get_builtin_count()) {
         if (sound_exists(argument0)) {
-            status=__gm82audio_exists(argument0)
-            if (status==-$1000001 || status==-$1000002) {
+            var __status;__status=__gm82audio_exists(argument0)
+            if (__status==-$1000001 || __status==-$1000002) {
                 //make sure the sound is preloaded or exported
                 sound_restore(argument0)
                 if (!__gm82audio_load_builtin(argument0)) {
@@ -70,7 +70,7 @@
     var __erstr;__erstr="in function audio_load: error loading "+argument0+": "
     
     if (file_exists(argument0)) {
-        __b=buffer_create()
+        var __b;__b=buffer_create()
         buffer_load_part(__b,argument[0],0,3)
         buffer_set_pos(__b,0)
         var __fourcc;__fourcc=buffer_read_data(__b,3)
